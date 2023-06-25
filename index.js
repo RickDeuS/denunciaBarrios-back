@@ -3,16 +3,15 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 // Importar rutas
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const reportRoutes = require('./routes/reportRoutes');
+const loginRoutes = require('../denunciaBarrios-back/src/Routes/login');
+const registerRoutes = require('../denunciaBarrios-back/src/Routes/register');
+
 
 // Configurar la conexión a MongoDB
 mongoose
-  .connect('mongodb://localhost:27017/my-database', {
+  .connect('mongodb://localhost:27017/barrios', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true,
   })
   .then(() => {
     console.log('Conexión exitosa a MongoDB');
@@ -28,9 +27,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Configurar las rutas
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/reports', reportRoutes);
+app.use('/auth', loginRoutes);
+app.use('/auth', registerRoutes);
 
 // Configurar el puerto
 const port = 3000;
