@@ -2,46 +2,58 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Usuario = require('../Models/user');
+const crypto = require('crypto');
 const app = express();
 
-app.post('/login', function (req, res) {
-    let body = req.body;
-    Usuario.findOne({ email: body.email }, (erro, usuarioDB)=>{
-        if (erro) {
-            return res.status(500).json({
-                ok: false,
-                err: erro
-            })
+app.post('/login', async (req, res) => {
+    try {
+    const { email, password } = req.body;
+
+    // Buscar el usuario por su correo electrónico
+    const usuarioDB = await Usuario.findOne({ email });
+
+    // Verificar si el usuario existe
+    if (!usuarioDB) {
+        return res.status(400).json({
+        ok: false,
+        err: {
+            message: 'El usuario no existe'
         }
-   // Verifica que exista un usuario con el mail escrita por el usuario.
-        if (!usuarioDB) {
-            return res.status(400).json({
-            ok: false,
-            err: {
-                message: "Usuario o contraseña incorrectos"
-            }
-        })
+        });
+    }
+
+    // Verificar la contraseña
+    const isPasswordValid = await bcrypt.compare(password, usuarioDB.password);
+    if (!isPasswordValid) {
+        return res.status(400).json({
+        ok: false,
+        err: {
+            message: 'Contraseña incorrecta'
         }
-   // Valida que la contraseña escrita por el usuario, sea la almacenada en la db
-        if (! bcrypt.compareSync(body.password, usuarioDB.password)){
-            return res.status(400).json({
-            ok: false,
-            err: {
-                message: "Usuario o contraseña incorrectos"
-            }
-            });
-        }
-   // Genera el token de autenticación
-        let token = jwt.sign({
-                usuario: usuarioDB,
-            }, process.env.SEED_AUTENTICACION, {
-            expiresIn: process.env.CADUCIDAD_TOKEN
-        })
-        res.json({
-            ok: true,
-            usuario: usuarioDB,
-            token,
-        })
-    })
-})
-    module.exports = app;
+        });
+    }
+
+    // Generar una clave secreta aleatoria
+    const secretKey = crypto.randomBytes(32).toString('hex');
+
+    // Generar el token de autenticación
+    const token = jwt.sign({ usuario: usuarioDB }, secretKey, { expiresIn: '1h' });
+
+    // Omitir el campo "password" en la respuesta
+    const { password: omitPassword, ...usuarioWithoutPassword } = usuarioDB.toObject();
+
+    res.json({
+        ok: true,
+        usuario: usuarioWithoutPassword
+    });
+    console.log("Inicio de sesion exitoso");
+    } catch (error) {
+    console.error('Error en el login:', error);
+    res.status(500).json({
+        ok: false,
+        err: 'Error en el servidor'
+    });
+    }
+});
+
+module.exports = app;
