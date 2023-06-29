@@ -1,36 +1,39 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
-// Importar rutas
-const loginRoutes = require('../denunciaBarrios-back/src/Routes/login');
-const registerRoutes = require('../denunciaBarrios-back/src/Routes/register');
-
-
-// Configurar la conexión a MongoDB
-mongoose.connect('mongodb+srv://riosr3060:Rsrr_060714@denuncias-back.eugamd3.mongodb.net/', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log('Conexión exitosa a MongoDB');
-}).catch((error) => {
-    console.error('Error al conectar a MongoDB:', error);
-});
-
+const bodyparser = require('body-parser');
+require('dotenv').config();
 const app = express();
 
-// Configurar middlewares
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
+// Conexión a Base de datos
+const uri = `mongodb+srv://riosr3060:${process.env.PASSWORD}@denuncias-back.eugamd3.mongodb.net/${process.env.DBNAME}`;
 
-// Configurar las rutas
-app.use('/auth', loginRoutes);
-app.use('/auth', registerRoutes);
+mongoose.connect(uri,
+    { useNewUrlParser: true, useUnifiedTopology: true }
+)
+.then(() => console.log('Se estableció conexión con la base de datos'))
+.catch(e => console.log('error db:', e))
 
-// Configurar el puerto
-const port = 3000;
+// capturar body
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.json());
 
-// Iniciar el servidor
-app.listen(port, () => {
-    console.log(`Servidor escuchando en el puerto ${port}`);
+// import routes
+const authRoutes = require('./src/Routes/auth');
+const homeRoutes = require('./src/Routes/home');
+const verifyToken = require('./scr/Routes/validate-token');
+
+// route middlewares
+app.use("/home", verifyToken, homeRoutes);
+app.use('/auth', authRoutes);
+app.get('/', (req, res) => {
+    res.json({
+        estado: true,
+        mensaje: 'funciona!'
+    })
 });
+
+// iniciar server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Levantamos servidor en puerto: ${PORT}`)
+})

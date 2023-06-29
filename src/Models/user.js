@@ -12,33 +12,40 @@ const userSchema = new Schema({
     nombreCompleto: {
     type: String,
     required: [true, "El nombre es necesario"],
+    min: 3,
+    max: 255,
   },
   cedula: {
     type: String,
     unique: true,
     required: true,
+    max: 10,
   },
   numTelefono: {
     type: String,
     unique: true,
-    required: true
+    required: true,
+    max: 10,
     
   },
   email: {
     type: String,
     unique: true,
     required: [true, "El correo es necesario"],
+    min: 6,
+    max: 1024,
   },
   password: {
     type: String,
     required: [true, "La contraseña es necesaria"],
+    minlength: 6,
   },
   role: {
     type: String,
     default: "USER",
     enum: rolesValidos,
   },
-});
+},{ timestamps: true});
 
 userSchema.methods.toJSON = function () {
   const user = this;
