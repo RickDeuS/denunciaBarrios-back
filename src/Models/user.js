@@ -11,7 +11,7 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     nombreCompleto: {
     type: String,
-    required: [true, "El nombre es necesario"],
+    required: true,
     min: 3,
     max: 255,
   },
@@ -31,13 +31,13 @@ const userSchema = new Schema({
   email: {
     type: String,
     unique: true,
-    required: [true, "El correo es necesario"],
+    required: true,
     min: 6,
     max: 1024,
   },
   password: {
     type: String,
-    required: [true, "La contraseña es necesaria"],
+    required: true,
     minlength: 6,
   },
   role: {
