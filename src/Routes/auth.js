@@ -1,3 +1,10 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Autenticación de usuarios
+ */
+
 const router = require('express').Router();
 const User = require('../Models/user');
 const Joi = require('@hapi/joi');
@@ -19,6 +26,49 @@ const schemaLogin = Joi.object({
     password: Joi.string().min(6).max(1024).required(),
 });
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Registrar un nuevo usuario
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: Usuario registrado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: null
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Error de validación o email ya registrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Error al guardar el usuario en la base de datos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
 router.post('/register', async (req, res) => {
     // Validar usuario
     const { error } = schemaRegister.validate(req.body);
@@ -50,9 +100,72 @@ router.post('/register', async (req, res) => {
             data: savedUser,
         });
     } catch (error) {
-        res.status(400).json({ error });
+        res.status(500).json({ error: 'Error al guardar el usuario en la base de datos' });
     }
 });
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Iniciar sesión de usuario
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginInput'
+ *     responses:
+ *       200:
+ *         description: Usuario autenticado exitosamente
+ *         headers:
+ *           auth-token:
+ *             schema:
+ *               type: string
+ *             description: Token de autenticación JWT
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LoginResponse'
+ *       400:
+ *         description: Error de validación, usuario no encontrado o contraseña no válida
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     LoginInput:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *           minLength: 6
+ *           maxLength: 255
+ *         password:
+ *           type: string
+ *           minLength: 6
+ *           maxLength: 1024
+ *     LoginResponse:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: null
+ *         data:
+ *           type: object
+ *           properties:
+ *             token:
+ *               type: string
+ */
 
 router.post('/login', async (req, res) => {
     // Validaciones
