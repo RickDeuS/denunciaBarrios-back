@@ -54,7 +54,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: 'http://localhost:3000', // Reemplaza con la URL de tu servidor
+                url: 'http://localhost:5000', // Reemplaza con la URL de tu servidor
             },
         ],
     },
@@ -66,7 +66,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Iniciar servidor
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Servidor en ejecución en el puerto: ${PORT}`);
 });
