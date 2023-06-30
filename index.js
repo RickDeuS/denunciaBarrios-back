@@ -54,11 +54,11 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: 'http://localhost:5000', // Reemplaza con la URL de tu servidor
+                url: 'https://back-barrios-462cb6c76674.herokuapp.com', 
             },
         ],
     },
-    apis: ['./src/Routes/auth.js', './src/Models/user.js'], // Reemplaza con la ruta a tus archivos de rutas
+    apis: ['./src/Routes/auth.js', './src/Models/user.js'], 
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
