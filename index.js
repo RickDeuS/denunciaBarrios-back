@@ -13,7 +13,7 @@ mongoose
     .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Se estableció conexión con la base de datos'))
     .catch((e) => console.log('Error de conexión a la base de datos:', e));
-    
+
 // cors
 const cors = require('cors');
 var corsOptions = {
@@ -24,12 +24,8 @@ app.use(cors(corsOptions));
 // Capturar body
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
+
+
 // Importar rutas
 const authRoutes = require('./src/Routes/auth');
 const homeRoutes = require('./src/Routes/home');
