@@ -7,7 +7,7 @@ require('dotenv').config();
 const app = express();
 
 // Conexión a Base de datos
-const uri = `mongodb+srv://riosr3060:${process.env.PASSWORD}@denuncias-back.eugamd3.mongodb.net/${process.env.DBNAME}`;
+const uri = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@denuncias-back.eugamd3.mongodb.net/${process.env.DBNAME}`;
 
 mongoose
     .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -17,7 +17,7 @@ mongoose
 // cors
 const cors = require('cors');
 const corsOptions = {
-    origin: 'https://back-barrios-462cb6c76674.herokuapp.com', 
+    origin: '*', 
 };
 app.use(cors(corsOptions));
 
