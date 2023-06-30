@@ -16,15 +16,14 @@ mongoose
 
 // cors
 const cors = require('cors');
-var corsOptions = {
-    origin: 'https://back-barrios-462cb6c76674.herokuapp.com', // Reemplazar con dominio
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
+const corsOptions = {
+    origin: 'https://back-barrios-462cb6c76674.herokuapp.com', 
+};
 app.use(cors(corsOptions));
+
 // Capturar body
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
-
 
 // Importar rutas
 const authRoutes = require('./src/Routes/auth');
