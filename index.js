@@ -5,6 +5,8 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 require('dotenv').config();
 const app = express();
+const cors = require('cors');
+app.use(cors());
 
 // Conexión a Base de datos
 const uri = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@denuncias-back.eugamd3.mongodb.net/${process.env.DBNAME}`;
