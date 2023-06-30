@@ -9,10 +9,7 @@ const cors = require('cors');
 app.use(cors());
 
 // Conexión a Base de datos
-const uri = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@denuncias-back.eugamd3.mongodb.net/${process.env.DBNAME}`;
-console.log("process.env.USERNAME: ", process.env.USERNAME);
-console.log("process.env.PASSWORD: ", process.env.PASSWORD);
-console.log("process.env.DBNAME: ", process.env.DBNAME);
+const uri = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@denuncias-back.eugamd3.mongodb.net/barrios`;
 
 mongoose
     .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
