@@ -16,13 +16,6 @@ mongoose
     .then(() => console.log('Se estableció conexión con la base de datos'))
     .catch((e) => console.log('Error de conexión a la base de datos:', e));
 
-// cors
-const cors = require('cors');
-const corsOptions = {
-    origin: '*', 
-};
-app.use(cors(corsOptions));
-
 // Capturar body
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
