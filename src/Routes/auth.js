@@ -100,6 +100,7 @@ router.post('/register', async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ error: 'Error al guardar el usuario en la base de datos' });
+        console.log(error);
     }
 });
 
