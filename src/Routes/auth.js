@@ -17,8 +17,7 @@ const schemaRegister = Joi.object({
     cedula: Joi.string().min(6).max(10).required(),
     numTelefono: Joi.string().min(6).max(10).required(),
     email: Joi.string().min(6).max(1024).required().email(),
-    password: Joi.string().min(6).required(),
-    role: Joi.string().default('USER'),
+    password: Joi.string().min(6).required()
 });
 
 const schemaLogin = Joi.object({
