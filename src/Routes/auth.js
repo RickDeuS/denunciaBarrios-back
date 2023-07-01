@@ -81,6 +81,16 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ error: 'Email ya registrado' });
     }
 
+    const isNumTelefonoExist = await User.findOne({ numTelefono: req.body.numTelefono });
+    if (isNumTelefonoExist) {
+        return res.status(400).json({ error: 'Numero telefonico ya registrado' });
+    }
+
+    const isDniExist = await User.findOne({ cedula: req.body.cedula });
+    if (isDniExist) {
+        return res.status(400).json({ error: 'Cedula ya registrada' });
+    }
+
     // Hash de la contraseña
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(req.body.password, salt);
