@@ -33,7 +33,7 @@ const mongoose = require("mongoose");
 var uniqueValidator = require("mongoose-unique-validator");
 
 const rolesValidos = {
-  values: ["ADMIN", "USER"],
+  values: ["USER"],
   message: "{VALUE} no es un rol válido",
 };
 
@@ -46,6 +46,7 @@ const userSchema = new Schema(
       required: true,
       min: 3,
       max: 255,
+      trim: true,
     },
     cedula: {
       type: String,
@@ -53,6 +54,7 @@ const userSchema = new Schema(
       required: true,
       min: 6,
       max: 10,
+      trim: true,
     },
     numTelefono: {
       type: String,
@@ -60,6 +62,7 @@ const userSchema = new Schema(
       required: true,
       min: 6,
       max: 10,
+      trim: true,
     },
     email: {
       type: String,
@@ -67,16 +70,19 @@ const userSchema = new Schema(
       required: true,
       min: 6,
       max: 255,
+      trim: true,
     },
     password: {
       type: String,
       required: true,
       min: 6,
+      trim: true,
     },
     role: {
       type: String,
       default: "USER",
       enum: rolesValidos,
+      trim: true,
     },
   },
   {
