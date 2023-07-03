@@ -2,11 +2,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyparser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
+const morgan = require('morgan');
 const swaggerJsdoc = require('swagger-jsdoc');
 require('dotenv').config();
 const app = express();
 const cors = require('cors');
 app.use(cors());
+app.use(morgan('dev'));
 
 // Conexión a Base de datos
 const uri = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@denuncias-back.eugamd3.mongodb.net/barrios`;
