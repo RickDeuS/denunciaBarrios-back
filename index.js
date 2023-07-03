@@ -38,7 +38,7 @@ app.use('/home', verifyToken);
 app.get('/', (req, res) => {
     res.json({
         estado: true,
-        mensaje: '¡Funciona!',
+        mensaje: 'Bienvenid@, inicia sesion o registrate por favor =)',
     });
 });
 
