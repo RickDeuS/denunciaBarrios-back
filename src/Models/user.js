@@ -20,13 +20,10 @@
  *         email:
  *           type: string
  *           minLength: 6
- *           maxLength: 1024
+ *           maxLength: 1024  
  *         password:
  *           type: string
  *           minLength: 6
- *         role:
- *           type: string
- *           default: USER
  */
 
 const mongoose = require("mongoose");
