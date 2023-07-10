@@ -65,9 +65,6 @@ module.exports = Denuncia;
  *         tituloDenuncia:
  *           type: string
  *           description: Título de la denuncia
- *         denunciante:
- *           type: string
- *           description: Nombre completo del denunciante
  *         descripcion:
  *           type: string
  *           description: Descripción de la denuncia

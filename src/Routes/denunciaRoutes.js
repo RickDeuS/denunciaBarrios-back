@@ -1,3 +1,9 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Denuncias
+ *   description: Listar, Crear y Eliminar Denuncias
+ */
 const router = require('express').Router();
 const Denuncia = require('../Models/denuncia');
 const User = require('../Models/user');
@@ -5,7 +11,31 @@ const Joi = require('@hapi/joi');
 
 /**
  * @swagger
- * /nuevaDenuncia:
+ * /denuncias:
+ *   get:
+ *     summary: Obtener todas las denuncias
+ *     tags: [Denuncias]
+ *     security:
+ *      - jwt: []
+ *     responses:
+ *       200:
+ *         description: Lista de denuncias obtenida exitosamente
+ *       500:
+ *         description: Error del servidor al obtener las denuncias
+ */
+router.get('/ListaDenuncias', async (req, res) => {
+    try {
+        const denuncias = await Denuncia.find();
+        res.status(200).json(denuncias);
+    } catch (error) {
+        console.error('Error al obtener las denuncias:', error);
+        res.status(500).json({ error: 'Error del servidor al obtener las denuncias.' });
+    }
+});
+
+/**
+ * @swagger
+ * /denuncias:
  *   post:
  *     summary: Crear una nueva denuncia
  *     tags: [Denuncias]
@@ -16,7 +46,7 @@ const Joi = require('@hapi/joi');
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/NuevaDenuncia'
+ *             $ref: '#/components/schemas/Denuncia'
  *     responses:
  *       201:
  *         description: Denuncia creada exitosamente
@@ -27,8 +57,7 @@ const Joi = require('@hapi/joi');
  *       500:
  *         description: Error del servidor al crear la denuncia
  */
-// Ruta protegida: Crear una nueva denuncia
-router.post('/nuevaDenuncia', async (req, res) => {
+router.post('/NuevaDenuncia', async (req, res) => {
     try {
         // Obtener el ID del usuario autenticado desde la sesión o el token
         const usuarioId = req.user.id;
@@ -62,7 +91,7 @@ router.post('/nuevaDenuncia', async (req, res) => {
         });
 
         if (denunciaExistente) {
-            return res.status(400).json({ error: 'Ya has presentado una denuncia con el mismo título. Cambia el titulo de tu denuncia e intenta nuevamente' });
+            return res.status(400).json({ error: 'Ya has presentado una denuncia con el mismo título.' });
         }
 
         // Crear la nueva denuncia con el título de la denuncia, el nombre completo del usuario autenticado como denunciante, y los demás datos
@@ -82,6 +111,57 @@ router.post('/nuevaDenuncia', async (req, res) => {
     } catch (error) {
         console.error('Error al crear la denuncia:', error);
         return res.status(500).json({ error: 'Error del servidor al crear la denuncia.' });
+    }
+});
+
+/**
+ * @swagger
+ * /denuncias:
+ *   delete:
+ *     summary: Eliminar una denuncia por su título
+ *     tags: [Denuncias]
+ *     security:
+ *       - jwt: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EliminarDenuncia'
+ *     responses:
+ *       200:
+ *         description: Denuncia eliminada exitosamente
+ *       400:
+ *         description: Error de validación o denuncia no encontrada
+ *       500:
+ *         description: Error del servidor al eliminar la denuncia
+ */
+router.delete('/EliminarDenuncia', async (req, res) => {
+    try {
+        const { tituloDenuncia } = req.body;
+
+        // Validar los datos de entrada usando Joi (puedes ajustar las reglas de validación según tus necesidades)
+        const schema = Joi.object({
+            tituloDenuncia: Joi.string().required().trim(),
+        });
+
+        const { error } = schema.validate({ tituloDenuncia });
+
+        if (error) {
+            return res.status(400).json({ error: error.details[0].message });
+        }
+
+        // Buscar y eliminar la denuncia por su título
+        const denunciaEliminada = await Denuncia.findOneAndDelete({ tituloDenuncia });
+
+        if (!denunciaEliminada) {
+            return res.status(400).json({ error: 'Denuncia no encontrada.' });
+        }
+
+        return res.status(200).json({ message: 'Denuncia eliminada exitosamente.' });
+    } catch (error) {
+        console.error('Error al eliminar la denuncia:', error);
+        return res.status(500).json({ error: 'Error del servidor al eliminar la denuncia.' });
     }
 });
 

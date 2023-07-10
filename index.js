@@ -46,6 +46,8 @@ app.get('/', (req, res) => {
 
 // Ruta protegida /home
 app.use('/home', homeRoutes);
+
+// Ruta protegida /denuncia
 app.use('/denuncia', denunciaRoutes);
 
 // Configuración de Swagger
@@ -59,11 +61,11 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: 'https://back-barrios-462cb6c76674.herokuapp.com', 
+                url: `http://localhost:${process.env.PORT}`,
             },
         ],
     },
-    apis: ['./src/Routes/authRoutes.js', './src/Models/user.js', 'src/Models/denuncia.js', 'src/Routes/denunciaRoutes.js']
+    apis: ['./src/Routes/*js', './src/Models/*js'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
