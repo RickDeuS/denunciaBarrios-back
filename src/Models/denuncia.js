@@ -2,15 +2,14 @@ const mongoose = require('mongoose');
 
 const denunciaSchema = new mongoose.Schema(
   {
-    nombreDenuncia: {
+    tituloDenuncia: {
       type: String,
       required: true,
       trim: true
     },
     denunciante: {
-      type: mongoose.Schema.Types.ObjectId, // Cambiar a tipo ObjectId
-      ref: 'User', // Referencia al modelo User
-      required: false // Hacer el campo opcional
+      type: String,
+      required: false
     },
     descripcion: {
       type: String,
@@ -40,8 +39,8 @@ const denunciaSchema = new mongoose.Schema(
 
 denunciaSchema.pre('save', async function (next) {
   if (!this.denunciante) {
-    // Asignar el ID del usuario autenticado como denunciante si no se ha establecido previamente
-    this.denunciante = this._id;
+    // Asignar el nombre completo del usuario autenticado como denunciante si no se ha establecido previamente
+    this.denunciante = this._id.nombreCompleto;
   }
   next();
 });
@@ -50,7 +49,6 @@ const Denuncia = mongoose.model('Denuncia', denunciaSchema);
 
 module.exports = Denuncia;
 
-
 /**
  * @swagger
  * components:
@@ -58,18 +56,18 @@ module.exports = Denuncia;
  *     Denuncia:
  *       type: object
  *       required:
- *         - nombreDenuncia
+ *         - tituloDenuncia
  *         - denunciante
  *         - descripcion
  *         - evidencia
  *         - ubicacion
  *       properties:
- *         nombreDenuncia:
+ *         tituloDenuncia:
  *           type: string
- *           description: Nombre de la denuncia
+ *           description: Título de la denuncia
  *         denunciante:
  *           type: string
- *           description: ID del denunciante
+ *           description: Nombre completo del denunciante
  *         descripcion:
  *           type: string
  *           description: Descripción de la denuncia

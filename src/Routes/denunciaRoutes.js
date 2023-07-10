@@ -3,6 +3,30 @@ const Denuncia = require('../Models/denuncia');
 const User = require('../Models/user');
 const Joi = require('@hapi/joi');
 
+/**
+ * @swagger
+ * /nuevaDenuncia:
+ *   post:
+ *     summary: Crear una nueva denuncia
+ *     tags: [Denuncias]
+ *     security:
+ *       - jwt: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/NuevaDenuncia'
+ *     responses:
+ *       201:
+ *         description: Denuncia creada exitosamente
+ *       400:
+ *         description: Error de validación o denuncia con el mismo título ya existe
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error del servidor al crear la denuncia
+ */
 // Ruta protegida: Crear una nueva denuncia
 router.post('/nuevaDenuncia', async (req, res) => {
     try {
@@ -31,9 +55,19 @@ router.post('/nuevaDenuncia', async (req, res) => {
             return res.status(400).json({ error: error.details[0].message });
         }
 
+        // Verificar si el usuario ya ha presentado una denuncia con el mismo título
+        const denunciaExistente = await Denuncia.findOne({
+            tituloDenuncia: req.body.tituloDenuncia,
+            denunciante: usuario.nombreCompleto,
+        });
+
+        if (denunciaExistente) {
+            return res.status(400).json({ error: 'Ya has presentado una denuncia con el mismo título. Cambia el titulo de tu denuncia e intenta nuevamente' });
+        }
+
         // Crear la nueva denuncia con el título de la denuncia, el nombre completo del usuario autenticado como denunciante, y los demás datos
         const nuevaDenuncia = new Denuncia({
-            nombreDenuncia: req.body.tituloDenuncia,
+            tituloDenuncia: req.body.tituloDenuncia,
             denunciante: usuario.nombreCompleto,
             descripcion: req.body.descripcion,
             evidencia: req.body.evidencia,
