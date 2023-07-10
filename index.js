@@ -66,6 +66,7 @@ const swaggerOptions = {
         servers: [
             {
                 url: `http://localhost:${process.env.PORT}`,
+                url: `https://back-barrios-462cb6c76674.herokuapp.com`,
             },
         ],
     },
