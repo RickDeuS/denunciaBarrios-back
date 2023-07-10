@@ -7,6 +7,8 @@ const swaggerJsdoc = require('swagger-jsdoc');
 require('dotenv').config();
 const app = express();
 const cors = require('cors');
+
+
 app.use(cors());
 app.use(morgan('dev'));
 
@@ -21,6 +23,8 @@ mongoose
 // Capturar body
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
+
+
 
 // Importar rutas
 const authRoutes = require('./src/Routes/ authRoutes');

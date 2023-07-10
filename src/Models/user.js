@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-var uniqueValidator = require('mongoose-unique-validator');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const rolesValidos = {
     values: ['USER'],
@@ -47,6 +47,10 @@ const userSchema = new Schema(
             min: 6,
             trim: true,
         },
+        photoUrl: {
+            type: String,
+            required: false,
+        },
         role: {
             type: String,
             default: 'USER',
@@ -64,6 +68,7 @@ const userSchema = new Schema(
                 ref: 'Denuncia',
             },
         ],
+        
     },
     {
         timestamps: true,

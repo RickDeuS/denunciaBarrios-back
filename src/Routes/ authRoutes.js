@@ -10,6 +10,19 @@ const User = require('../Models/user');
 const Joi = require('@hapi/joi');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+
+//Configuracion Cloudinary y Multer
+cloudinary.config({
+    cloud_name: `${process.env.CLOUDINARY_NAME}`,
+    api_key: `${process.env.CLOUDINARY_APIKEY}`,
+    api_secret: `${process.env.CLOUDINARY_API_SECRET}`
+});
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 
 // Validación de datos
 const schemaRegister = Joi.object({
@@ -68,7 +81,7 @@ const schemaLogin = Joi.object({
  *                 error:
  *                   type: string
  */
-router.post('/register', async (req, res) => {
+router.post('/register',upload.single('photo'), async (req, res) => {
     // Validar usuario
     const { error } = schemaRegister.validate(req.body);
 
@@ -95,13 +108,22 @@ router.post('/register', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(req.body.password, salt);
 
+
+
     const user = new User({
         nombreCompleto: req.body.nombreCompleto,
         cedula: req.body.cedula,
         numTelefono: req.body.numTelefono,
         email: req.body.email,
         password: password,
+        photoUrl: req.body.photoUrl,
     });
+
+    const file = req.files.photo;
+    const result = await cloudinary.uploader.upload(file.tempFilePath);
+    const photoUrl = result.secure_url;
+    user.photoUrl = photoUrl;
+
     try {
         const savedUser = await user.save();
         res.json({
