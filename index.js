@@ -23,16 +23,18 @@ app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 
 // Importar rutas
-const authRoutes = require('./src/Routes/auth');
-const homeRoutes = require('./src/Routes/home');
+const authRoutes = require('./src/Routes/ authRoutes');
+const homeRoutes = require('./src/Routes/homeRoutes');
+const denunciaRoutes = require('./src/Routes/denunciaRoutes');
 const verifyToken = require('./src/Routes/validate-token');
 
 // Ruta de autenticación
 app.use('/auth', authRoutes);
 
-// Middleware para verificar el token en las rutas / y /home
+// Middleware para verificar el token en las rutas protegidas 
 //app.use('/', verifyToken);
 app.use('/home', verifyToken);
+app.use('/denuncia', verifyToken);
 
 // Ruta por defecto
 app.get('/', (req, res) => {
@@ -44,6 +46,7 @@ app.get('/', (req, res) => {
 
 // Ruta protegida /home
 app.use('/home', homeRoutes);
+app.use('/denuncia', denunciaRoutes);
 
 // Configuración de Swagger
 const swaggerOptions = {

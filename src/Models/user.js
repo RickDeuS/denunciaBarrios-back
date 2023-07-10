@@ -24,6 +24,9 @@
  *         password:
  *           type: string
  *           minLength: 6
+ *         numDenuncias:
+ *           type: number
+ *           default: 0
  */
 
 const mongoose = require("mongoose");
@@ -41,7 +44,7 @@ const userSchema = new Schema(
     nombreCompleto: {
       type: String,
       required: true,
-      min: 3,
+      min: 6,
       max: 255,
       trim: true,
     },
@@ -80,6 +83,11 @@ const userSchema = new Schema(
       default: "USER",
       enum: rolesValidos,
       trim: true,
+    },
+    numDenunciasHechas: {
+      type: Number,
+      default: 0,
+      required: false
     },
   },
   {

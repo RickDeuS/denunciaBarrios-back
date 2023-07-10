@@ -8,9 +8,9 @@ const denunciaSchema = new mongoose.Schema(
       trim: true
     },
     denunciante: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Usuario',
-      required: true
+      type: mongoose.Schema.Types.ObjectId, // Cambiar a tipo ObjectId
+      ref: 'User', // Referencia al modelo User
+      required: false // Hacer el campo opcional
     },
     descripcion: {
       type: String,
@@ -38,9 +38,18 @@ const denunciaSchema = new mongoose.Schema(
   }
 );
 
+denunciaSchema.pre('save', async function (next) {
+  if (!this.denunciante) {
+    // Asignar el ID del usuario autenticado como denunciante si no se ha establecido previamente
+    this.denunciante = this._id;
+  }
+  next();
+});
+
 const Denuncia = mongoose.model('Denuncia', denunciaSchema);
 
 module.exports = Denuncia;
+
 
 /**
  * @swagger
