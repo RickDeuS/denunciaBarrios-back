@@ -1,9 +1,3 @@
-/**
- * @swagger
- * tags:
- *   name: Denuncias
- *   description: Listar, Crear y Eliminar Denuncias
- */
 const router = require('express').Router();
 const Denuncia = require('../Models/denuncia');
 const User = require('../Models/user');
@@ -11,21 +5,39 @@ const Joi = require('@hapi/joi');
 
 /**
  * @swagger
- * /denuncias:
+ * tags:
+ *   name: Denuncias
+ *   description: Listar, Crear y Eliminar Denuncias
+ */
+
+/**
+ * @swagger
+ * /denuncias/listaDenuncias:
  *   get:
- *     summary: Obtener todas las denuncias
+ *     summary: Obtener todas las denuncias del usuario autenticado
  *     tags: [Denuncias]
  *     security:
- *      - jwt: []
+ *       - jwt: []
  *     responses:
  *       200:
- *         description: Lista de denuncias obtenida exitosamente
+ *         description: Lista de denuncias del usuario obtenida exitosamente
  *       500:
  *         description: Error del servidor al obtener las denuncias
  */
-router.get('/ListaDenuncias', async (req, res) => {
+router.get('/listaDenuncias', async (req, res) => {
     try {
-        const denuncias = await Denuncia.find();
+        // Obtener el ID del usuario autenticado desde la sesión o el token
+        const usuarioId = req.user.id;
+
+        // Consultar el usuario autenticado en la base de datos
+        const usuario = await User.findById(usuarioId);
+
+        if (!usuario) {
+            return res.status(404).json({ error: 'Usuario no encontrado.' });
+        }
+
+        // Obtener las denuncias del usuario autenticado
+        const denuncias = await Denuncia.find({ denunciante: usuario.nombreCompleto });
         res.status(200).json(denuncias);
     } catch (error) {
         console.error('Error al obtener las denuncias:', error);
@@ -35,7 +47,7 @@ router.get('/ListaDenuncias', async (req, res) => {
 
 /**
  * @swagger
- * /denuncias:
+ * /denuncias/nuevaDenuncia:
  *   post:
  *     summary: Crear una nueva denuncia
  *     tags: [Denuncias]
@@ -57,7 +69,7 @@ router.get('/ListaDenuncias', async (req, res) => {
  *       500:
  *         description: Error del servidor al crear la denuncia
  */
-router.post('/NuevaDenuncia', async (req, res) => {
+router.post('/nuevaDenuncia', async (req, res) => {
     try {
         // Obtener el ID del usuario autenticado desde la sesión o el token
         const usuarioId = req.user.id;
@@ -94,7 +106,6 @@ router.post('/NuevaDenuncia', async (req, res) => {
             return res.status(400).json({ error: 'Ya has presentado una denuncia con el mismo título.' });
         }
 
-        // Crear la nueva denuncia con el título de la denuncia, el nombre completo del usuario autenticado como denunciante, y los demás datos
         const nuevaDenuncia = new Denuncia({
             tituloDenuncia: req.body.tituloDenuncia,
             denunciante: usuario.nombreCompleto,
@@ -103,10 +114,15 @@ router.post('/NuevaDenuncia', async (req, res) => {
             ubicacion: req.body.ubicacion,
             estado: req.body.estado,
         });
-
+        
         // Guardar la denuncia en la base de datos
         await nuevaDenuncia.save();
-
+        
+        // Actualizar el usuario con la nueva denuncia
+        usuario.Denuncias.push(nuevaDenuncia);
+        usuario.numDenunciasRealizadas += 1;
+        await usuario.save();
+        
         return res.status(201).json({ message: 'Denuncia creada exitosamente.' });
     } catch (error) {
         console.error('Error al crear la denuncia:', error);
@@ -116,7 +132,7 @@ router.post('/NuevaDenuncia', async (req, res) => {
 
 /**
  * @swagger
- * /denuncias:
+ * /denuncias/eliminarDenuncia:
  *   delete:
  *     summary: Eliminar una denuncia por su título
  *     tags: [Denuncias]
@@ -132,11 +148,11 @@ router.post('/NuevaDenuncia', async (req, res) => {
  *       200:
  *         description: Denuncia eliminada exitosamente
  *       400:
- *         description: Error de validación o denuncia no encontrada
+ *         description: Error de validación odenuncia no encontrada
  *       500:
  *         description: Error del servidor al eliminar la denuncia
  */
-router.delete('/EliminarDenuncia', async (req, res) => {
+router.delete('/eliminarDenuncia', async (req, res) => {
     try {
         const { tituloDenuncia } = req.body;
 
