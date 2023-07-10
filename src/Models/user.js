@@ -1,3 +1,46 @@
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *        - nombreCompleto
+ *        - cedula
+ *        - numTelefono
+ *        - email
+ *        - password
+ *       properties:
+ *         nombreCompleto:
+ *           type: string
+ *           minLength: 6
+ *           maxLength: 255
+ *         cedula:
+ *           type: string
+ *           minLength: 6
+ *           maxLength: 10
+ *         numTelefono:
+ *           type: string
+ *           minLength: 6
+ *           maxLength: 10
+ *         email:
+ *           type: string
+ *           minLength: 6
+ *           maxLength: 255
+ *         password:
+ *           type: string
+ *           minLength: 6
+ *         photoUrl:
+ *           type: string
+ *         role:
+ *           type: string
+ *           default: 'USER'
+ *           enum:
+ *             - USER
+ *         numDenunciasRealizadas:
+ *           type: number
+ *           default: 0
+ */
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
@@ -68,7 +111,6 @@ const userSchema = new Schema(
                 ref: 'Denuncia',
             },
         ],
-        
     },
     {
         timestamps: true,
