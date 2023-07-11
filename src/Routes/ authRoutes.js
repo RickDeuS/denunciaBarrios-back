@@ -115,14 +115,14 @@ router.post('/register',upload.single('photo'), async (req, res) => {
         cedula: req.body.cedula,
         numTelefono: req.body.numTelefono,
         email: req.body.email,
-        password: password,
-        photoUrl: req.body.photoUrl,
+        password: password
+        //photoUrl: req.body.photoUrl,
     });
 
-    const file = req.files.photo;
-    const result = await cloudinary.uploader.upload(file.tempFilePath);
-    const photoUrl = result.secure_url;
-    user.photoUrl = photoUrl;
+    //const file = req.files.photoUrl;
+    //const result = await cloudinary.uploader.upload(file.tempFilePath);
+    //const photoUrl = result.secure_url;
+    //user.photoUrl = photoUrl;
 
     try {
         const savedUser = await user.save();

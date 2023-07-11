@@ -3,27 +3,6 @@ const Denuncia = require('../Models/denuncia');
 const User = require('../Models/user');
 const Joi = require('@hapi/joi');
 
-/**
- * @swagger
- * tags:
- *   name: Denuncias
- *   description: Listar, Crear y Eliminar Denuncias
- */
-
-/**
- * @swagger
- * /denuncias/listaDenuncias:
- *   get:
- *     summary: Obtener todas las denuncias del usuario autenticado
- *     tags: [Denuncias]
- *     security:
- *       - jwt: []
- *     responses:
- *       200:
- *         description: Lista de denuncias del usuario obtenida exitosamente
- *       500:
- *         description: Error del servidor al obtener las denuncias
- */
 router.get('/listaDenuncias', async (req, res) => {
     try {
         // Obtener el ID del usuario autenticado desde la sesión o el token
@@ -45,30 +24,7 @@ router.get('/listaDenuncias', async (req, res) => {
     }
 });
 
-/**
- * @swagger
- * /denuncias/nuevaDenuncia:
- *   post:
- *     summary: Crear una nueva denuncia
- *     tags: [Denuncias]
- *     security:
- *       - jwt: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Denuncia'
- *     responses:
- *       201:
- *         description: Denuncia creada exitosamente
- *       400:
- *         description: Error de validación o denuncia con el mismo título ya existe
- *       404:
- *         description: Usuario no encontrado
- *       500:
- *         description: Error del servidor al crear la denuncia
- */
+
 router.post('/nuevaDenuncia', async (req, res) => {
     try {
         // Obtener el ID del usuario autenticado desde la sesión o el token
@@ -130,28 +86,7 @@ router.post('/nuevaDenuncia', async (req, res) => {
     }
 });
 
-/**
- * @swagger
- * /denuncias/eliminarDenuncia:
- *   delete:
- *     summary: Eliminar una denuncia por su título
- *     tags: [Denuncias]
- *     security:
- *       - jwt: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/EliminarDenuncia'
- *     responses:
- *       200:
- *         description: Denuncia eliminada exitosamente
- *       400:
- *         description: Error de validación odenuncia no encontrada
- *       500:
- *         description: Error del servidor al eliminar la denuncia
- */
+
 router.delete('/eliminarDenuncia', async (req, res) => {
     try {
         const { tituloDenuncia } = req.body;
@@ -180,5 +115,100 @@ router.delete('/eliminarDenuncia', async (req, res) => {
         return res.status(500).json({ error: 'Error del servidor al eliminar la denuncia.' });
     }
 });
+/**
+ * @swagger
+ * tags:
+ *   name: Denuncias
+ *   description: Listar, Crear y Eliminar Denuncias
+ */
 
+/**
+ * @swagger
+ * /denuncias/listaDenuncias:
+ *   get:
+ *     summary: Obtener todas las denuncias del usuario autenticado
+ *     tags: [Denuncias]
+ *     security:
+ *       - jwt: []
+ *     responses:
+ *       200:
+ *         description: Lista de denuncias del usuario obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Denuncia'
+ *       500:
+ *         description: Error del servidor al obtener las denuncias
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+
+/**
+ * @swagger
+ * /denuncias/nuevaDenuncia:
+ *   post:
+ *     summary: Crear una nueva denuncia
+ *     tags: [Denuncias]
+ *     security:
+ *       - jwt: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Denuncia'
+ *     responses:
+ *       201:
+ *         description: Denuncia creada exitosamente
+ *       400:
+ *         description: Error de validación o denuncia con el mismo título ya existe
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error del servidor al crear la denuncia
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+
+/**
+ * @swagger
+ * /denuncias/eliminarDenuncia:
+ *   delete:
+ *     summary: Eliminar una denuncia por su título
+ *     tags: [Denuncias]
+ *     security:
+ *       - jwt: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EliminarDenuncia'
+ *     responses:
+ *       200:
+ *         description: Denuncia eliminada exitosamente
+ *       400:
+ *         description: Error de validación o denuncia no encontrada
+ *       500:
+ *         description: Error del servidor al eliminar la denuncia
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
 module.exports = router;
