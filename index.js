@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const connMongo = require('./src/Config/Database/configMongo');
 const bodyparser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const morgan = require('morgan');
@@ -8,17 +8,11 @@ require('dotenv').config();
 const app = express();
 const cors = require('cors');
 
+connMongo.mongoose;
 
 app.use(cors());
 app.use(morgan('dev'));
 
-// Conexión a Base de datos
-const uri = `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@denuncias-back.eugamd3.mongodb.net/barrios`;
-
-mongoose
-    .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Se estableció conexión con la base de datos'))
-    .catch((e) => console.log('Error de conexión a la base de datos:', e));
 
 // Capturar body
 app.use(bodyparser.urlencoded({ extended: false }));

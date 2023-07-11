@@ -90,7 +90,7 @@ const userSchema = new Schema(
             min: 6,
             trim: true,
         },
-        photoUrl: {
+        photo: {
             type: String,
             required: false,
         },

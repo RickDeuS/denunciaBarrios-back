@@ -1,10 +1,3 @@
-/**
- * @swagger
- * tags:
- *   name: Auth
- *   description: Autenticación de usuarios
- */
-
 const router = require('express').Router();
 const User = require('../Models/user');
 const Joi = require('@hapi/joi');
@@ -13,16 +6,17 @@ const jwt = require('jsonwebtoken');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 
-//Configuracion Cloudinary y Multer
+// Configuración Cloudinary
 cloudinary.config({
-    cloud_name: `${process.env.CLOUDINARY_NAME}`,
-    api_key: `${process.env.CLOUDINARY_APIKEY}`,
-    api_secret: `${process.env.CLOUDINARY_API_SECRET}`
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_APIKEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true,
 });
 
-const storage = multer.memoryStorage();
+// Configuración Multer
+const storage = multer.diskStorage({});
 const upload = multer({ storage });
-
 
 // Validación de datos
 const schemaRegister = Joi.object({
@@ -30,7 +24,8 @@ const schemaRegister = Joi.object({
     cedula: Joi.string().min(6).max(10).required(),
     numTelefono: Joi.string().min(6).max(10).required(),
     email: Joi.string().min(6).max(1024).required().email(),
-    password: Joi.string().min(6).required()
+    password: Joi.string().min(6).required(),
+    photo: Joi.string().min(6).max(1024),
 });
 
 const schemaLogin = Joi.object({
@@ -47,7 +42,7 @@ const schemaLogin = Joi.object({
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/User'
  *     responses:
@@ -81,7 +76,7 @@ const schemaLogin = Joi.object({
  *                 error:
  *                   type: string
  */
-router.post('/register',upload.single('photo'), async (req, res) => {
+router.post('/register', upload.single('photo'), async (req, res) => {
     // Validar usuario
     const { error } = schemaRegister.validate(req.body);
 
@@ -106,34 +101,37 @@ router.post('/register',upload.single('photo'), async (req, res) => {
 
     // Hash de la contraseña
     const salt = await bcrypt.genSalt(10);
-    const password = await bcrypt.hash(req.body.password, salt);
-
-
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
     const user = new User({
         nombreCompleto: req.body.nombreCompleto,
         cedula: req.body.cedula,
         numTelefono: req.body.numTelefono,
         email: req.body.email,
-        password: password
-        //photoUrl: req.body.photoUrl,
+        password: hashedPassword,
+        photo: '',
     });
 
-    //const file = req.files.photoUrl;
-    //const result = await cloudinary.uploader.upload(file.tempFilePath);
-    //const photoUrl = result.secure_url;
-    //user.photoUrl = photoUrl;
-
+    console.log("Antes de try catch");
     try {
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.path, { folder: 'profile_photos' });
+            user.photo = result.secure_url; // Asignar la URL de la imagen a 'photo'
+            console.log("Imagen subida a Cloudinary:", result);
+        }
+
         const savedUser = await user.save();
+
         res.json({
             error: null,
             data: savedUser,
         });
     } catch (error) {
         res.status(500).json({ error: 'Error al guardar el usuario en la base de datos' });
-        console.log(error);
+        console.log("Error:", error);
+        console.log("req.file:", req.file);
     }
+    console.log("Despues de try catch");
 });
 
 /**
