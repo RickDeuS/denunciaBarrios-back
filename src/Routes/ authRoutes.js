@@ -192,11 +192,6 @@ router.post('/verifyUser', async (req, res) => {
             return res.status(404).json({ error: 'Token inválido o expirado' });
         }
 
-        // Verificar si el usuario ya ha sido verificado
-        if (user.isVerified) {
-            return res.json({ message: 'La cuenta ya ha sido verificada previamente' });
-        }
-
         // Marcar la cuenta como verificada
         user.isVerified = true;
         user.verificationToken = undefined; // Eliminar el token de verificación
@@ -205,10 +200,10 @@ router.post('/verifyUser', async (req, res) => {
         res.json({ message: 'Cuenta verificada correctamente' });
     } catch (error) {
         // Manejar errores internos
+        console.error("Error al verificar la cuenta:", error);
         res.status(500).json({ error: 'Error al verificar la cuenta' });
     }
 });
-
 
 
 /**
