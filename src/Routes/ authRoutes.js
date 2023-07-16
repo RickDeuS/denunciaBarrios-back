@@ -1,10 +1,15 @@
 const router = require('express').Router();
 const User = require('../Models/user');
-const Joi = require('@hapi/joi');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Joi = require('@hapi/joi');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
+const nodemailer = require('nodemailer');
+const generateVerificationToken = require('../utils/generateVerificationToken');
+const fs = require('fs');
+const handlebars = require('handlebars');
+const path = require('path');
 
 // Configuración Cloudinary
 cloudinary.config({
@@ -32,6 +37,7 @@ const schemaLogin = Joi.object({
     email: Joi.string().min(6).max(255).required().email(),
     password: Joi.string().min(6).max(1024).required(),
 });
+
 
 /**
  * @swagger
@@ -76,44 +82,58 @@ const schemaLogin = Joi.object({
  *                 error:
  *                   type: string
  */
+
+const userMailer = process.env.USER_MAILER;
+const passMailer = process.env.PASS_MAILER;
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: userMailer,
+        pass: passMailer,
+    },
+});
+
+
 router.post('/register', upload.single('photo'), async (req, res) => {
-    // Validar usuario
-    const { error } = schemaRegister.validate(req.body);
-
-    if (error) {
-        return res.status(400).json({ error: error.details[0].message });
-    }
-
-    const isEmailExist = await User.findOne({ email: req.body.email });
-    if (isEmailExist) {
-        return res.status(400).json({ error: 'Email ya registrado' });
-    }
-
-    const isNumTelefonoExist = await User.findOne({ numTelefono: req.body.numTelefono });
-    if (isNumTelefonoExist) {
-        return res.status(400).json({ error: 'Numero telefonico ya registrado' });
-    }
-
-    const isDniExist = await User.findOne({ cedula: req.body.cedula });
-    if (isDniExist) {
-        return res.status(400).json({ error: 'Cedula ya registrada' });
-    }
-
-    // Hash de la contraseña
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
-    const user = new User({
-        nombreCompleto: req.body.nombreCompleto,
-        cedula: req.body.cedula,
-        numTelefono: req.body.numTelefono,
-        email: req.body.email,
-        password: hashedPassword,
-        photo: '',
-    });
-
-    console.log("Antes de try catch");
     try {
+        // Validar usuario
+        const { error } = schemaRegister.validate(req.body);
+
+        if (error) {
+            return res.status(400).json({ error: error.details[0].message });
+        }
+
+        const isEmailExist = await User.findOne({ email: req.body.email });
+        if (isEmailExist) {
+            return res.status(400).json({ error: 'Email ya registrado' });
+        }
+
+        const isNumTelefonoExist = await User.findOne({ numTelefono: req.body.numTelefono });
+        if (isNumTelefonoExist) {
+            return res.status(400).json({ error: 'Numero telefonico ya registrado' });
+        }
+
+        const isDniExist = await User.findOne({ cedula: req.body.cedula });
+        if (isDniExist) {
+            return res.status(400).json({ error: 'Cedula ya registrada' });
+        }
+
+        // Hash de la contraseña
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+        const user = new User({
+            nombreCompleto: req.body.nombreCompleto,
+            cedula: req.body.cedula,
+            numTelefono: req.body.numTelefono,
+            email: req.body.email,
+            password: hashedPassword,
+            photo: '',
+            verificationToken: generateVerificationToken(),
+            isVerified: false,
+        });
+
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path, { folder: 'profile_photos' });
             user.photo = result.secure_url; // Asignar la URL de la imagen a 'photo'
@@ -121,6 +141,29 @@ router.post('/register', upload.single('photo'), async (req, res) => {
         }
 
         const savedUser = await user.save();
+        console.log("Usuario guardado en la base de datos:", savedUser);
+
+        // Generar el token y construir la URL de verificación
+        const verificationToken = generateVerificationToken();
+        const verificationURL = `https://back-barrios-462cb6c76674.herokuapp.com/auth/verifyUser/${verificationToken}`;
+
+        // Enviar correo electrónico de verificación
+        const templatePath = path.join(__dirname, '..', 'utils', 'verificationEmail.hbs');
+        const verificationEmailTemplate = fs.readFileSync(templatePath, 'utf8');
+        const template = handlebars.compile(verificationEmailTemplate);
+        const verificationEmailContent = template({
+            nombreCompleto: req.body.nombreCompleto,
+            verificationURL: verificationURL,
+        });
+
+        const mailOptions = {
+            from: `Denuncia Loja `,
+            to: req.body.email,
+            subject: 'Verificación de cuenta',
+            html: verificationEmailContent,
+        };
+
+        await transporter.sendMail(mailOptions);
 
         res.json({
             error: null,
@@ -131,8 +174,42 @@ router.post('/register', upload.single('photo'), async (req, res) => {
         console.log("Error:", error);
         console.log("req.file:", req.file);
     }
-    console.log("Despues de try catch");
 });
+
+router.post('/verifyUser', async (req, res) => {
+    const token = req.body.verificationToken; // Obtener el token de verificación del cuerpo
+
+    try {
+        // Validar el token
+        if (!token) {
+            return res.status(400).json({ error: 'Token de verificación no proporcionado' });
+        }
+
+        // Buscar al usuario con el token recibido
+        const user = await User.findOne({ verificationToken: token });
+
+        if (!user) {
+            return res.status(404).json({ error: 'Token inválido o expirado' });
+        }
+
+        // Verificar si el usuario ya ha sido verificado
+        if (user.isVerified) {
+            return res.json({ message: 'La cuenta ya ha sido verificada previamente' });
+        }
+
+        // Marcar la cuenta como verificada
+        user.isVerified = true;
+        user.verificationToken = undefined; // Eliminar el token de verificación
+        await user.save();
+
+        res.json({ message: 'Cuenta verificada correctamente' });
+    } catch (error) {
+        // Manejar errores internos
+        res.status(500).json({ error: 'Error al verificar la cuenta' });
+    }
+});
+
+
 
 /**
  * @swagger
@@ -196,6 +273,7 @@ router.post('/register', upload.single('photo'), async (req, res) => {
  *             token:
  *               type: string
  */
+;
 
 router.post('/login', async (req, res) => {
     // Validaciones
@@ -204,6 +282,11 @@ router.post('/login', async (req, res) => {
 
     const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).json({ error: 'Usuario no encontrado' });
+
+    // Verificar si el usuario está verificado
+    if (!user.isVerified) {
+        return res.status(401).json({ error: 'El usuario no está verificado' });
+    }
 
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) return res.status(400).json({ error: 'Contraseña no válida' });
@@ -216,11 +299,17 @@ router.post('/login', async (req, res) => {
         },
         process.env.TOKEN_SECRET
     );
-
+    user.token = token;
+    await user.save();
     res.header('auth-token', token).json({
         error: null,
         data: { token },
     });
+});
+
+
+router.post('/recuperarContraseña', async (req, res) => {
+
 });
 
 module.exports = router;

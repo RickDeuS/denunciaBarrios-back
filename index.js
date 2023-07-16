@@ -24,7 +24,7 @@ app.use(bodyparser.json());
 const authRoutes = require('./src/Routes/ authRoutes');
 const homeRoutes = require('./src/Routes/homeRoutes');
 const denunciaRoutes = require('./src/Routes/denunciaRoutes');
-const verifyToken = require('./src/Routes/validate-token');
+const verifyToken = require('./src/utils/validate-token');
 
 // Ruta de autenticación
 app.use('/auth', authRoutes);
