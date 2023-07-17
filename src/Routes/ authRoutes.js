@@ -1,4 +1,3 @@
-
 const express = require('express');
 const routes = require('express').Router();
 const registerRoutes = require('./registerRoutes');
