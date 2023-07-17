@@ -99,6 +99,9 @@ const userSchema = new Schema(
         verificationToken: { 
             type: String,
         },
+        resetToken: {
+            type: String,
+        },
         numDenunciasRealizadas: {
             type: Number,
             default: 0,
