@@ -4,10 +4,8 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const handlebars = require('handlebars');
 const path = require('path');
-<<<<<<< HEAD
-=======
 const nodemailer = require('nodemailer');
->>>>>>> 0aba09a (changes in git)
+
 
 /**
  * @swagger
@@ -77,8 +75,6 @@ const nodemailer = require('nodemailer');
 
 //RECUPERAR CONTRASEÑA DE USUARIO
 
-<<<<<<< HEAD
-=======
 const userMailer = process.env.USER_MAILER;
 const passMailer = process.env.PASS_MAILER;
 
@@ -90,7 +86,6 @@ const transporter = nodemailer.createTransport({
     },
 });
 
->>>>>>> 0aba09a (changes in git)
 router.post('/', async (req, res) => {
     try {
         const { cedula } = req.body;

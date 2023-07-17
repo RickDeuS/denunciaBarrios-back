@@ -1,7 +1,5 @@
-<<<<<<< HEAD
+
 const express = require('express');
-=======
->>>>>>> 0aba09a (changes in git)
 const routes = require('express').Router();
 const registerRoutes = require('./registerRoutes');
 const loginRoutes = require('./loginRoutes');
