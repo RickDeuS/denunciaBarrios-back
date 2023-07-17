@@ -86,9 +86,12 @@ router.post('/', async (req, res) => {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
 
+        if (!nuevaContrasena) {
+            return res.status(400).json({ error: 'La nueva contraseña no puede estar vacía' });
+        }
+
         // Hash de la nueva contraseña
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(nuevaContrasena, salt);
+        const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
 
         // Actualizar la contraseña del usuario
         user.password = hashedPassword;
