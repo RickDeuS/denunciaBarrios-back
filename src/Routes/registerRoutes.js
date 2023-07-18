@@ -43,7 +43,37 @@ const schemaRegister = Joi.object({
  *       content:
  *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             type: object
+ *             properties:
+ *               nombreCompleto:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 255
+ *               cedula:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 10
+ *               numTelefono:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 10
+ *               email:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 1024
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *               photo:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 1024
+ *             required:
+ *               - nombreCompleto
+ *               - cedula
+ *               - numTelefono
+ *               - email
+ *               - password
  *     responses:
  *       200:
  *         description: Usuario registrado exitosamente
