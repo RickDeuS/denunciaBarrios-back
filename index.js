@@ -55,7 +55,7 @@ const swaggerOptions = {
         info: {
             title: 'Backend de Denuncias en Barrios',
             version: '1.0.0',
-            description: 'Documentación de la API para Denuncias en Barrios',
+            description: 'Documentación de la API para Denuncias en Barrios de Loja',
         },
         servers: [
             {
