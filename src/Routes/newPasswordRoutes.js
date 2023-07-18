@@ -23,13 +23,13 @@ const jwt = require('jsonwebtoken');
  *           schema:
  *             type: object
  *             properties:
- *               token:
+ *               resetToken:
  *                 type: string
- *               nuevaContrasena:
+ *               newPassword:
  *                 type: string
  *             example:
- *               token: "your_reset_token_here"
- *               nuevaContrasena: "new_password_here"
+ *               resetToken: "your_reset_token_here"
+ *               newPassword: "new_password_here"
  *     responses:
  *       200:
  *         description: Cambio de contraseña exitoso.
@@ -56,6 +56,17 @@ const jwt = require('jsonwebtoken');
  *                   type: string
  *             example:
  *               error: "Usuario no encontrado"
+ *       400:
+ *         description: La nueva contraseña no puede estar vacía.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *             example:
+ *               error: "La nueva contraseña no puede estar vacía"
  *       500:
  *         description: Error al restablecer la contraseña.
  *         content:
@@ -74,10 +85,10 @@ const jwt = require('jsonwebtoken');
 
 router.post('/', async (req, res) => {
     try {
-        const { token, nuevaContrasena } = req.body;
+        const { resetToken, newPassword } = req.body;
 
         // Decodificar el token de restablecimiento de contraseña
-        const decodedToken = jwt.verify(token, process.env.RESET_TOKEN_SECRET);
+        const decodedToken = jwt.verify(resetToken, process.env.RESET_TOKEN_SECRET);
 
         // Buscar al usuario por el ID obtenido del token
         const user = await User.findById(decodedToken.userId);
@@ -86,19 +97,19 @@ router.post('/', async (req, res) => {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
 
-        if (!nuevaContrasena) {
+        if (!newPassword) {
             return res.status(400).json({ error: 'La nueva contraseña no puede estar vacía' });
         }
 
         // Hash de la nueva contraseña
-        const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         // Actualizar la contraseña del usuario
         user.password = hashedPassword;
         await user.save();
 
         // Eliminar el token de restablecimiento de contraseña del usuario
-        user.verificationToken = undefined;
+        user.resetToken = undefined;
         await user.save();
 
         res.json({
