@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const User = require('../Models/user');
+const User = require('../../Models/user');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const handlebars = require('handlebars');

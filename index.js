@@ -21,7 +21,7 @@ app.use(bodyparser.json());
 
 
 // Importar rutas
-const authRoutes = require('./src/Routes/ authRoutes');
+const authRoutes = require('./src/Routes/authRoutes/ authRoutes');
 const homeRoutes = require('./src/Routes/homeRoutes');
 const denunciaRoutes = require('./src/Routes/denunciaRoutes');
 const verifyToken = require('./src/utils/validate-token');
