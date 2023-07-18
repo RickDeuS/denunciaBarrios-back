@@ -2,6 +2,7 @@ const router = require('express').Router();
 const Denuncia = require('../Models/denuncia');
 const User = require('../Models/user');
 const Joi = require('@hapi/joi');
+const cloudinary = require('cloudinary').v2;
 
 router.get('/listaDenuncias', async (req, res) => {
     try {

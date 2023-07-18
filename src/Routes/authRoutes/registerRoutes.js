@@ -168,7 +168,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path, { folder: 'profile_photos' });
             user.photo = result.secure_url; // Asignar la URL de la imagen a 'photo'
-            console.log("Imagen subida a Cloudinary:", result);
+            console.log("Imagen subida a Cloudinary");
         }
 
         const savedUser = await user.save();
