@@ -30,16 +30,32 @@
  *         password:
  *           type: string
  *           minLength: 6
- *         photoUrl:
+ *         photo:
  *           type: string
- *         role:
+ *         isVerified:
+ *           type: boolean
+ *           default: false
+ *         token:
  *           type: string
- *           default: 'USER'
- *           enum:
- *             - USER
+ *         verificationToken:
+ *           type: string
+ *         resetToken:
+ *           type: string
  *         numDenunciasRealizadas:
  *           type: number
  *           default: 0
+ *       example:
+ *         nombreCompleto: John Doe
+ *         cedula: 12345678
+ *         numTelefono: 98765432
+ *         email: john@example.com
+ *         password: password123
+ *         photo: https://example.com/profile.jpg
+ *         isVerified: true
+ *         token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *         verificationToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *         resetToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *         numDenunciasRealizadas: 3
  */
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
