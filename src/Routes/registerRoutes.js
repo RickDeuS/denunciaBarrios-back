@@ -24,12 +24,12 @@ const upload = multer({ storage });
 
 // Validación de datos
 const schemaRegister = Joi.object({
-    nombreCompleto: Joi.string().min(6).max(255).required(),
+    nombreCompleto: Joi.string().min(6).max(255).required().regex(/^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$/),
     cedula: Joi.string().min(6).max(10).required(),
     numTelefono: Joi.string().min(6).max(10).required(),
     email: Joi.string().min(6).max(1024).required().email(),
     password: Joi.string().min(6).required(),
-    photo: Joi.string().min(6).max(1024),
+    photo: Joi.string().min(6).max(1024).optional(),
 });
 
 /**
@@ -96,6 +96,10 @@ router.post('/', upload.single('photo'), async (req, res) => {
         if (error) {
             return res.status(400).json({ error: error.details[0].message });
         }
+        const isNombreCompletoExist = await User.findOne({ nombreCompleto: req.body.nombreCompleto });
+        if (isNombreCompletoExist) {
+            return res.status(400).json({ error: 'Nombre ya registrado' });
+        }
 
         const isEmailExist = await User.findOne({ email: req.body.email });
         if (isEmailExist) {
@@ -138,7 +142,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
         console.log("Usuario guardado en la base de datos:", savedUser);
 
         // Generar el token y construir la URL de verificación
-        
+
         const verificationURL = `https://back-barrios-462cb6c76674.herokuapp.com/auth/verifyUser/${verificationToken}`;
 
         // Enviar correo electrónico de verificación
