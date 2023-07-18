@@ -115,6 +115,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
         // Hash de la contraseña
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
+        const verificationToken = generateVerificationToken();
 
         const user = new User({
             nombreCompleto: req.body.nombreCompleto,
@@ -137,7 +138,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
         console.log("Usuario guardado en la base de datos:", savedUser);
 
         // Generar el token y construir la URL de verificación
-        const verificationToken = generateVerificationToken();
+        
         const verificationURL = `https://back-barrios-462cb6c76674.herokuapp.com/auth/verifyUser/${verificationToken}`;
 
         // Enviar correo electrónico de verificación
