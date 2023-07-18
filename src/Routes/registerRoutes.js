@@ -25,16 +25,19 @@ const upload = multer({ storage });
 // Validación de datos
 const schemaRegister = Joi.object({
     nombreCompleto: Joi.string().min(6).max(255).required().regex(/^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$/),
-    cedula: Joi.string().min(6).max(10).required(),
-    numTelefono: Joi.string().min(6).max(10).required(),
+    cedula: Joi.string().min(6).max(10).required().numeric(),
+    numTelefono: Joi.string().min(6).max(10).required().numeric(),
     email: Joi.string().min(6).max(1024).required().email(),
-    password: Joi.string().min(6).required(),
+    password: Joi.string().min(6).required().regex(/^[a-zA-Z0-9]{3,30}$/),
     photo: Joi.string().min(6).max(1024).optional(),
 });
 
 /**
  * @swagger
  * /auth/register:
+ * 
+ * 
+ * 
  *   post:
  *     summary: Registrar un nuevo usuario
  *     tags: [Auth]

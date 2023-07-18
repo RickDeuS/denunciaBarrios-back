@@ -45,10 +45,10 @@
  *           type: number
  *           default: 0
  *       example:
- *         nombreCompleto: John Doe
+ *         nombreCompleto: Juanito Alimaña
  *         cedula: 12345678
  *         numTelefono: 98765432
- *         email: john@example.com
+ *         email: juanito@example.com
  *         password: password123
  *         photo: https://example.com/profile.jpg
  *         isVerified: true
