@@ -3,6 +3,14 @@ const Denuncia = require('../../Models/denuncia');
 const User = require('../../Models/user');
 const Joi = require('@hapi/joi');
 const cloudinary = require('cloudinary').v2;
+
+/**
+ * @swagger
+ * tags:
+ *   name: Denuncias
+ *   description: Endpoints para denuncias
+ */
+
 /**
  * @swagger
  * /api/denuncias:
@@ -51,7 +59,6 @@ const cloudinary = require('cloudinary').v2;
  *                   type: string
  *                   example: Error del servidor al obtener las denuncias.
  */
-
 // LISTAR DENUNCIAS DEL USUARIO
 
 router.get('/', async (req, res) => {

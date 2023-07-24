@@ -6,6 +6,13 @@ const cloudinary = require('cloudinary').v2;
 
 /**
  * @swagger
+ * tags:
+ *   name: Denuncias
+ *   description: Endpoints para  denucnias
+ */
+
+/**
+ * @swagger
  * /api/denuncias:
  *   delete:
  *     summary: Elimina una denuncia por su título.
