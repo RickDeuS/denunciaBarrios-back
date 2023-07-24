@@ -4,6 +4,71 @@ const User = require('../../Models/user');
 const Joi = require('@hapi/joi');
 const cloudinary = require('cloudinary').v2;
 
+/**
+ * @swagger
+ * /api/denuncias:
+ *   delete:
+ *     summary: Elimina una denuncia por su título.
+ *     tags: [Denuncias]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               tituloDenuncia:
+ *                 type: string
+ *                 description: Título de la denuncia a eliminar.
+ *                 example: Denuncia de contaminación en parque público.
+ *             required:
+ *               - tituloDenuncia
+ *     responses:
+ *       200:
+ *         description: Denuncia eliminada exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Denuncia eliminada exitosamente.
+ *       400:
+ *         description: Error en la solicitud del cliente o denuncia no encontrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Denuncia no encontrada.
+ *       401:
+ *         description: No se proporcionó un token de autenticación válido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Acceso no autorizado.
+ *       500:
+ *         description: Error del servidor al eliminar la denuncia.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Error del servidor al eliminar la denuncia.
+ */
+
+
 //ELIMINAR DENUNCIA
 
 router.delete('/', async (req, res) => {

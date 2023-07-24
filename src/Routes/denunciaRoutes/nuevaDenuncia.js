@@ -3,6 +3,112 @@ const Denuncia = require('../../Models/denuncia');
 const User = require('../../Models/user');
 const Joi = require('@hapi/joi');
 
+/**
+ * @swagger
+ * /api/denuncias:
+ *   post:
+ *     summary: Crea una nueva denuncia.
+ *     tags: [Denuncias]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               tituloDenuncia:
+ *                 type: string
+ *                 description: Título de la denuncia.
+ *                 example: Denuncia de contaminación en parque público.
+ *               descripcion:
+ *                 type: string
+ *                 description: Descripción detallada de la denuncia.
+ *                 example: Existe contaminación del agua en el parque cercano a mi casa.
+ *               evidencia:
+ *                 type: string
+ *                 description: URL de la evidencia adjunta (imagen, video, etc.).
+ *                 example: https://ejemplo.com/evidencia.jpg
+ *               ubicacion:
+ *                 type: object
+ *                 properties:
+ *                   type:
+ *                     type: string
+ *                     description: Tipo de ubicación, siempre debe ser "Point".
+ *                     example: Point
+ *                   coordinates:
+ *                     type: array
+ *                     description: Coordenadas de la ubicación [longitud, latitud].
+ *                     items:
+ *                       type: number
+ *                     example: [-77.12345, 12.34567]
+ *               estado:
+ *                 type: string
+ *                 description: Estado actual de la denuncia.
+ *                 example: Pendiente
+ *               categoria:
+ *                 type: string
+ *                 description: Categoría de la denuncia.
+ *                 example: Contaminacion
+ *             required:
+ *               - tituloDenuncia
+ *               - descripcion
+ *               - evidencia
+ *               - ubicacion
+ *               - categoria
+ *     responses:
+ *       201:
+ *         description: Denuncia creada exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Denuncia creada exitosamente.
+ *       400:
+ *         description: Error en la solicitud del cliente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Ya has presentado una denuncia con el mismo título.
+ *       401:
+ *         description: No se proporcionó un token de autenticación válido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Acceso no autorizado.
+ *       404:
+ *         description: No se encontró el usuario en la base de datos.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Usuario no encontrado.
+ *       500:
+ *         description: Error del servidor al crear la denuncia.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Error del servidor al crear la denuncia.
+ */
 // NUEVA DENUNCIA    
 router.post('/', async (req, res) => {
     try {
