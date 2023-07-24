@@ -81,7 +81,6 @@ router.post('/', async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).json({ error: 'Usuario no encontrado' });
 
-    // Verificar si el usuario está verificado
     if (!user.isVerified) {
         return res.status(401).json({ error: 'El usuario no está verificado' });
     }

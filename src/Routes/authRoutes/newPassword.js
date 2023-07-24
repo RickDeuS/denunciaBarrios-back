@@ -86,11 +86,7 @@ const jwt = require('jsonwebtoken');
 router.post('/', async (req, res) => {
     try {
         const { resetToken, newPassword } = req.body;
-
-        // Decodificar el token de restablecimiento de contraseña
         const decodedToken = jwt.verify(resetToken, process.env.RESET_TOKEN_SECRET);
-
-        // Buscar al usuario por el ID obtenido del token
         const user = await User.findById(decodedToken.userId);
 
         if (!user) {
@@ -101,14 +97,10 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: 'La nueva contraseña no puede estar vacía' });
         }
 
-        // Hash de la nueva contraseña
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        // Actualizar la contraseña del usuario
         user.password = hashedPassword;
         await user.save();
 
-        // Eliminar el token de restablecimiento de contraseña del usuario
         user.resetToken = undefined;
         await user.save();
 

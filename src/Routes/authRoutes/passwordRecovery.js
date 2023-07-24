@@ -97,16 +97,15 @@ router.post('/', async (req, res) => {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
 
-        // Generar un token de restablecimiento de contraseña
+        // Generar un token de restablecimiento 
         const resetToken = jwt.sign(
             {
                 userId: user._id,
             },
             process.env.RESET_TOKEN_SECRET,
-            { expiresIn: '1h' } // El token expirará en 1 hora
+            { expiresIn: '1h' } 
         );
 
-        // Guardar el token de restablecimiento de contraseña en el usuario
         user.resetToken = resetToken;
         await user.save();
 

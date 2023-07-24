@@ -39,7 +39,7 @@ const User = require('../../Models/user');
 //VERIFICA CUENTA DE USUARIO 
 
 router.post('/', async (req, res) => {
-    const token = req.body.verificationToken; // Obtener el token de verificación del cuerpo
+    const token = req.body.verificationToken; 
 
     try {
         // Validar el token

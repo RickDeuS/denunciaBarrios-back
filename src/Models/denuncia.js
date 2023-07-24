@@ -22,14 +22,29 @@ const denunciaSchema = new mongoose.Schema(
       trim: true
     },
     ubicacion: {
-      type: String,
-      required: true,
-      trim: true
+      type: {
+        type: String,
+        enum: ['Point'], 
+        required: true
+      },
+      coordenadas: {
+        type: [Number], 
+        required: true
+      }
     },
     estado: {
       type: String,
       required: false,
       trim: true
+    },
+    fechaHora: {
+      type: Date,
+      default: Date.now 
+    },
+    categoria: {
+      type: String,
+      enum: ['Seguridad', 'Infraestructura', 'Contaminacion', 'Ruido', 'Otro'], 
+      required: true
     }
   },
   {
@@ -37,9 +52,10 @@ const denunciaSchema = new mongoose.Schema(
   }
 );
 
+denunciaSchema.index({ ubicacion: '2dsphere' });
+
 denunciaSchema.pre('save', async function (next) {
   if (!this.denunciante) {
-    // Asignar el nombre completo del usuario autenticado como denunciante si no se ha establecido previamente
     this.denunciante = this._id.nombreCompleto;
   }
   next();
@@ -48,6 +64,7 @@ denunciaSchema.pre('save', async function (next) {
 const Denuncia = mongoose.model('Denuncia', denunciaSchema);
 
 module.exports = Denuncia;
+
 
 /**
  * @swagger

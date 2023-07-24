@@ -1,10 +1,10 @@
 const express = require('express');
 const routes = require('express').Router();
-const registerRoutes = require('./registerRoutes');
-const loginRoutes = require('./loginRoutes');
-const verifyUserRoutes = require('./verifyUserRoutes');
-const newPasswordRoutes = require('./newPasswordRoutes');
-const passwordRecoveryRoutes = require('./passwordRecoveryRoutes');
+const registerRoutes = require('./authRoutes/register');
+const loginRoutes = require('./authRoutes/login');
+const verifyUserRoutes = require('./authRoutes/verifyUser');
+const newPasswordRoutes = require('./authRoutes/newPassword');
+const passwordRecoveryRoutes = require('./authRoutes/passwordRecovery');
 
 routes.use('/register', registerRoutes);
 routes.use('/login', loginRoutes);

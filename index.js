@@ -21,10 +21,10 @@ app.use(bodyparser.json());
 
 
 // Importar rutas
-const authRoutes = require('./src/Routes/authRoutes/ authRoutes');
+const authRoutes = require('./src/Routes/ authRoutes');
 const homeRoutes = require('./src/Routes/homeRoutes');
 const denunciaRoutes = require('./src/Routes/denunciaRoutes');
-const verifyToken = require('./src/utils/validate-token');
+const verifyToken = require('./src/Middleware/validate-token');
 
 // Ruta de autenticación
 app.use('/auth', authRoutes);
