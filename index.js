@@ -32,7 +32,7 @@ app.use('/auth', authRoutes);
 // Middleware para verificar el token en las rutas protegidas 
 //app.use('/', verifyToken);
 app.use('/home', verifyToken);
-app.use('/denuncia', verifyToken);
+// app.use('/denuncia', verifyToken);
 
 // Ruta por defecto
 app.get('/', (req, res) => {
