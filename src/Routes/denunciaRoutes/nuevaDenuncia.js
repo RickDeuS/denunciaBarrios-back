@@ -12,7 +12,7 @@ const Joi = require('@hapi/joi');
 
 /**
  * @swagger
- * /api/denuncias:
+ * /denuncia/nuevaDenuncia:
  *   post:
  *     summary: Crea una nueva denuncia.
  *     tags: [Denuncias]

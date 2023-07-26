@@ -13,7 +13,7 @@ const cloudinary = require('cloudinary').v2;
 
 /**
  * @swagger
- * /api/denuncias:
+ * /denuncia/eliminarDenuncia:
  *   delete:
  *     summary: Elimina una denuncia por su título.
  *     tags: [Denuncias]

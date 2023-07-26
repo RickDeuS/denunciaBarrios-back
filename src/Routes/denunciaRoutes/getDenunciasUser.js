@@ -13,7 +13,7 @@ const cloudinary = require('cloudinary').v2;
 
 /**
  * @swagger
- * /api/denuncias:
+ * /denuncia/getDenunciasUser:
  *   get:
  *     summary: Obtiene todas las denuncias del usuario actual.
  *     tags: [Denuncias]
