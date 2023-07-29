@@ -38,10 +38,11 @@ const User = require('../../Models/user');
 
 //VERIFICA CUENTA DE USUARIO 
 
-router.post('/', async (req, res) => {
-    const token = req.body.verificationToken; 
-
+router.post('/:token', async (req, res) => {
     try {
+        // Obtener el token de verificación desde los parámetros de la URL
+        const token = req.params.token;
+
         // Validar el token
         if (!token) {
             return res.status(400).json({ error: 'Token de verificación no proporcionado' });

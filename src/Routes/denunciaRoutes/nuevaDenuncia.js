@@ -7,7 +7,7 @@ const Joi = require('@hapi/joi');
  * @swagger
  * tags:
  *   name: Denuncias
- *   description: Endpoints para  denucnias
+ *   description: Endpoints para  denuncias
  */
 
 /**

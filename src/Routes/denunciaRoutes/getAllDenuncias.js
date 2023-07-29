@@ -1,10 +1,19 @@
 /**
  * @swagger
+ * tags:
+ *   name: Denuncias
+ *   description: Endpoints para  denucnias
+ */
+
+/**
+ * @swagger
  * path:
  *   denuncia/getAllDenuncias:
  *     get:
  *       summary: Obtiene todas las denuncias almacenadas en la base de datos
  *       tags: [Denuncias]
+ *       security:
+ *       - BearerAuth: []
  *       responses:
  *         200:
  *           description: Retorna un arreglo de denuncias

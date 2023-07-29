@@ -167,16 +167,13 @@ router.post('/', upload.single('photo'), async (req, res) => {
 
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path, { folder: 'profile_photos' });
-            user.photo = result.secure_url; 
+            user.photo = result.secure_url;
             console.log("Imagen subida a Cloudinary");
         }
-
-        const savedUser = await user.save();
-        console.log("Usuario guardado en la base de datos:", savedUser);
-
+        // Enviar el correo electrónico de verificación
         const verificationURL = `https://back-barrios-462cb6c76674.herokuapp.com/auth/verifyUser/${verificationToken}`;
 
-        const templatePath = path.join(__dirname, '..', 'utils', 'verificationEmail.hbs');
+        const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmail.hbs');
         const verificationEmailTemplate = fs.readFileSync(templatePath, 'utf8');
         const template = handlebars.compile(verificationEmailTemplate);
         const verificationEmailContent = template({
@@ -192,15 +189,18 @@ router.post('/', upload.single('photo'), async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
-
+        const savedUser = await user.save();
         res.json({
             error: null,
             data: savedUser,
         });
     } catch (error) {
+        // Manejar cualquier error durante el proceso
         res.status(500).json({ error: 'Error al guardar el usuario en la base de datos' });
         console.log("Error:", error);
         console.log("req.file:", req.file);
+
+        await User.deleteOne({ email: req.body.email });
     }
 });
 
