@@ -15,9 +15,8 @@ app.use(morgan('dev'));
 
 
 // Capturar body
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 
 // Importar rutas
@@ -64,7 +63,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ['./src/Routes/authRoutes/*.js','./src/Routes/denunciaRoutes/*.js', './src/Models/*.js','./src/Routes/denunciaRoutes/getDenunciasUser.js'],
+    apis: ['./src/Routes/authRoutes/*.js','./src/Routes/denunciaRoutes/*.js', './src/Models/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);

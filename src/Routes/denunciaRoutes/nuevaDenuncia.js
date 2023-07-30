@@ -2,17 +2,21 @@ const router = require('express').Router();
 const Denuncia = require('../../Models/denuncia');
 const User = require('../../Models/user');
 const Joi = require('@hapi/joi');
+const cloudinary = require('cloudinary').v2;
+const _ = require('lodash');
 const verifyToken = require('../../Middleware/validate-token');
+const fs = require('fs');
+
 /**
  * @swagger
  * tags:
  *   name: Denuncias
- *   description: Endpoints para  denuncias
+ *   description: Endpoints para denuncias
  */
 
 /**
  * @swagger
- * /denuncia/nuevaDenuncia:
+ * /denuncias/nuevaDenuncia:
  *   post:
  *     summary: Crea una nueva denuncia.
  *     tags: [Denuncias]
@@ -21,7 +25,7 @@ const verifyToken = require('../../Middleware/validate-token');
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -35,8 +39,8 @@ const verifyToken = require('../../Middleware/validate-token');
  *                 example: Existe contaminación del agua en el parque cercano a mi casa.
  *               evidencia:
  *                 type: string
- *                 description: URL de la evidencia adjunta (imagen, video, etc.).
- *                 example: https://ejemplo.com/evidencia.jpg
+ *                 format: binary
+ *                 description: Imagen de evidencia adjunta.
  *               ubicacion:
  *                 type: object
  *                 properties:
@@ -76,7 +80,7 @@ const verifyToken = require('../../Middleware/validate-token');
  *                   type: string
  *                   example: Denuncia creada exitosamente.
  *       400:
- *         description: Error en la solicitud del cliente.
+ *         description: Error en la solicitud del cliente o ya has presentado una denuncia con el mismo título.
  *         content:
  *           application/json:
  *             schema:
@@ -116,60 +120,98 @@ const verifyToken = require('../../Middleware/validate-token');
  *                   type: string
  *                   example: Error del servidor al crear la denuncia.
  */
+
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_APIKEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true,
+});
+
+const lastDenunciaTimes = {};
+const multer = require('multer');
+const upload = multer();
+
 // NUEVA DENUNCIA    
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
     try {
+        console.log("Entrando a la ruta '/denuncia/nuevaDenuncia'");
         const usuarioId = req.user.id;
-
-        const usuario = await User.findById(usuarioId);
-
-        if (!usuario) {
-            return res.status(404).json({ error: 'Usuario no encontrado.' });
-        }
 
         const schema = Joi.object({
             tituloDenuncia: Joi.string().required().trim(),
             descripcion: Joi.string().required().trim(),
-            evidencia: Joi.string().required().trim(),
+            categoria: Joi.string().valid('Seguridad', 'Infraestructura', 'Contaminacion', 'Ruido', 'Otro').required(),
+            evidencia: Joi.string(),
             ubicacion: Joi.object({
                 type: Joi.string().valid('Point').required(),
-                coordinates: Joi.array().items(Joi.number()).length(2).required(),
+                coordenadas: Joi.array().items(Joi.number()).length(2).required(),
             }).required(),
-            estado: Joi.string().trim(),
-            categoria: Joi.string().valid('Seguridad', 'Infraestructura', 'Contaminacion', 'Ruido', 'Otro').required(),
         });
 
-        const { error } = schema.validate(req.body);
+        const { error, value } = schema.validate(req.body, {
+            stripUnknown: true,
+        });
 
         if (error) {
+            console.log("Error en la validación del cuerpo de la solicitud:", error.details[0].message);
             return res.status(400).json({ error: error.details[0].message });
         }
 
-        const denunciaExistente = await Denuncia.findOne({
-            tituloDenuncia: req.body.tituloDenuncia,
-            denunciante: usuario.nombreCompleto,
-        });
-
-        if (denunciaExistente) {
-            return res.status(400).json({ error: 'Ya has presentado una denuncia con el mismo título.' });
+        // Verificar si el usuario ha presentado una denuncia en los últimos 15 minutos
+        const now = Date.now();
+        const lastDenunciaTime = lastDenunciaTimes[usuarioId];
+        if (lastDenunciaTime && now - lastDenunciaTime < 15 * 60 * 1000) {
+            console.log("El usuario intentó presentar otra denuncia en menos de 15 minutos.");
+            return res.status(400).json({ error: 'Debes esperar al menos 15 minutos antes de presentar otra denuncia.' });
         }
 
+        const nombreDenunciante = await User.findById(usuarioId).select('nombreCompleto');
+        
+
+        const { ubicacion } = value;
+
         const nuevaDenuncia = new Denuncia({
-            tituloDenuncia: req.body.tituloDenuncia,
-            denunciante: usuario.nombreCompleto,
-            descripcion: req.body.descripcion,
-            evidencia: req.body.evidencia,
-            ubicacion: req.body.ubicacion,
-            estado: req.body.estado,
-            categoria: req.body.categoria,
+            tituloDenuncia: value.tituloDenuncia,
+            idDenunciante: usuarioId,
+            nombreDenunciante: nombreDenunciante.nombreCompleto,
+            descripcion: value.descripcion,
+            categoria: value.categoria,
+            prueba: '',
+            ubicacion,
+            estado: 'En revisión',
         });
-        
+
+        if (req.file) {
+            // Escribir el archivo temporal
+            const tempFilePath = `/tmp/${req.file.originalname}`; // Puedes ajustar la ubicación y el nombre del archivo temporal según tus necesidades
+            fs.writeFileSync(tempFilePath, req.file.buffer);
+
+            // Subir el archivo temporal a Cloudinary
+            const publicId = `evidencia_${nuevaDenuncia._id}`;
+            const result = await cloudinary.uploader.upload(tempFilePath, {
+                folder: 'denuncia_photos',
+                public_id: publicId,
+            });
+            nuevaDenuncia.evidencia = result.secure_url;
+            console.log("Imagen subida a Cloudinary");
+
+            // Eliminar el archivo temporal después de subirlo a Cloudinary
+            fs.unlinkSync(tempFilePath);
+        }
+        console.log("Creando denuncia...", nuevaDenuncia);
         await nuevaDenuncia.save();
-        
+
+        const usuario = await User.findById(usuarioId);
         usuario.Denuncias.push(nuevaDenuncia);
         usuario.numDenunciasRealizadas += 1;
         await usuario.save();
-        
+
+        // Actualizar el último tiempo de denuncia para el usuario actual
+        lastDenunciaTimes[usuarioId] = now;
+
+        console.log("Denuncia creada exitosamente.");
         return res.status(201).json({ message: 'Denuncia creada exitosamente.' });
     } catch (error) {
         console.error('Error al crear la denuncia:', error);

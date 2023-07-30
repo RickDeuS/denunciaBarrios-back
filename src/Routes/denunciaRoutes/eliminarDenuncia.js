@@ -1,25 +1,22 @@
 const router = require('express').Router();
 const Denuncia = require('../../Models/denuncia');
-const User = require('../../Models/user');
 const Joi = require('@hapi/joi');
-const cloudinary = require('cloudinary').v2;
-const verifyToken = require('../../Middleware/validate-token');
 
 /**
  * @swagger
  * tags:
  *   name: Denuncias
- *   description: Endpoints para  denucnias
+ *   description: Endpoints para denuncias
  */
 
 /**
  * @swagger
- * /denuncia/eliminarDenuncia:
- *   delete:
- *     summary: Elimina una denuncia por su título.
+ * /denuncias/eliminarDenuncia:
+ *   post:
+ *     summary: Elimina una denuncia por su ID.
  *     tags: [Denuncias]
  *     security:
- *       - BearerAuth: []
+ *        - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -27,12 +24,12 @@ const verifyToken = require('../../Middleware/validate-token');
  *           schema:
  *             type: object
  *             properties:
- *               tituloDenuncia:
+ *               _id:
  *                 type: string
- *                 description: Título de la denuncia a eliminar.
- *                 example: Denuncia de contaminación en parque público.
+ *                 description: ID de la denuncia a eliminar.
+ *                 example: 613e489aeb037263d4d091ab
  *             required:
- *               - tituloDenuncia
+ *               - _id
  *     responses:
  *       200:
  *         description: Denuncia eliminada exitosamente.
@@ -54,16 +51,6 @@ const verifyToken = require('../../Middleware/validate-token');
  *                 error:
  *                   type: string
  *                   example: Denuncia no encontrada.
- *       401:
- *         description: No se proporcionó un token de autenticación válido.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Acceso no autorizado.
  *       500:
  *         description: Error del servidor al eliminar la denuncia.
  *         content:
@@ -76,29 +63,26 @@ const verifyToken = require('../../Middleware/validate-token');
  *                   example: Error del servidor al eliminar la denuncia.
  */
 
-
-//ELIMINAR DENUNCIA
-
-router.delete('/', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        const { tituloDenuncia } = req.body;
+        const { _id } = req.body;
 
-        // Validar los datos de entrada usando Joi (puedes ajustar las reglas de validación según tus necesidades)
+        // Validar los datos 
         const schema = Joi.object({
-            tituloDenuncia: Joi.string().required().trim(),
+            _id: Joi.string().required().trim(),
         });
 
-        const { error } = schema.validate({ tituloDenuncia });
+        const { error } = schema.validate({ _id });
 
         if (error) {
             return res.status(400).json({ error: error.details[0].message });
         }
 
-        // Buscar y eliminar la denuncia por su título
-        const denunciaEliminada = await Denuncia.findOneAndDelete({ tituloDenuncia });
+        // Buscar  la denuncia por ID para cambiar el campo isDeleted a true
+        const denunciaActualizada = await Denuncia.findByIdAndUpdate(_id, { isDeleted: true }, { new: true });
 
-        if (!denunciaEliminada) {
-            return res.status(400).json({ error: 'Denuncia no encontrada.' });
+        if (!denunciaActualizada) {
+            return res.status(404).json({ error: 'Denuncia no encontrada.' });
         }
 
         return res.status(200).json({ message: 'Denuncia eliminada exitosamente.' });

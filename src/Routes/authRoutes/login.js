@@ -96,8 +96,6 @@ router.post('/', async (req, res) => {
         },
         process.env.TOKEN_SECRET
     );
-    user.token = token;
-    await user.save();
     res.header('auth-token', token).json({
         error: null,
         data: { token },

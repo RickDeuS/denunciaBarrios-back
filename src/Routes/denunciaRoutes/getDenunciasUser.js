@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const verifyToken = require('../../Middleware/validate-token');
 const Denuncia = require('../../Models/denuncia');
 const User = require('../../Models/user');
 const Joi = require('@hapi/joi');
@@ -12,24 +13,23 @@ const Joi = require('@hapi/joi');
 
 /**
  * @swagger
- * path:
- *   /denuncia/getDenunciasUser:
+ *   /denuncias/getDenunciasUser:
  *     get:
- *       summary: Obtiene todas las denuncias realizadas por el usuario autenticado
+ *       summary: Obtiene todas las denuncias realizadas por el usuario autenticado.
  *       tags: [Denuncias]
  *       security:
- *       - BearerAuth: []
+ *         - BearerAuth: []
  *       responses:
  *         200:
- *           description: Retorna un arreglo de denuncias
+ *           description: Retorna un arreglo de denuncias realizadas por el usuario.
  *           content:
  *             application/json:
  *               schema:
  *                 type: array
  *                 items:
  *                   $ref: '#/components/schemas/Denuncia'
- *         500:
- *           description: Error al obtener las denuncias
+ *         404:
+ *           description: Usuario no encontrado o el usuario no ha presentado denuncias.
  *           content:
  *             application/json:
  *               schema:
@@ -37,12 +37,22 @@ const Joi = require('@hapi/joi');
  *                 properties:
  *                   error:
  *                     type: string
- *                     description: Mensaje de error
+ *                     example: Usuario no encontrado.
+ *         500:
+ *           description: Error del servidor al obtener las denuncias.
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   error:
+ *                     type: string
+ *                     example: Error del servidor al obtener las denuncias.
  */
 
-router.get('/', async (req, res) => {
+// Ruta para obtener todas las denuncias realizadas por el usuario autenticado.
+router.get('/', verifyToken, async (req, res) => {
     try {
-        // Obtener el ID del usuario autenticado desde el token JWT en los headers
         const usuarioId = req.user.id;
 
         const usuario = await User.findById(usuarioId);
@@ -50,7 +60,15 @@ router.get('/', async (req, res) => {
             return res.status(404).json({ error: 'Usuario no encontrado.' });
         }
 
-        const denuncias = await Denuncia.find({ denunciante: usuario.nombreCompleto });
+        const denuncias = await Denuncia.find({
+            idDenunciante: usuarioId,
+            isDeleted: false,
+        });
+
+        if (denuncias.length === 0) {
+            return res.status(200).json({ message: 'El usuario no ha presentado denuncias.' });
+        }
+
         res.status(200).json(denuncias);
     } catch (error) {
         console.error('Error al obtener las denuncias:', error);
@@ -59,3 +77,4 @@ router.get('/', async (req, res) => {
 });
 
 module.exports = router;
+

@@ -5,45 +5,53 @@
  *     User:
  *       type: object
  *       required:
- *        - nombreCompleto
- *        - cedula
- *        - numTelefono
- *        - email
- *        - password
+ *         - nombreCompleto
+ *         - cedula
+ *         - numTelefono
+ *         - email
+ *         - password
  *       properties:
  *         nombreCompleto:
  *           type: string
  *           minLength: 6
  *           maxLength: 255
+ *           description: Nombre completo del usuario.
  *         cedula:
  *           type: string
  *           minLength: 6
  *           maxLength: 10
+ *           description: Número de cédula del usuario.
  *         numTelefono:
  *           type: string
  *           minLength: 6
  *           maxLength: 10
+ *           description: Número de teléfono del usuario.
  *         email:
  *           type: string
  *           minLength: 6
  *           maxLength: 255
+ *           description: Dirección de correo electrónico del usuario.
  *         password:
  *           type: string
  *           minLength: 6
+ *           description: Contraseña del usuario.
  *         photo:
  *           type: string
+ *           description: URL de la foto de perfil del usuario (opcional).
  *         isVerified:
  *           type: boolean
  *           default: false
- *         token:
- *           type: string
+ *           description: Estado de verificación del usuario.
  *         verificationToken:
  *           type: string
+ *           description: Token de verificación del usuario.
  *         resetToken:
  *           type: string
+ *           description: Token de restablecimiento de contraseña del usuario.
  *         numDenunciasRealizadas:
  *           type: number
  *           default: 0
+ *           description: Número de denuncias realizadas por el usuario.
  *       example:
  *         nombreCompleto: Juanito Alimaña
  *         cedula: 12345678
@@ -52,7 +60,6 @@
  *         password: password123
  *         photo: https://example.com/profile.jpg
  *         isVerified: true
- *         token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *         verificationToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *         resetToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *         numDenunciasRealizadas: 3
@@ -109,10 +116,7 @@ const userSchema = new Schema(
             type: Boolean,
             default: false,
         },
-        token: { 
-            type: String,
-        },
-        verificationToken: { 
+        verificationToken: {
             type: String,
         },
         resetToken: {
