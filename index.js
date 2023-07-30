@@ -32,7 +32,7 @@ app.use('/auth', authRoutes);
 // Middleware para verificar el token en las rutas protegidas 
 //app.use('/', verifyToken);
 app.use('/home', verifyToken);
-//app.use('/denuncia', verifyToken);
+app.use('/denuncias', verifyToken);
 
 // Ruta por defecto
 app.get('/', (req, res) => {
@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
 app.use('/home', homeRoutes);
 
 // Ruta protegida /denuncia
-app.use('/denuncia', denunciaRoutes);
+app.use('/denuncias', denunciaRoutes);
 
 // Configuración de Swagger
 const swaggerOptions = {

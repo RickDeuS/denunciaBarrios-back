@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Denuncia = require('../../Models/denuncia');
 const User = require('../../Models/user');
 const Joi = require('@hapi/joi');
-
+const verifyToken = require('../../Middleware/validate-token');
 /**
  * @swagger
  * tags:

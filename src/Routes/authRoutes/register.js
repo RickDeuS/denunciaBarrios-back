@@ -153,6 +153,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         const verificationToken = generateVerificationToken();
+        console.log("este es el token que se genera 1: ", verificationToken);
 
         const user = new User({
             nombreCompleto: req.body.nombreCompleto,
@@ -161,7 +162,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
             email: req.body.email,
             password: hashedPassword,
             photo: '',
-            verificationToken: generateVerificationToken(),
+            verificationToken,
             isVerified: false,
         });
 
@@ -172,6 +173,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
         }
         // Enviar el correo electrónico de verificación
         const verificationURL = `https://back-barrios-462cb6c76674.herokuapp.com/auth/verifyUser/${verificationToken}`;
+        console.log("url de verificacion: ", verificationURL);
 
         const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmail.hbs');
         const verificationEmailTemplate = fs.readFileSync(templatePath, 'utf8');

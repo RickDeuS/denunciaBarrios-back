@@ -3,6 +3,7 @@ const Denuncia = require('../../Models/denuncia');
 const User = require('../../Models/user');
 const Joi = require('@hapi/joi');
 const cloudinary = require('cloudinary').v2;
+const verifyToken = require('../../Middleware/validate-token');
 
 /**
  * @swagger
