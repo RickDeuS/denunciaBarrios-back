@@ -185,7 +185,7 @@ router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
 
         if (req.file) {
             // Escribir el archivo temporal
-            const tempFilePath = `/tmp/${req.file.originalname}`; // Puedes ajustar la ubicación y el nombre del archivo temporal según tus necesidades
+            const tempFilePath = `/tmp/${req.file.originalname}`; 
             fs.writeFileSync(tempFilePath, req.file.buffer);
 
             // Subir el archivo temporal a Cloudinary

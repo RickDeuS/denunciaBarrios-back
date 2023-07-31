@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const Denuncia = require('../../Models/denuncia');
 const Joi = require('@hapi/joi');
+const User =  require('../../Models/user');
+const verifyToken = require('../../Middleware/validate-token');
 
 /**
  * @swagger
@@ -63,7 +65,8 @@ const Joi = require('@hapi/joi');
  *                   example: Error del servidor al eliminar la denuncia.
  */
 
-router.post('/', async (req, res) => {
+router.post('/',verifyToken ,async (req, res) => {
+    const idUsuario = req.user._id;
     try {
         const { _id } = req.body;
 
@@ -80,10 +83,14 @@ router.post('/', async (req, res) => {
 
         // Buscar  la denuncia por ID para cambiar el campo isDeleted a true
         const denunciaActualizada = await Denuncia.findByIdAndUpdate(_id, { isDeleted: true }, { new: true });
-
+        
         if (!denunciaActualizada) {
             return res.status(404).json({ error: 'Denuncia no encontrada.' });
         }
+
+        const usuario = await User.findById(idUsuario);
+        usuario.numDenuncias = usuario.numDenuncias - 1;
+        await usuario.save();
 
         return res.status(200).json({ message: 'Denuncia eliminada exitosamente.' });
     } catch (error) {
