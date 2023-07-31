@@ -1,5 +1,7 @@
 /**
  * @swagger
+/**
+ * @swagger
  * components:
  *   schemas:
  *     User:
@@ -52,6 +54,10 @@
  *           type: number
  *           default: 0
  *           description: Número de denuncias realizadas por el usuario.
+ *         isBlocked:
+ *           type: boolean
+ *           default: false
+ *           description: Estado de bloqueo del usuario.
  *       example:
  *         nombreCompleto: Juanito Alimaña
  *         cedula: 12345678
@@ -63,6 +69,7 @@
  *         verificationToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *         resetToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *         numDenunciasRealizadas: 3
+ *         isBlocked: false
  */
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
@@ -126,6 +133,10 @@ const userSchema = new Schema(
             type: Number,
             default: 0,
             required: false,
+        },
+        isBlocked: {
+            type: Boolean,
+            default: false,
         },
         Denuncias: [
             {

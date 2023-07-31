@@ -23,7 +23,9 @@ app.use(express.urlencoded({ extended: false }));
 const authRoutes = require('./src/Routes/ authRoutes');
 const homeRoutes = require('./src/Routes/homeRoutes');
 const denunciaRoutes = require('./src/Routes/denunciaRoutes');
+const adminRoutes = require('./src/Routes/adminRoutes');
 const verifyToken = require('./src/Middleware/validate-token');
+const verifyAdminToken = require('./src/Middleware/verifyAdminToken');
 
 // Ruta de autenticación
 app.use('/auth', authRoutes);
@@ -32,6 +34,7 @@ app.use('/auth', authRoutes);
 //app.use('/', verifyToken);
 app.use('/home', verifyToken);
 app.use('/denuncias', verifyToken);
+// app.use('/admin', verifyAdminToken);
 
 // Ruta por defecto
 app.get('/', (req, res) => {
@@ -43,8 +46,7 @@ app.get('/', (req, res) => {
 
 // Ruta protegida /home
 app.use('/home', homeRoutes);
-
-// Ruta protegida /denuncia
+app.use('/admin', adminRoutes);
 app.use('/denuncias', denunciaRoutes);
 
 // Configuración de Swagger
@@ -63,7 +65,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ['./src/Routes/authRoutes/*.js','./src/Routes/denunciaRoutes/*.js', './src/Models/*.js'],
+    apis: ['./src/Routes/authRoutes/*.js','./src/Routes/denunciaRoutes/*.js','./src/Routes/adminRoutes/*.js' ,'./src/Models/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);

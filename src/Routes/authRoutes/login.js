@@ -85,6 +85,10 @@ router.post('/', async (req, res) => {
         return res.status(401).json({ error: 'El usuario no está verificado' });
     }
 
+    if (user.isBlocked) {
+        return res.status(401).json({ error: 'El usuario está bloqueado. No puede iniciar sesion' });
+    }
+
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) return res.status(400).json({ error: 'Contraseña no válida' });
 
