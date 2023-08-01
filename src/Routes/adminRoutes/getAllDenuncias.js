@@ -11,7 +11,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 
 /**
  * @swagger
- * /admin/verTodasDenuncias:
+ * /admin/getAllDenuncias:
  *   get:
  *     summary: Ver todas las denuncias.
  *     tags: [Administrador]
@@ -48,7 +48,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   example: Error del servidor al obtener las denuncias.
  */
 
-router.get('/', verifyAdminToken,async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         // Buscar todas las denuncias
         const denuncias = await Denuncia.find();

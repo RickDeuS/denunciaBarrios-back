@@ -12,7 +12,7 @@ const jwt = require('jsonwebtoken');
 
 /**
  * @swagger
- * /admin/login:
+ * /admin/loginAdmin:
  *   post:
  *     summary: Inicia sesión como administrador.
  *     tags: [Administrador]

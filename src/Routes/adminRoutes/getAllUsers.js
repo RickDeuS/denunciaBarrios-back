@@ -11,7 +11,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 
 /**
  * @swagger
- * /admin/todasCuentasUsuarios:
+ * /admin/getAllUsers:
  *   get:
  *     summary: Obtener todas las cuentas de usuario registradas.
  *     tags: [Administrador]
@@ -48,7 +48,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   example: Error del servidor al obtener las cuentas de usuario.
  */
 
-router.get('/',verifyAdminToken, async (req, res) => {
+router.get('/' , async (req, res) => {
     try {
         const usuarios = await User.find();
         return res.status(200).json(usuarios);

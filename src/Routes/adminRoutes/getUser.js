@@ -11,7 +11,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 
 /**
  * @swagger
- * /admin/detallesUsuario:
+ * /admin/getUser:
  *   get:
  *     summary: Obtener detalles de una cuenta de usuario por su cédula.
  *     tags: [Administrador]
@@ -64,7 +64,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   example: Error del servidor al obtener los detalles del usuario.
  */
 
-router.get('/',verifyAdminToken, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const { cedula } = req.body;
 

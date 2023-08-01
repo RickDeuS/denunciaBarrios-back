@@ -11,7 +11,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 
 /**
  * @swagger
- * /admin/verDetallesDenuncia:
+ * /admin/detallesDenuncia:
  *   post:
  *     summary: Ver detalles de una denuncia por su ID.
  *     tags: [Administrador]
@@ -69,7 +69,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   example: Error del servidor al obtener los detalles de la denuncia.
  */
 
-router.post('/',verifyAdminToken, async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { _id } = req.body;
 

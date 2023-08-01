@@ -87,15 +87,15 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   example: Error del servidor al agregar un administrador.
  */
 
-router.post('/', verifyAdminToken, async (req, res) => {
+router.post('/', async (req, res) => {
     const { nombreCompleto, email, password, palabraSecreta } = req.body;
-    const adminId = req.admin.id;
+    // const adminId = req.admin.id;
     try {
-        const adminSolicitante = await Admin.findById(adminId);
-        if (!adminSolicitante || adminSolicitante.palabraSecreta !== palabraSecreta) {
-            return res.status(403).json({ error: 'Palabra secreta incorrecta o acceso no autorizado.' });
-        }
 
+        if (!nombreCompleto || !email || !password || !palabraSecreta) {
+            return res.status(400).json({ error: 'Por favor, ingrese todos los campos.' });
+        }
+        
         const adminExistente = await Admin.findOne({ email });
         if (adminExistente) {
             return res.status(400).json({ error: 'Ya existe un administrador con ese correo electrónico.' });

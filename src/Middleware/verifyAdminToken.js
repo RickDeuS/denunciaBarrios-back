@@ -4,7 +4,7 @@ function verificarToken(req, res, next) {
     const token = req.headers['auth-admin'];
 
     if (!token) {
-        return res.status(401).json({ error: 'Acceso no autorizado. Se requiere un token de autenticación.' });
+        return res.status(401).json({ error: 'Acceso no autorizado.' });
     }
 
     jwt.verify(token, `${process.env.SECRETO_ADMINS}`, (error, decoded) => {

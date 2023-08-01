@@ -72,7 +72,6 @@
  *         isBlocked: false
  */
 const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
 
 const Schema = mongoose.Schema;
 
@@ -119,6 +118,11 @@ const userSchema = new Schema(
             type: String,
             required: false,
         },
+        role: {
+            type: String,
+            default: 'user',
+        },
+
         isVerified: {
             type: Boolean,
             default: false,

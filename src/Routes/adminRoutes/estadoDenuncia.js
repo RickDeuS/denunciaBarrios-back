@@ -15,7 +15,7 @@ const path = require('path');
 
 /**
  * @swagger
- * /admin/modificarEstadoDenuncia:
+ * /admin/estadoDenuncia:
  *   post:
  *     summary: Modificar el estado de una denuncia por su ID.
  *     tags: [Administrador]
@@ -93,7 +93,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-router.post('/', verifyAdminToken,async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { _id, estado } = req.body;
 

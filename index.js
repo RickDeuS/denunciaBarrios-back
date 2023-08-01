@@ -34,7 +34,6 @@ app.use('/auth', authRoutes);
 //app.use('/', verifyToken);
 app.use('/home', verifyToken);
 app.use('/denuncias', verifyToken);
-// app.use('/admin', verifyAdminToken);
 
 // Ruta por defecto
 app.get('/', (req, res) => {

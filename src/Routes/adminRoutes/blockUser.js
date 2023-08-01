@@ -11,12 +11,10 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 
 /**
  * @swagger
- * /admin/bloquearUsuario:
+ * /admin/blockUser:
  *   post:
  *     summary: Bloquear o inhabilitar una cuenta de usuario por su cédula.
  *     tags: [Administrador]
- *     security:
- *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -73,7 +71,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   example: Error del servidor al bloquear o inhabilitar la cuenta de usuario.
  */
 
-router.post('/',verifyAdminToken, async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { cedula } = req.body;
 
@@ -81,8 +79,6 @@ router.post('/',verifyAdminToken, async (req, res) => {
         if (!usuario) {
             return res.status(404).json({ error: 'Usuario no encontrado.' });
         }
-
-        // Realizar aquí las verificaciones adicionales necesarias antes de bloquear o inhabilitar la cuenta
 
         // Bloquear o inhabilitar la cuenta de usuario
         usuario.isBlocked = true;
