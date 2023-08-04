@@ -10,17 +10,16 @@ const cors = require('cors');
 
 connMongo.mongoose;
 
-app.use(cors());
-app.use(morgan('dev'));
+app.use(cors()); // Agregar el middleware cors
 
+app.use(morgan('dev'));
 
 // Capturar body
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-
 // Importar rutas
-const authRoutes = require('./src/Routes/ authRoutes');
+const authRoutes = require('./src/Routes/authRoutes');
 const homeRoutes = require('./src/Routes/homeRoutes');
 const denunciaRoutes = require('./src/Routes/denunciaRoutes');
 const adminRoutes = require('./src/Routes/adminRoutes');
