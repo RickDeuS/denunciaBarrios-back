@@ -10,7 +10,13 @@ const cors = require('cors');
 
 connMongo.mongoose;
 
-app.use(cors()); // Agregar el middleware cors
+const corsOptions = {
+    origin: '*',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'auth-token', 'auth-admin'],
+};
+
+app.use(cors(corsOptions));
 
 app.use(morgan('dev'));
 
@@ -19,7 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Importar rutas
-const authRoutes = require('./src/Routes/authRoutes');
+const authRoutes = require('./src/Routes/ authRoutes');
 const homeRoutes = require('./src/Routes/homeRoutes');
 const denunciaRoutes = require('./src/Routes/denunciaRoutes');
 const adminRoutes = require('./src/Routes/adminRoutes');
@@ -63,7 +69,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ['./src/Routes/authRoutes/*.js','./src/Routes/denunciaRoutes/*.js','./src/Routes/adminRoutes/*.js' ,'./src/Models/*.js'],
+    apis: ['./src/Routes/authRoutes/*.js', './src/Routes/denunciaRoutes/*.js', './src/Routes/adminRoutes/*.js', './src/Models/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
