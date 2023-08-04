@@ -134,10 +134,11 @@ const multer = require('multer');
 const upload = multer();
 
 // NUEVA DENUNCIA    
-router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
+router.post('/', upload.single('evidencia'), async (req, res) => {
     try {
         console.log("Entrando a la ruta '/denuncia/nuevaDenuncia'");
-        const usuarioId = req.user.id;
+        // const usuarioId = req.user.id;
+        const usuarioId = '649f538ad48c14763011a8e1';
 
         const schema = Joi.object({
             tituloDenuncia: Joi.string().required().trim(),
