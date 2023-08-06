@@ -13,55 +13,38 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  * @swagger
  * /admin/getUser:
  *   get:
- *     summary: Obtener detalles de una cuenta de usuario por su cédula.
+ *     summary: Obtener detalles de un usuario por su cédula
  *     tags: [Administrador]
- *     security:
- *       - BearerAuth: []
  *     parameters:
- *       - in: query
- *         name: cedula
- *         schema:
- *           type: string
+ *       - in: body
+ *         name: body
  *         required: true
- *         description: Cédula del usuario del cual se desean obtener los detalles.
- *         example: 12345678
+ *         schema:
+ *           type: object
+ *           properties:
+ *             cedula:
+ *               type: string
+ *         example:
+ *           cedula: 123456789
  *     responses:
  *       200:
- *         description: Detalles del usuario.
+ *         description: Detalles del usuario
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
- *       401:
- *         description: No se proporcionó un token de autenticación válido.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Acceso no autorizado.
+ *               $ref: '#/components/schemas/User'  
  *       404:
- *         description: No se encontró el usuario en la base de datos.
+ *         description: Usuario no encontrado
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Usuario no encontrado.
+ *             example:
+ *               error: Usuario no encontrado.
  *       500:
- *         description: Error del servidor al obtener los detalles del usuario.
+ *         description: Error del servidor al obtener los detalles del usuario
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Error del servidor al obtener los detalles del usuario.
+ *             example:
+ *               error: Error del servidor al obtener los detalles del usuario.
  */
 
 router.get('/', async (req, res) => {

@@ -11,6 +11,7 @@ const getGeneralView = require('./adminRoutes/getGeneralView');
 const getUser = require('./adminRoutes/getUser');
 const addAdmin = require('./adminRoutes/addAdmin');
 const loginAdmin = require('./adminRoutes/loginAdmin');
+const unblockUser = require('./adminRoutes/unblockUser');
 
 router.use('/blockUser', blockUser);
 router.use('/deleteDenuncia', deleteDenuncia);
@@ -22,5 +23,6 @@ router.use('/getGeneralView', getGeneralView);
 router.use('/getUser', getUser);
 router.use('/addAdmin', addAdmin);
 router.use('/loginAdmin', loginAdmin);
+router.use('/unblockUser', unblockUser);
 
 module.exports = router;

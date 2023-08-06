@@ -11,7 +11,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 
 /**
  * @swagger
- * /admin/blockUser:
+ * /admin/unblockUser:
  *   post:
  *     summary: Bloquear o inhabilitar una cuenta de usuario por su cédula.
  *     tags: [Administrador]
@@ -32,7 +32,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *               - cedula
  *     responses:
  *       200:
- *         description: Cuenta de usuario bloqueada o inhabilitada correctamente.
+ *         description: Cuenta de usuario desbloqueada correctamente.
  *         content:
  *           application/json:
  *             schema:
@@ -40,7 +40,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Cuenta de usuario bloqueada o inhabilitada correctamente.
+ *                   example: Cuenta de usuario desbloqueada correctamente.
  *       401:
  *         description: No se proporcionó un token de autenticación válido o el usuario no es administrador.
  *         content:
@@ -62,7 +62,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   type: string
  *                   example: Usuario no encontrado.
  *       500:
- *         description: Error del servidor al bloquear o inhabilitar la cuenta de usuario.
+ *         description: Error del servidor
  *         content:
  *           application/json:
  *             schema:
@@ -70,10 +70,10 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *               properties:
  *                 error:
  *                   type: string
- *                   example: Error del servidor al bloquear o inhabilitar la cuenta de usuario.
+ *                   example: Error del servidor 
  */
 
-router.post('/blockUser', verifyAdminToken, async (req, res) => {
+router.post('/', verifyAdminToken, async (req, res) => {
     try {
         const { cedula } = req.body;
 
@@ -83,13 +83,13 @@ router.post('/blockUser', verifyAdminToken, async (req, res) => {
         }
 
         // Bloquear o inhabilitar la cuenta de usuario
-        usuario.isBlocked = true; // Cambiamos a true para bloquear, false para desbloquear.
+        usuario.isBlocked = false; // Cambiamos a true para bloquear, false para desbloquear.
         await usuario.save();
 
-        return res.status(200).json({ message: 'Cuenta de usuario bloqueada o inhabilitada correctamente.' });
+        return res.status(200).json({ message: 'Cuenta de usuario desbloqueada correctamente.' });
     } catch (error) {
-        console.error('Error al bloquear o inhabilitar la cuenta de usuario:', error);
-        return res.status(500).json({ error: 'Error del servidor al bloquear o inhabilitar la cuenta de usuario.', error });
+        console.error('Error al desbloquear la cuenta de usuario:', error);
+        return res.status(500).json({ error: 'Error del servidor ', error });
     }
 });
 
