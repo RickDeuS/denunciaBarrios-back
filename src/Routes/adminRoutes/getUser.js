@@ -12,33 +12,33 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 /**
  * @swagger
  * /admin/getUser:
- *   get:
- *     summary: Obtener detalles de un usuario por su cédula
+ *   post:
+ *     summary: Obtener detalles de un usuario por su ID
  *     tags: [Administrador]
- *     parameters:
- *       - in: body
- *         name: body
- *         required: true
- *         schema:
- *           type: object
- *           properties:
- *             cedula:
- *               type: string
- *         example:
- *           cedula: 123456789
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               _id:
+ *                 type: string
+ *             example:
+ *               _id: "123456789"
  *     responses:
  *       200:
  *         description: Detalles del usuario
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'  
- *       404:
- *         description: Usuario no encontrado
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Usuario no encontrado o ID de usuario faltante
  *         content:
  *           application/json:
  *             example:
- *               error: Usuario no encontrado.
+ *               error: Usuario no encontrado o ID de usuario faltante.
  *       500:
  *         description: Error del servidor al obtener los detalles del usuario
  *         content:
@@ -46,14 +46,20 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *             example:
  *               error: Error del servidor al obtener los detalles del usuario.
  */
-
-router.get('/', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        const { cedula } = req.body;
+        const { _id } = req.body;
 
-        const usuario = await User.findOne({ cedula });
+        // Validar que se proporcione el ID del usuario
+        if (!_id) {
+            return res.status(400).json({ error: 'Se debe proporcionar el ID del usuario.' });
+        }
+
+        // Buscar el usuario por su ID
+        const usuario = await User.findById(_id);
+
         if (!usuario) {
-            return res.status(404).json({ error: 'Usuario no encontrado.' });
+            return res.status(400).json({ error: 'Usuario no encontrado.' });
         }
 
         return res.status(200).json(usuario);
