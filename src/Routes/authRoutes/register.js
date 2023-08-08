@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const User = require('../../Models/user');
 const bcrypt = require('bcrypt');
-const Joi = require('@hapi/joi');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const nodemailer = require('nodemailer');
@@ -9,6 +8,7 @@ const generateVerificationToken = require('../../utils/generateVerificationToken
 const fs = require('fs');
 const handlebars = require('handlebars');
 const path = require('path');
+const schemaRegister = require('./schemaRegister');
 
 // Configuración Cloudinary
 cloudinary.config({
@@ -23,14 +23,7 @@ const storage = multer.diskStorage({});
 const upload = multer({ storage });
 
 // Validación de datos
-const schemaRegister = Joi.object({
-    nombreCompleto: Joi.string().min(6).max(255).required().regex(/^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$/),
-    cedula: Joi.string().min(6).max(10).required().pattern(/^[0-9]+$/),
-    numTelefono: Joi.string().min(6).max(10).required().pattern(/^[0-9]+$/),
-    email: Joi.string().min(6).max(1024).required().email(),
-    password: Joi.string().min(6).required().regex(/^[a-zA-Z0-9]{3,30}$/),
-    photo: Joi.string().min(6).max(1024).optional(),
-});
+
 
 /**
  * @swagger
