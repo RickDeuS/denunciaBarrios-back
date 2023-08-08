@@ -82,16 +82,16 @@ const path = require('path');
  *                   example: Error del servidor al modificar el estado de la denuncia.
  */
 
-const userMailer = process.env.USER_MAILER;
-const passMailer = process.env.PASS_MAILER;
+// const userMailer = process.env.USER_MAILER;
+// const passMailer = process.env.PASS_MAILER;
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: userMailer,
-        pass: passMailer,
-    },
-});
+// const transporter = nodemailer.createTransport({
+//     service: 'gmail',
+//     auth: {
+//         user: userMailer,
+//         pass: passMailer,
+//     },
+// });
 
 router.post('/', async (req, res) => {
     try {
@@ -105,13 +105,13 @@ router.post('/', async (req, res) => {
         // Buscar y actualizar el estado de la denuncia por su ID
         const denunciaActualizada = await Denuncia.findByIdAndUpdate(_id, { estado }, { new: true });
 
-        const templatePath = path.join(__dirname, '..', '..', 'utils', 'estadoDenuncia.hbs');
-        const estadoDenunciaEmail = fs.readFileSync(templatePath, 'utf8');
-        const template = handlebars.compile(estadoDenunciaEmail);
-        const estadoDenunciaEmailContent = template({
-            nombreCompleto: req.body.nombreCompleto,
-            verificationURL: verificationURL,
-        });
+        // const templatePath = path.join(__dirname, '..', '..', 'utils', 'estadoDenuncia.hbs');
+        // const estadoDenunciaEmail = fs.readFileSync(templatePath, 'utf8');
+        // const template = handlebars.compile(estadoDenunciaEmail);
+        // const estadoDenunciaEmailContent = template({
+        //     nombreCompleto: req.body.nombreCompleto,
+        //     verificationURL: verificationURL,
+        // });
 
 
         if (!denunciaActualizada) {
