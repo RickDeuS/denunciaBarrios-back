@@ -2,7 +2,7 @@ const Joi = require('@hapi/joi');
 
 const schemaRegister = Joi.object({
   nombreCompleto: Joi.string()
-    .min(6)
+    .min(3)
     .max(255)
     .required()
     .regex(/^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$/)
@@ -16,7 +16,7 @@ const schemaRegister = Joi.object({
     }),
 
   cedula: Joi.string()
-    .min(6)
+    .min(10)
     .max(10)
     .required()
     .pattern(/^[0-9]+$/)
@@ -30,7 +30,7 @@ const schemaRegister = Joi.object({
     }),
 
   numTelefono: Joi.string()
-    .min(6)
+    .min(10)
     .max(10)
     .required()
     .pattern(/^[0-9]+$/)
@@ -70,14 +70,6 @@ const schemaRegister = Joi.object({
     }),
 
   photo: Joi.string()
-    .min(6)
-    .max(1024)
-    .optional()
-    .messages({
-      'string.base': 'La foto debe ser una cadena',
-      'string.min': 'La foto debe tener al menos {#limit} caracteres',
-      'string.max': 'La foto no debe tener más de {#limit} caracteres',
-    }),
 });
 
 module.exports = schemaRegister;
