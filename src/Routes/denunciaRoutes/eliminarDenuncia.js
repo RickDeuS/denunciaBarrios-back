@@ -13,25 +13,20 @@ const verifyToken = require('../../Middleware/validate-token');
 
 /**
  * @swagger
- * /denuncias/eliminarDenuncia:
- *   post:
+ * /denuncias/eliminarDenuncia/{id}:
+ *   delete:
  *     summary: Elimina una denuncia por su ID.
  *     tags: [Denuncias]
  *     security:
  *        - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               _id:
- *                 type: string
- *                 description: ID de la denuncia a eliminar.
- *                 example: 613e489aeb037263d4d091ab
- *             required:
- *               - _id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la denuncia a eliminar.
+ *         example: 613e489aeb037263d4d091ab
  *     responses:
  *       200:
  *         description: Denuncia eliminada exitosamente.
@@ -65,32 +60,21 @@ const verifyToken = require('../../Middleware/validate-token');
  *                   example: Error del servidor al eliminar la denuncia.
  */
 
-router.post('/',verifyToken ,async (req, res) => {
+router.delete('/:_id', verifyToken, async (req, res) => {
     const idUsuario = req.user._id;
+    const denunciaId = req.params._id;
+
     try {
-        const { _id } = req.body;
+        // Buscar y eliminar la denuncia por ID
+        const denunciaEliminada = await Denuncia.findByIdAndRemove(denunciaId);
 
-        // Validar los datos 
-        const schema = Joi.object({
-            _id: Joi.string().required().trim(),
-        });
-
-        const { error } = schema.validate({ _id });
-
-        if (error) {
-            return res.status(400).json({ error: error.details[0].message });
-        }
-
-        // Buscar  la denuncia por ID para cambiar el campo isDeleted a true
-        const denunciaActualizada = await Denuncia.findByIdAndUpdate(_id, { isDeleted: true }, { new: true });
-        
-        if (!denunciaActualizada) {
+        if (!denunciaEliminada) {
             return res.status(404).json({ error: 'Denuncia no encontrada.' });
         }
 
-        const usuario = await User.findById(idUsuario);
-        usuario.numDenuncias = usuario.numDenuncias - 1;
-        await usuario.save();
+        // const usuario = await User.findById(idUsuario);
+        // usuario.numDenunciasRealizadas = usuario.numDenunciasRealizadas - 1;
+        // await usuario.save();
 
         return res.status(200).json({ message: 'Denuncia eliminada exitosamente.' });
     } catch (error) {
