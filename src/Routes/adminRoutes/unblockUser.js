@@ -73,7 +73,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   example: Error del servidor 
  */
 
-router.post('/', verifyAdminToken, async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { cedula } = req.body;
 
