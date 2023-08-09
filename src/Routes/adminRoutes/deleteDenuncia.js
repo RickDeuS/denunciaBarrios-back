@@ -11,25 +11,20 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 
 /**
  * @swagger
- * /admin/deleteDenuncia:
- *   post:
+ * /admin/deleteDenuncia/{id}:
+ *   delete:
  *     summary: Eliminar una denuncia por su ID.
  *     tags: [Administrador]
  *     security:
  *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               _id:
- *                 type: string
- *                 description: ID de la denuncia a eliminar.
- *                 example: 6123456789abcdef12345678
- *             required:
- *               - _id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la denuncia a eliminar.
+ *         example: 6123456789abcdef12345678
  *     responses:
  *       200:
  *         description: Denuncia eliminada exitosamente.
