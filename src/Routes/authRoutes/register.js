@@ -183,7 +183,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
             html: verificationEmailContent,
         };
 
-        await transporter.sendMail(mailOptions);
+        // await transporter.sendMail(mailOptions);
         const savedUser = await user.save();
         res.json({
             error: null,
