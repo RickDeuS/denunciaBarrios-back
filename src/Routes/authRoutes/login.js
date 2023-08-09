@@ -93,7 +93,7 @@ router.post('/', async (req, res) => {
         },
         process.env.TOKEN_SECRET
     );
-    res.header('auth-token', token).json({
+    res.json({
         error: null,
         data: { token },
     });
