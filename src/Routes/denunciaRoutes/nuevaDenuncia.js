@@ -6,6 +6,7 @@ const cloudinary = require('cloudinary').v2;
 const _ = require('lodash');
 const verifyToken = require('../../Middleware/validate-token');
 const fs = require('fs');
+const path = require('path');
 
 /**
  * @swagger
@@ -131,7 +132,6 @@ cloudinary.config({
 
 const lastDenunciaTimes = {};
 const multer = require('multer');
-const { log } = require('console');
 const upload = multer();
 
 // NUEVA DENUNCIA    
@@ -167,7 +167,6 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
         }
 
         const nombreDenunciante = await User.findById(usuarioId).select('nombreCompleto');
-        
 
         const nuevaDenuncia = new Denuncia({
             tituloDenuncia: value.tituloDenuncia,
@@ -175,8 +174,7 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
             nombreDenunciante: nombreDenunciante.nombreCompleto,
             descripcion: value.descripcion,
             categoria: value.categoria,
-            evidencia: value.evidencia,
-
+            evidencia:'',
             ubicacion: value.ubicacion,
             estado: 'En revisión',
         });
@@ -186,46 +184,54 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
         if (req.file) {
             try {
                 // Crear una ruta temporal para el archivo
-                const tempFilePath = `/tmp/${req.file.originalname}`; 
-                
+                const tempFileName = `temp_${Date.now()}.png`; // Cambiar la extensión según el tipo de archivo
+                const tempDir = path.join(__dirname, '..', 'temp');
+                const tempFilePath = path.join(tempDir, tempFileName);
+        
+                // Crear el directorio temporal si no existe
+                if (!fs.existsSync(tempDir)) {
+                    fs.mkdirSync(tempDir);
+                }
+        
                 // Escribir el archivo temporal en el sistema de archivos
                 fs.writeFileSync(tempFilePath, req.file.buffer);
-        
                 // Subir el archivo temporal a Cloudinary
                 const publicId = `evidencia_${nuevaDenuncia._id}`;
                 const result = await cloudinary.uploader.upload(tempFilePath, {
                     folder: 'denuncia_photos',
                     public_id: publicId,
                 });
-        
+
                 // Asignar la URL de la imagen subida a la propiedad "evidencia" de la denuncia
                 nuevaDenuncia.evidencia = result.secure_url;
-                
+                console.log('AQUI ESTA EL URL DE IMAGEN', nuevaDenuncia.evidencia);
+
                 // Eliminar el archivo temporal después de subirlo a Cloudinary
                 fs.unlinkSync(tempFilePath);
+
+                // Ahora la evidencia se ha asignado, podemos intentar guardar la denuncia
+                try {
+                    console.log("Creando denuncia...", nuevaDenuncia);
+                    await nuevaDenuncia.save();
+
+                    const usuario = await User.findById(usuarioId);
+                    usuario.Denuncias.push(nuevaDenuncia);
+                    usuario.numDenunciasRealizadas += 1;
+                    await usuario.save();
+
+                    // Actualizar el último tiempo de denuncia para el usuario actual
+                    lastDenunciaTimes[usuarioId] = now;
+
+                    console.log("Denuncia creada exitosamente.");
+                    return res.status(201).json({ message: 'Denuncia creada exitosamente.' });
+                } catch (error) {
+                    console.error('Error al crear la denuncia:', error);
+                    return res.status(500).json({ error: 'Error del servidor al crear la denuncia.' });
+                }
             } catch (error) {
                 console.error("Error al subir la imagen a Cloudinary:", error);
                 // Aquí podrías manejar el error de manera apropiada, si es necesario
             }
-        }
-        
-        try {
-            console.log("Creando denuncia...", nuevaDenuncia);
-            await nuevaDenuncia.save();
-        
-            const usuario = await User.findById(usuarioId);
-            usuario.Denuncias.push(nuevaDenuncia);
-            usuario.numDenunciasRealizadas += 1;
-            await usuario.save();
-        
-            // Actualizar el último tiempo de denuncia para el usuario actual
-            lastDenunciaTimes[usuarioId] = now;
-        
-            console.log("Denuncia creada exitosamente.");
-            return res.status(201).json({ message: 'Denuncia creada exitosamente.' });
-        } catch (error) {
-            console.error('Error al crear la denuncia:', error);
-            return res.status(500).json({ error: 'Error del servidor al crear la denuncia.' });
         }
     } catch (error) {
         console.error('Error en la ruta /denuncia/nuevaDenuncia:', error);
