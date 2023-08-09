@@ -73,19 +73,19 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   example: Error del servidor al eliminar la denuncia.
  */
 
-router.post('/', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
-        const { _id } = req.body;
+        const denunciaId = req.params.id;
 
         // Validar que se proporcione el ID de la denuncia
-        if (!_id) {
+        if (!denunciaId) {
             return res.status(400).json({ error: 'Se debe proporcionar el ID de la denuncia.' });
         }
 
-        // Buscar y actualizar el campo isDeleted de la denuncia por su ID
-        const denunciaActualizada = await Denuncia.findByIdAndUpdate(_id, { isDeleted: true }, { new: true });
+        // Buscar y eliminar la denuncia por su ID
+        const denunciaEliminada = await Denuncia.findByIdAndRemove(denunciaId);
 
-        if (!denunciaActualizada) {
+        if (!denunciaEliminada) {
             return res.status(400).json({ error: 'Denuncia no encontrada.' });
         }
 

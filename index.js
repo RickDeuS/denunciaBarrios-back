@@ -12,7 +12,6 @@ connMongo.mongoose;
 
 const corsOptions = {
     origin: '*',
-    methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization', 'auth-token', 'auth-admin'],
 };
 
