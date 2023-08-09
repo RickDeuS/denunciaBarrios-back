@@ -144,7 +144,7 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
             descripcion: Joi.string().required().trim(),
             categoria: Joi.string().valid('Seguridad', 'Infraestructura', 'Contaminacion', 'Ruido', 'Otro').required(),
             evidencia: Joi.string(),
-            ubicacion: Joi.object({
+            ubicacion: Joi.string({
                 type: Joi.string().valid('Point').required(),
                 coordenadas: Joi.array().items(Joi.number()).length(2).required(),
             }).required(),
