@@ -74,10 +74,6 @@ router.post('/', async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).json({ error: 'Usuario no encontrado' });
 
-    if (!user.isVerified) {
-        return res.status(401).json({ error: 'El usuario no está verificado' });
-    }
-
     if (user.isBlocked === true) {
         return res.status(401).json({ error: 'El usuario está bloqueado. No puede iniciar sesion' });
     }
