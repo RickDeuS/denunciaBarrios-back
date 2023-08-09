@@ -27,15 +27,9 @@ const denunciaSchema = new mongoose.Schema(
       trim: true
     },
     ubicacion: {
-      type: {
-        type: String,
-        enum: ['Point'],
-        required: true
-      },
-      coordenadas: {
-        type: [Number],
-        required: true
-      }
+      type: String,
+      required: true,
+      trim: true,
     },
     categoria: {
       type: String,
@@ -44,19 +38,17 @@ const denunciaSchema = new mongoose.Schema(
     },
     estado: {
       type: String,
-      enum: ['En revisión', 'En proceso de solución', 'Solucionada'], 
-      required: false, 
-      default: 'En revisión' 
+      enum: ['En revisión', 'En proceso de solución', 'Solucionada'],
+      default: 'En revisión'
     },
     isDeleted: {
       type: Boolean,
-      default: false 
+      default: false
     },
     fechaHora: {
       type: Date,
       default: Date.now
     }
-    
   },
   {
     versionKey: false,
@@ -68,7 +60,7 @@ denunciaSchema.index({ ubicacion: '2dsphere' });
 
 const Denuncia = mongoose.model('Denuncia', denunciaSchema);
 
-module.exports = Denuncia;
+module.exports = Denuncia;
 
 
 /**

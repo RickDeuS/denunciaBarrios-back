@@ -165,7 +165,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
             console.log("Imagen subida a Cloudinary");
         }
         // Enviar el correo electrónico de verificación
-        const verificationURL = `https://back-barrios-462cb6c76674.herokuapp.com/auth/verifyUser/${verificationToken}`;
+        const verificationURL = `https://como-va-mi-barrio-a1bd81410089.herokuapp.com/verificarCuenta/${verificationToken}`;
         console.log("url de verificacion: ", verificationURL);
 
         const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmail.hbs');

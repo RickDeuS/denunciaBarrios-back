@@ -131,6 +131,7 @@ cloudinary.config({
 
 const lastDenunciaTimes = {};
 const multer = require('multer');
+const { log } = require('console');
 const upload = multer();
 
 // NUEVA DENUNCIA    
@@ -144,10 +145,7 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
             descripcion: Joi.string().required().trim(),
             categoria: Joi.string().valid('Seguridad', 'Infraestructura', 'Contaminacion', 'Ruido', 'Otro').required(),
             evidencia: Joi.string(),
-            ubicacion: Joi.string({
-                type: Joi.string().valid('Point').required(),
-                coordenadas: Joi.array().items(Joi.number()).length(2).required(),
-            }).required(),
+            ubicacion: Joi.string().required(),
         });
         console.log(schema.ubicacion);
 
@@ -165,7 +163,7 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
         const lastDenunciaTime = lastDenunciaTimes[usuarioId];
         if (lastDenunciaTime && now - lastDenunciaTime < 15 * 60 * 1000) {
             console.log("El usuario intentó presentar otra denuncia en menos de 15 minutos.");
-            return res.status(400).json({ error: 'Debes esperar al menos 15 minutos antes de presentar otra denuncia.' });
+            return res.status(403).json({ error: 'Debes esperar al menos 15 minutos antes de presentar otra denuncia.' });
         }
 
         const nombreDenunciante = await User.findById(usuarioId).select('nombreCompleto');
@@ -177,46 +175,61 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
             nombreDenunciante: nombreDenunciante.nombreCompleto,
             descripcion: value.descripcion,
             categoria: value.categoria,
-            evidencia: '',
-            ubicacion:value.ubicacion,
+            evidencia: value.evidencia,
+
+            ubicacion: value.ubicacion,
             estado: 'En revisión',
         });
 
-        console.log(" aqui llega ",nuevaDenuncia.ubicacion);
+        console.log(" aqui llega ", nuevaDenuncia.ubicacion);
 
         if (req.file) {
-            // Escribir el archivo temporal
-            const tempFilePath = `/tmp/${req.file.originalname}`; 
-            fs.writeFileSync(tempFilePath, req.file.buffer);
-
-            // Subir el archivo temporal a Cloudinary
-            const publicId = `evidencia_${nuevaDenuncia._id}`;
-            const result = await cloudinary.uploader.upload(tempFilePath, {
-                folder: 'denuncia_photos',
-                public_id: publicId,
-            });
-            nuevaDenuncia.evidencia = result.secure_url;
-            console.log("Imagen subida a Cloudinary");
-
-            // Eliminar el archivo temporal después de subirlo a Cloudinary
-            fs.unlinkSync(tempFilePath);
+            try {
+                // Crear una ruta temporal para el archivo
+                const tempFilePath = `/tmp/${req.file.originalname}`; 
+                
+                // Escribir el archivo temporal en el sistema de archivos
+                fs.writeFileSync(tempFilePath, req.file.buffer);
+        
+                // Subir el archivo temporal a Cloudinary
+                const publicId = `evidencia_${nuevaDenuncia._id}`;
+                const result = await cloudinary.uploader.upload(tempFilePath, {
+                    folder: 'denuncia_photos',
+                    public_id: publicId,
+                });
+        
+                // Asignar la URL de la imagen subida a la propiedad "evidencia" de la denuncia
+                nuevaDenuncia.evidencia = result.secure_url;
+                
+                // Eliminar el archivo temporal después de subirlo a Cloudinary
+                fs.unlinkSync(tempFilePath);
+            } catch (error) {
+                console.error("Error al subir la imagen a Cloudinary:", error);
+                // Aquí podrías manejar el error de manera apropiada, si es necesario
+            }
         }
-        console.log("Creando denuncia...", nuevaDenuncia);
-        await nuevaDenuncia.save();
-
-        const usuario = await User.findById(usuarioId);
-        usuario.Denuncias.push(nuevaDenuncia);
-        usuario.numDenunciasRealizadas += 1;
-        await usuario.save();
-
-        // Actualizar el último tiempo de denuncia para el usuario actual
-        lastDenunciaTimes[usuarioId] = now;
-
-        console.log("Denuncia creada exitosamente.");
-        return res.status(201).json({ message: 'Denuncia creada exitosamente.' });
+        
+        try {
+            console.log("Creando denuncia...", nuevaDenuncia);
+            await nuevaDenuncia.save();
+        
+            const usuario = await User.findById(usuarioId);
+            usuario.Denuncias.push(nuevaDenuncia);
+            usuario.numDenunciasRealizadas += 1;
+            await usuario.save();
+        
+            // Actualizar el último tiempo de denuncia para el usuario actual
+            lastDenunciaTimes[usuarioId] = now;
+        
+            console.log("Denuncia creada exitosamente.");
+            return res.status(201).json({ message: 'Denuncia creada exitosamente.' });
+        } catch (error) {
+            console.error('Error al crear la denuncia:', error);
+            return res.status(500).json({ error: 'Error del servidor al crear la denuncia.' });
+        }
     } catch (error) {
-        console.error('Error al crear la denuncia:', error);
-        return res.status(500).json({ error: 'Error del servidor al crear la denuncia.' });
+        console.error('Error en la ruta /denuncia/nuevaDenuncia:', error);
+        return res.status(500).json({ error: 'Error en el servidor.' });
     }
 });
 
