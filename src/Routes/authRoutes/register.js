@@ -177,7 +177,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
         });
 
         const mailOptions = {
-            from: `Denuncia Loja `,
+            from: `Como va mi barrio `,
             to: req.body.email,
             subject: 'Verificación de cuenta',
             html: verificationEmailContent,
