@@ -137,8 +137,7 @@ const upload = multer();
 router.post('/', upload.single('evidencia'), async (req, res) => {
     try {
         console.log("Entrando a la ruta '/denuncia/nuevaDenuncia'");
-        // const usuarioId = req.user.id;
-        const usuarioId = '649f538ad48c14763011a8e1';
+        const usuarioId = req.user.id;
 
         const schema = Joi.object({
             tituloDenuncia: Joi.string().required().trim(),
@@ -150,6 +149,7 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
                 coordenadas: Joi.array().items(Joi.number()).length(2).required(),
             }).required(),
         });
+        console.log(schema.ubicacion);
 
         const { error, value } = schema.validate(req.body, {
             stripUnknown: true,
@@ -171,18 +171,18 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
         const nombreDenunciante = await User.findById(usuarioId).select('nombreCompleto');
         
 
-        const { ubicacion } = value;
-
         const nuevaDenuncia = new Denuncia({
             tituloDenuncia: value.tituloDenuncia,
             idDenunciante: usuarioId,
             nombreDenunciante: nombreDenunciante.nombreCompleto,
             descripcion: value.descripcion,
             categoria: value.categoria,
-            prueba: '',
-            ubicacion,
+            evidencia: '',
+            ubicacion:value.ubicacion,
             estado: 'En revisión',
         });
+
+        console.log(" aqui llega ",nuevaDenuncia.ubicacion);
 
         if (req.file) {
             // Escribir el archivo temporal

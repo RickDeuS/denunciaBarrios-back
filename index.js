@@ -33,6 +33,7 @@ const verifyAdminToken = require('./src/Middleware/verifyAdminToken');
 
 // Ruta de autenticación
 app.use('/auth', authRoutes);
+app.use('/admin', adminRoutes);
 
 // Middleware para verificar el token en las rutas protegidas 
 //app.use('/', verifyToken);
