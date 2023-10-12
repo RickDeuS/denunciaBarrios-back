@@ -171,17 +171,24 @@ router.post('/', upload.single('photo'), async (req, res) => {
         const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmail.hbs');
         const verificationEmailTemplate = fs.readFileSync(templatePath, 'utf8');
         const template = handlebars.compile(verificationEmailTemplate);
+
         const verificationEmailContent = template({
             nombreCompleto: req.body.nombreCompleto,
             verificationURL: verificationURL,
         });
 
+        console.log(verificationEmailContent)
+
+        
         const mailOptions = {
-            from: `Como va mi barrio `,
+            from: `Como va mi barrio`,
             to: req.body.email,
             subject: 'Verificación de cuenta',
             html: verificationEmailContent,
         };
+        await transporter.sendMail(mailOptions);
+
+        
 
         // await transporter.sendMail(mailOptions);
         const savedUser = await user.save();
