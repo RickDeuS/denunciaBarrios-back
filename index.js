@@ -15,9 +15,15 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization', 'auth-token', 'auth-admin'],
 };
 
-app.use(cors(corsOptions));
 
-app.use(morgan('dev'));
+morgan.token('custom', function (req, res) {
+    return `IP: ${req.ip}, Method: ${req.method}, URL: ${req.originalUrl}, Status: ${res.statusCode}`;
+});
+
+// Utiliza el formato personalizado
+app.use(morgan(':custom'));
+
+app.use(cors(corsOptions));
 
 // Capturar body
 app.use(express.json());
@@ -35,7 +41,7 @@ const verifyAdminToken = require('./src/Middleware/verifyAdminToken');
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
 
-// Middleware para verificar el token en las rutas protegidas 
+// Middleware para verificar el token en las rutas protegidas
 //app.use('/', verifyToken);
 //app.use('/denuncias', verifyToken);
 
@@ -43,7 +49,7 @@ app.use('/admin', adminRoutes);
 app.get('/', (req, res) => {
     res.json({
         estado: true,
-        mensaje: 'Bienvenid@, inicia sesion o registrate por favor =)',
+        mensaje: 'Bienvenid@, inicia sesión o regístrate por favor =)',
     });
 });
 

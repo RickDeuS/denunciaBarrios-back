@@ -54,6 +54,7 @@ const Joi = require('@hapi/joi');
 router.get('/', async (req, res) => {
     try {
         const usuarioId = '64c5688cfb56baad04c3ad58';
+        // const usuarioId = req.user._id;
 
         const usuario = await User.findById(usuarioId);
         if (!usuario) {
