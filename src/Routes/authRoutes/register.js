@@ -17,72 +17,145 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
     secure: true,
 });
-
 // Configuración Multer
 const storage = multer.diskStorage({});
 const upload = multer({ storage });
-
 // Validación de datos
-const validateUser = async (req, res) => {
-    const { error } = schemaRegister.validate(req.body);
-    if (error) {
-        return res.status(400).json({ error: error.details[0].message });
+/**
+ * @swagger
+ * /auth/register:
+ * 
+ * 
+ * 
+ *   post:
+ *     summary: Registrar un nuevo usuario
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombreCompleto:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 255
+ *               cedula:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 10
+ *               numTelefono:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 10
+ *               email:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 1024
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *               photo:
+ *                 type: string
+ *                 minLength: 6
+ *                 maxLength: 1024
+ *             required:
+ *               - nombreCompleto
+ *               - cedula
+ *               - numTelefono
+ *               - email
+ *               - password
+ *     responses:
+ *       200:
+ *         description: Usuario registrado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: null
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Error de validación o email ya registrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Error al guardar el usuario en la base de datos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
+const userMailer = process.env.USER_MAILER;
+const passMailer = process.env.PASS_MAILER;
+
+
+
+const transportSendGrid = {
+
+    tls: { rejectUnauthorized: false },
+
+    host: "smtp.sendgrid.net",
+
+    port: 587,
+
+    secure: false,
+
+    auth: {
+
+        user: "apikey",
+
+        pass: passMailer,
+
+ 
+
     }
-    return null;
-};
 
-const checkDuplicate = async (field, value, res) => {
-    const user = await User.findOne({ [field]: value });
-    if (user) {
-        return res.status(400).json({ error: `${field} ya registrado` });
-    }
-    return null;
-};
+}
 
-const sendVerificationEmail = async (user, verificationToken, email) => {
-    const verificationURL = `https://como-va-mi-barrio-a1bd81410089.herokuapp.com/verificarCuenta/${verificationToken}`;
-    const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmail.hbs');
-    const verificationEmailTemplate = fs.readFileSync(templatePath, 'utf8');
-    const template = handlebars.compile(verificationEmailTemplate);
-    const verificationEmailContent = template({ nombreCompleto: user.nombreCompleto, verificationURL });
 
-    const mailOptions = {
-        from: process.env.USER_MAILER,
-        to: email,
-        subject: 'Verificación de cuenta',
-        html: verificationEmailContent,
-    };
+var transporter = nodemailer.createTransport(transportSendGrid);
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.USER_MAILER,
-            pass: process.env.PASS_MAILER,
-        },
-    });
-
-    await transporter.sendMail(mailOptions);
-};
 
 router.post('/', upload.single('photo'), async (req, res) => {
     try {
-        const validationError = await validateUser(req, res);
-        if (validationError) return;
-
-        const duplicateFields = await Promise.all([
-            checkDuplicate('nombreCompleto', req.body.nombreCompleto, res),
-            checkDuplicate('email', req.body.email, res),
-            checkDuplicate('numTelefono', req.body.numTelefono, res),
-            checkDuplicate('cedula', req.body.cedula, res),
-        ]);
-        if (duplicateFields.some((error) => error !== null)) return;
-
+        // Validar usuario
+        const { error } = schemaRegister.validate(req.body);
+        if (error) {
+            return res.status(400).json({ error: error.details[0].message });
+        }
+        const isNombreCompletoExist = await User.findOne({ nombreCompleto: req.body.nombreCompleto });
+        if (isNombreCompletoExist) {
+            return res.status(400).json({ error: 'Nombre ya registrado' });
+        }
+        const isEmailExist = await User.findOne({ email: req.body.email });
+        if (isEmailExist) {
+            return res.status(400).json({ error: 'Email ya registrado' });
+        }
+        const isNumTelefonoExist = await User.findOne({ numTelefono: req.body.numTelefono });
+        if (isNumTelefonoExist) {
+            return res.status(400).json({ error: 'Numero telefonico ya registrado' });
+        }
+        const isDniExist = await User.findOne({ cedula: req.body.cedula });
+        if (isDniExist) {
+            return res.status(400).json({ error: 'Cedula ya registrada' });
+        }
+        // Hash de la contraseña
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         const verificationToken = generateVerificationToken();
-
+        console.log("este es el token que se genera 1: ", verificationToken);
         const user = new User({
             nombreCompleto: req.body.nombreCompleto,
             cedula: req.body.cedula,
@@ -93,19 +166,64 @@ router.post('/', upload.single('photo'), async (req, res) => {
             verificationToken,
             isVerified: false,
         });
-
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path, { folder: 'profile_photos' });
             user.photo = result.secure_url;
+            console.log("Imagen subida a Cloudinary");
         }
+        // Enviar el correo electrónico de verificación
+        const verificationURL = `https://como-va-mi-barrio-a1bd81410089.herokuapp.com/verificarCuenta/${verificationToken}`;
+        console.log("URL de verificación:", verificationURL);
+        const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmail.hbs');
+        const verificationEmailTemplate = fs.readFileSync(templatePath, 'utf8');
+        const template = handlebars.compile(verificationEmailTemplate);
 
-        await sendVerificationEmail(user, verificationToken, req.body.email);
+        const verificationEmailContent = template({
+            nombreCompleto: req.body.nombreCompleto,
+            verificationURL: verificationURL,
+        });
+        const mailOptions = {
+            from: userMailer,
+            to: req.body.email,
+            subject: 'Verificación de cuenta',
+            html: "<h1>HOLI </h1>",
+        };
+        console.log("--------- ", mailOptions);
+        console.log(transportSendGrid)
+        //  await transporter.sendMail(mailOptions, function (err, msg) {
+            
+        //  });
 
+
+        const email = await new Promise((resolve, reject) => {
+            transporter.sendMail(mailOptions, function (err, info) {
+                if (err) {
+                    resolve(err);
+                } else {
+                    resolve(info);
+                }
+            })
+        });
+        console.log( "--- ", email)
+//return; 
+
+        //await transporter.sendMail(mailOptions);
         const savedUser = await user.save();
-        res.status(200).json({ error: null, data: savedUser });
+        res.json({
+            error: null,
+            data: savedUser,
+        });
     } catch (error) {
+        // Manejar cualquier error durante el proceso
         res.status(500).json({ error: 'Error al guardar el usuario en la base de datos' });
+        console.log("Error:", error);
+        await User.deleteOne({ email: req.body.email });
     }
-});
 
+    return; 
+});
 module.exports = router;
+
+
+ 
+///////////////////////

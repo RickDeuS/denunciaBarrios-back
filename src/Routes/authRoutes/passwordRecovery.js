@@ -113,7 +113,7 @@ router.post('/', async (req, res) => {
         const templatePath = path.join(__dirname, '..', 'utils', 'passwordRecovery.hbs');
         const recuperarContrasenaTemplate = fs.readFileSync(templatePath, 'utf8');
         const template = handlebars.compile(recuperarContrasenaTemplate);
-        const resetURL = `https://back-barrios-462cb6c76674.herokuapp.com/auth/newPassword/${resetToken}`;
+        const resetURL = `http://localhost:5000/auth/newPassword/${resetToken}`;
         const recuperarContrasenaContent = template({
             nombreCompleto: user.nombreCompleto,
             resetURL: resetURL,
