@@ -118,7 +118,7 @@ const transportSendGrid = {
 
         pass: passMailer,
 
- 
+
 
     }
 
@@ -191,7 +191,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
         console.log("--------- ", mailOptions);
         console.log(transportSendGrid)
         //  await transporter.sendMail(mailOptions, function (err, msg) {
-            
+
         //  });
 
 
@@ -204,8 +204,8 @@ router.post('/', upload.single('photo'), async (req, res) => {
                 }
             })
         });
-        console.log( "--- ", email)
-//return; 
+        console.log("--- ", email)
+        //return; 
 
         //await transporter.sendMail(mailOptions);
         const savedUser = await user.save();
@@ -220,10 +220,10 @@ router.post('/', upload.single('photo'), async (req, res) => {
         await User.deleteOne({ email: req.body.email });
     }
 
-    return; 
+    return;
 });
 module.exports = router;
 
 
- 
+
 ///////////////////////

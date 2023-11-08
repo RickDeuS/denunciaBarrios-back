@@ -30,7 +30,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Importar rutas
-const authRoutes = require('./src/Routes/ authRoutes');
+const AuthRoutes = require('./src/Routes/authRoutes');
 const homeRoutes = require('./src/Routes/homeRoutes');
 const denunciaRoutes = require('./src/Routes/denunciaRoutes');
 const adminRoutes = require('./src/Routes/adminRoutes');
@@ -38,7 +38,7 @@ const verifyToken = require('./src/Middleware/validate-token');
 const verifyAdminToken = require('./src/Middleware/verifyAdminToken');
 
 // Ruta de autenticación
-app.use('/auth', authRoutes);
+app.use('/auth', AuthRoutes);
 app.use('/admin', adminRoutes);
 
 // Middleware para verificar el token en las rutas protegidas
