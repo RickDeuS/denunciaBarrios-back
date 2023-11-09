@@ -7,8 +7,8 @@ const Joi = require('@hapi/joi');
 /**
  * @swagger
  * tags:
- *   name: Usuarios
- *   description: Endpoints para usuarios
+ *   name: Auth
+ *   description: Endpoints para la autenticación y recuperación de contraseña.
  */
 
 
