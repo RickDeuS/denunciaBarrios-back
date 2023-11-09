@@ -4,6 +4,14 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Joi = require('@hapi/joi');
 
+/**
+ * @swagger
+ * tags:
+ *   name: Usuarios
+ *   description: Endpoints para usuarios
+ */
+
+
 
 /**
  * @swagger
