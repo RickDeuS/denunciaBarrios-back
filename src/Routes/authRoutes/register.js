@@ -10,17 +10,6 @@ const handlebars = require('handlebars');
 const path = require('path');
 const schemaRegister = require('./schemaRegister');
 
-// Configuración Cloudinary
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME,
-    api_key: process.env.CLOUDINARY_APIKEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-    secure: true,
-});
-// Configuración Multer
-const storage = multer.diskStorage({});
-const upload = multer({ storage });
-// Validación de datos
 /**
  * @swagger
  * tags:
@@ -31,6 +20,8 @@ const upload = multer({ storage });
 
 
 /**
+ * @swagger
+ *  /auth/register:
  *   post:
  *     summary: Registrar un nuevo usuario
  *     tags: [Auth]
@@ -101,6 +92,18 @@ const upload = multer({ storage });
  *                 error:
  *                   type: string
  */
+
+// Configuración Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_APIKEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true,
+});
+// Configuración Multer
+const storage = multer.diskStorage({});
+const upload = multer({ storage });
+// Validación de datos
 const userMailer = process.env.USER_MAILER;
 const passMailer = process.env.PASS_MAILER;
 

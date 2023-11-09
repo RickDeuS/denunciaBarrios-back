@@ -1,6 +1,6 @@
 const express = require('express');
 const routes = require('express').Router();
-const registerRoutes = require('./AuthRoutes/registerRoute');
+const registerRoutes = require('./AuthRoutes/register');
 const loginRoutes = require('./AuthRoutes/login');
 const verifyUserRoutes = require('./AuthRoutes/verifyUser');
 const newPasswordRoutes = require('./AuthRoutes/newPassword');
