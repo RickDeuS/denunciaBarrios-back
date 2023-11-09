@@ -10,6 +10,8 @@ const jwt = require('jsonwebtoken');
  *   description: Endpoints para la autenticación y recuperación de contraseña.
  */
 
+
+
 /**
  * @swagger
  * /auth/newPassword:

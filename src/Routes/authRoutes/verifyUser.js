@@ -5,8 +5,10 @@ const User = require('../../Models/user');
  * @swagger
  * tags:
  *   name: Auth
- *   description: Endpoints para la autenticación y verificación de usuarios.
+ *   description: Endpoints para la autenticación y recuperación de contraseña.
  */
+
+
 
 /**
  * @swagger

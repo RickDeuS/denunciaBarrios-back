@@ -22,12 +22,13 @@ const storage = multer.diskStorage({});
 const upload = multer({ storage });
 // Validación de datos
 /**
-/**
  * @swagger
  * tags:
  *   name: Auth
  *   description: Endpoints para la autenticación y recuperación de contraseña.
  */
+
+
 
 /**
  *   post:

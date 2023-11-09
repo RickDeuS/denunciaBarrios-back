@@ -14,6 +14,8 @@ const nodemailer = require('nodemailer');
  *   description: Endpoints para la autenticación y recuperación de contraseña.
  */
 
+
+
 /**
  * @swagger
  * /auth/passwordRecovery:
