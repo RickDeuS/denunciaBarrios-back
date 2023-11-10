@@ -219,7 +219,6 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
                     usuario.numDenunciasRealizadas += 1;
                     await usuario.save();
 
-                    // Actualizar el último tiempo de denuncia para el usuario actual
                     lastDenunciaTimes[usuarioId] = now;
 
                     console.log("Denuncia creada exitosamente.");
@@ -230,7 +229,6 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
                 }
             } catch (error) {
                 console.error("Error al subir la imagen a Cloudinary:", error);
-                // Aquí podrías manejar el error de manera apropiada, si es necesario
             }
         }
     } catch (error) {

@@ -162,7 +162,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         const verificationToken = generateVerificationToken();
-        console.log("este es el token que se genera 1: ", verificationToken);
+        console.log("Verification Token: ", verificationToken);
         const user = new User({
             nombreCompleto: req.body.nombreCompleto,
             cedula: req.body.cedula,
