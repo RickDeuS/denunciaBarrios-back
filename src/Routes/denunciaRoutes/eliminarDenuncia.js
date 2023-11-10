@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const Denuncia = require('../../Models/denuncia');
 const Joi = require('@hapi/joi');
-const User =  require('../../Models/user');
+const User = require('../../Models/user');
 const verifyToken = require('../../Middleware/validate-token');
 
 /**
@@ -72,9 +72,9 @@ router.delete('/:_id', verifyToken, async (req, res) => {
             return res.status(404).json({ error: 'Denuncia no encontrada.' });
         }
 
-        // const usuario = await User.findById(idUsuario);
-        // usuario.numDenunciasRealizadas = usuario.numDenunciasRealizadas - 1;
-        // await usuario.save();
+        const usuario = await User.findById(idUsuario);
+        usuario.numDenunciasRealizadas = usuario.numDenunciasRealizadas - 1;
+        await usuario.save();
 
         return res.status(200).json({ message: 'Denuncia eliminada exitosamente.' });
     } catch (error) {

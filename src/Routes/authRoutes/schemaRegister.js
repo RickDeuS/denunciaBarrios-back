@@ -62,7 +62,6 @@ const schemaRegister = Joi.object({
     .required()
     .regex(/^[a-zA-Z0-9]{3,30}$/)
     .messages({
-      'string.base': 'La contraseña debe ser una cadena',
       'string.empty': 'La contraseña no debe estar vacía',
       'string.min': 'La contraseña debe tener al menos {#limit} caracteres',
       'any.required': 'La contraseña es un campo obligatorio',

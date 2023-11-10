@@ -53,8 +53,8 @@ const Joi = require('@hapi/joi');
 // Ruta para obtener todas las denuncias realizadas por el usuario autenticado.
 router.get('/', async (req, res) => {
     try {
-        const usuarioId = '64c5688cfb56baad04c3ad58';
-        // const usuarioId = req.user._id;
+        // const usuarioId = '64c5688cfb56baad04c3ad58';
+        const usuarioId = req.user._id;
 
         const usuario = await User.findById(usuarioId);
         if (!usuario) {

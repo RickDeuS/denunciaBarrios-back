@@ -85,11 +85,16 @@ const jwt = require('jsonwebtoken');
 
 //NUEVA CONTRASEÑA DE USUARIO 
 
-router.post('/', async (req, res) => {
+// router.post('/:resetToken', async (req, res) => {
+    router.post('/', async (req, res) => {
+
     try {
+        // const resetToken = req.params.resetToken;
+        // const newPassword = req.body;
         const { resetToken, newPassword } = req.body;
         const decodedToken = jwt.verify(resetToken, process.env.RESET_TOKEN_SECRET);
-        const user = await User.findById(decodedToken.userId);
+        const userId = decodedToken.id;
+        const user = await User.findById(userId);
 
         if (!user) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -111,8 +116,8 @@ router.post('/', async (req, res) => {
             message: 'Cambio de contraseña exitoso',
         });
     } catch (error) {
+        console.error("Error:", error.message);
         res.status(500).json({ error: 'Error al restablecer la contraseña' });
-        console.log("Error:", error);
     }
 });
 

@@ -193,7 +193,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
             from: userMailer,
             to: req.body.email,
             subject: 'Verificación de cuenta',
-            html: "<h1>HOLI </h1>",
+            html: verificationEmailContent,
         };
         console.log("--------- ", mailOptions);
         console.log(transportSendGrid)
