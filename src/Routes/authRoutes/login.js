@@ -97,6 +97,7 @@ router.post('/', async (req, res) => {
         },
         process.env.TOKEN_SECRET
     );
+    console.log("Usuario Logueado")
     res.json({
         error: null,
         data: { token },
