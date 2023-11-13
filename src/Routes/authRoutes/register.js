@@ -94,15 +94,15 @@ const schemaRegister = require('./schemaRegister');
  */
 
 // Configuración Cloudinary
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME,
-    api_key: process.env.CLOUDINARY_APIKEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-    secure: true,
-});
-// Configuración Multer
-const storage = multer.diskStorage({});
-const upload = multer({ storage });
+// cloudinary.config({
+//     cloud_name: process.env.CLOUDINARY_NAME,
+//     api_key: process.env.CLOUDINARY_APIKEY,
+//     api_secret: process.env.CLOUDINARY_API_SECRET,
+//     secure: true,
+// });
+// // Configuración Multer
+// const storage = multer.diskStorage({});
+// const upload = multer({ storage });
 // Validación de datos
 const userMailer = process.env.USER_MAILER;
 const passMailer = process.env.PASS_MAILER;
@@ -135,7 +135,7 @@ const transportSendGrid = {
 var transporter = nodemailer.createTransport(transportSendGrid);
 
 
-router.post('/', upload.single('photo'), async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         // Validar usuario
         const { error } = schemaRegister.validate(req.body);
@@ -169,15 +169,15 @@ router.post('/', upload.single('photo'), async (req, res) => {
             numTelefono: req.body.numTelefono,
             email: req.body.email,
             password: hashedPassword,
-            photo: '',
+            // photo: '',
             verificationToken,
             isVerified: false,
         });
-        if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path, { folder: 'profile_photos' });
-            user.photo = result.secure_url;
-            console.log("Imagen subida a Cloudinary");
-        }
+        // if (req.file) {
+        //     const result = await cloudinary.uploader.upload(req.file.path, { folder: 'profile_photos' });
+        //     user.photo = result.secure_url;
+        //     console.log("Imagen subida a Cloudinary");
+        // }
         // Enviar el correo electrónico de verificación
         const verificationURL = `https://como-va-mi-barrio-a1bd81410089.herokuapp.com/verificarCuenta/${verificationToken}`;
         console.log("URL de verificación:", verificationURL);
