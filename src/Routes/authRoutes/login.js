@@ -99,7 +99,11 @@ router.post('/', async (req, res) => {
     );
     res.json({
         error: null,
-        data: { token },
+        info: 'Inicio de sesión exitoso',
+        result:{
+            token: token,
+            user: user
+        }
     });
 });
 
