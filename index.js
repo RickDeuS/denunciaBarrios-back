@@ -42,8 +42,8 @@ app.use('/auth', AuthRoutes);
 app.use('/admin', adminRoutes);
 
 // Middleware para verificar el token en las rutas protegidas
-//app.use('/', verifyToken);
-//app.use('/denuncias', verifyToken);
+app.use('/', verifyToken);
+app.use('/denuncias', verifyToken);
 
 // Ruta por defecto
 app.get('/', (req, res) => {
