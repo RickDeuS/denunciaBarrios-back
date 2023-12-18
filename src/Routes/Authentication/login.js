@@ -102,7 +102,6 @@ router.post('/', async (req, res) => {
         info: 'Inicio de sesión exitoso',
         result:{
             token: token,
-            user: user
         }
     });
 });
