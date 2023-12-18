@@ -39,10 +39,10 @@ const verifyAdminToken = require('./src/Middleware/verifyAdminToken');
 
 // Ruta de autenticación
 app.use('/auth', AuthRoutes);
+app.use('/admin', verifyAdminToken);
 app.use('/admin', adminRoutes);
 
 // Middleware para verificar el token en las rutas protegidas
-app.use('/', verifyToken);
 app.use('/denuncias', verifyToken);
 
 // Ruta por defecto
@@ -53,7 +53,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// Ruta protegida /home
+// Ruta protegida 
 app.use('/denuncias', denunciaRoutes);
 
 // Configuración de Swagger
