@@ -9,6 +9,7 @@ const fs = require('fs');
 const handlebars = require('handlebars');
 const path = require('path');
 const schemaRegister = require('./schemaRegister');
+const { Resend } = require("resend");
 
 /**
  * @swagger
@@ -106,33 +107,24 @@ const schemaRegister = require('./schemaRegister');
 // Validación de datos
 const userMailer = process.env.USER_MAILER;
 const passMailer = process.env.PASS_MAILER;
+const resendApiKey = process.env.RESEND_API_KEY;
 
-
-
-const transportSendGrid = {
-
-    tls: { rejectUnauthorized: false },
-
-    host: "smtp.sendgrid.net",
-
-    port: 587,
-
-    secure: false,
-
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, 
     auth: {
-
-        user: "apikey",
-
+        user: userMailer,
         pass: passMailer,
+    },
+    tls: {
+        // do not fail on invalid certs
+        rejectUnauthorized: false,
+    },
+});
 
 
-
-    }
-
-}
-
-
-var transporter = nodemailer.createTransport(transportSendGrid);
 
 
 router.post('/', async (req, res) => {
@@ -196,7 +188,7 @@ router.post('/', async (req, res) => {
             html: verificationEmailContent,
         };
         console.log("--------- ", mailOptions);
-        console.log(transportSendGrid)
+        console.log(transporter)
         //  await transporter.sendMail(mailOptions, function (err, msg) {
 
         //  });
