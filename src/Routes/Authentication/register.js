@@ -1,8 +1,6 @@
 const router = require('express').Router();
 const User = require('../../Models/user');
 const bcrypt = require('bcrypt');
-const cloudinary = require('cloudinary').v2;
-const multer = require('multer');
 const nodemailer = require('nodemailer');
 const generateVerificationToken = require('../../utils/generateVerificationToken');
 const fs = require('fs');
@@ -154,7 +152,6 @@ router.post('/', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         const verificationToken = generateVerificationToken();
-        console.log("Verification Token: ", verificationToken);
         const user = new User({
             nombreCompleto: req.body.nombreCompleto,
             cedula: req.body.cedula,
@@ -172,7 +169,6 @@ router.post('/', async (req, res) => {
         // }
         // Enviar el correo electrónico de verificación
         const verificationURL = `https://como-va-mi-barrio-a1bd81410089.herokuapp.com/verificarCuenta/${verificationToken}`;
-        console.log("URL de verificación:", verificationURL);
         const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmail.hbs');
         const verificationEmailTemplate = fs.readFileSync(templatePath, 'utf8');
         const template = handlebars.compile(verificationEmailTemplate);
@@ -187,8 +183,6 @@ router.post('/', async (req, res) => {
             subject: 'Verificación de cuenta',
             html: verificationEmailContent,
         };
-        console.log("--------- ", mailOptions);
-        console.log(transporter)
         //  await transporter.sendMail(mailOptions, function (err, msg) {
 
         //  });
@@ -203,7 +197,6 @@ router.post('/', async (req, res) => {
                 }
             })
         });
-        console.log("--- ", email)
         //return; 
 
         //await transporter.sendMail(mailOptions);

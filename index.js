@@ -1,6 +1,5 @@
 const express = require('express');
 const connMongo = require('./src/Config/Database/configMongo');
-const bodyparser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const morgan = require('morgan');
 const swaggerJsdoc = require('swagger-jsdoc');
