@@ -11,8 +11,6 @@ const Joi = require('@hapi/joi');
  *   description: Endpoints para la autenticación y recuperación de contraseña.
  */
 
-
-
 /**
  * @swagger
  * /auth/login:
@@ -28,24 +26,34 @@ const Joi = require('@hapi/joi');
  *     responses:
  *       200:
  *         description: Usuario autenticado exitosamente
- *         headers:
- *           auth-token:
- *             schema:
- *               type: string
- *             description: Token de autenticación JWT
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/LoginResponse'
+ *               $ref: '#/components/schemas/StandardResponse'
  *       400:
- *         description: Error de validación, usuario no encontrado o contraseña no válida
+ *         description: Contraseña no válida
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Usuario bloqueado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 
 /**
@@ -64,46 +72,92 @@ const Joi = require('@hapi/joi');
  *           type: string
  *           minLength: 6
  *           maxLength: 1024
- *     LoginResponse:
+ *     StandardResponse:
  *       type: object
  *       properties:
- *         error:
- *           type: null
+ *         code:
+ *           type: integer
+ *         status:
+ *           type: string
+ *         message:
+ *           type: string
  *         data:
  *           type: object
  *           properties:
  *             token:
  *               type: string
+ *     ErrorResponse:
+ *       type: object
+ *       properties:
+ *         code:
+ *           type: integer
+ *         status:
+ *           type: string
+ *         message:
+ *           type: string
+ *         data:
+ *           type: object
  */
-;
+
 
 router.post('/', async (req, res) => {
-    // Validaciones
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) return res.status(400).json({ error: 'Usuario no encontrado' });
-
-    if (user.isBlocked === true) {
-        return res.status(401).json({ error: 'El usuario está bloqueado. No puede iniciar sesion' });
-    }
-
-    const validPassword = await bcrypt.compare(req.body.password, user.password);
-    if (!validPassword) return res.status(400).json({ error: 'Contraseña no válida' });
-
-    // Crear token JWT
-    const token = jwt.sign(
-        {
-            name: user.nombreCompleto,
-            id: user._id,
-        },
-        process.env.TOKEN_SECRET
-    );
-    res.json({
-        error: null,
-        info: 'Inicio de sesión exitoso',
-        result:{
-            token: token,
+    try {
+        // Validaciones
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) {
+            return res.status(404).json({ 
+                code: 404,
+                status: 'error',
+                message: 'Usuario no encontrado',
+                data: {} 
+            });
         }
-    });
+
+        if (user.isBlocked === true) {
+            return res.status(401).json({ 
+                code: 401,
+                status: 'error',
+                message: 'El usuario está bloqueado. No puede iniciar sesion',
+                data: {} 
+            });
+        }
+
+        const validPassword = await bcrypt.compare(req.body.password, user.password);
+        if (!validPassword) {
+            return res.status(400).json({ 
+                code: 400,
+                status: 'error',
+                message: 'Contraseña no válida',
+                data: {} 
+            });
+        }
+
+        // Crear token JWT
+        const token = jwt.sign(
+            {
+                name: user.nombreCompleto,
+                id: user._id,
+            },
+            process.env.TOKEN_SECRET
+        );
+
+        res.json({
+            code: 200,
+            status: 'success',
+            message: 'Inicio de sesión exitoso',
+            data: {
+                token: token,
+            }
+        });
+    } catch (error) {
+        // Manejo de errores inesperados
+        res.status(500).json({
+            code: 500,
+            status: 'error',
+            message: 'Error interno del servidor',
+            data: {} 
+        });
+    }
 });
 
 module.exports = router;

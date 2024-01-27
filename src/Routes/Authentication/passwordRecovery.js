@@ -6,16 +6,6 @@ const handlebars = require('handlebars');
 const path = require('path');
 const nodemailer = require('nodemailer');
 
-
-/**
- * @swagger
- * tags:
- *   name: Auth
- *   description: Endpoints para la autenticación y recuperación de contraseña.
- */
-
-
-
 /**
  * @swagger
  * /auth/passwordRecovery:
@@ -41,16 +31,43 @@ const nodemailer = require('nodemailer');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
- *                   type: null
+ *                 code:
+ *                   type: integer
+ *                 status:
+ *                   type: string
  *                 message:
  *                   type: string
- *                 token:
- *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     token:
+ *                       type: string
  *             example:
- *               error: null
+ *               code: 200
+ *               status: "success"
  *               message: "Se ha enviado un correo electrónico para restablecer la contraseña"
- *               token: "your_reset_token_here"
+ *               data:
+ *                 token: "your_reset_token_here"
+ *       400:
+ *         description: La cédula no puede estar vacía.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *             example:
+ *               code: 400
+ *               status: "error"
+ *               message: "La cédula no puede estar vacía"
+ *               data: {}
  *       404:
  *         description: Usuario no encontrado.
  *         content:
@@ -58,10 +75,19 @@ const nodemailer = require('nodemailer');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                 status:
  *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
  *             example:
- *               error: "Usuario no encontrado"
+ *               code: 404
+ *               status: "error"
+ *               message: "Usuario no encontrado"
+ *               data: {}
  *       500:
  *         description: Error al recuperar la contraseña.
  *         content:
@@ -69,11 +95,21 @@ const nodemailer = require('nodemailer');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                 status:
  *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
  *             example:
- *               error: "Error al recuperar la contraseña"
+ *               code: 500
+ *               status: "error"
+ *               message: "Error al recuperar la contraseña"
+ *               data: {}
  */
+
 
 //RECUPERAR CONTRASEÑA DE USUARIO
 
@@ -107,33 +143,33 @@ router.post('/', async (req, res) => {
     try {
         const { cedula } = req.body;
 
-        if(!cedula){
-            return res.status(400).json({ error: 'La cédula no puede estar vacía' });
+        if (!cedula) {
+            return res.status(400).json({
+                code: 400,
+                status: 'error',
+                message: 'La cédula no puede estar vacía',
+                data: {}
+            });
         }
-        
 
         // Buscar al usuario por la cédula
         const user = await User.findOne({ cedula });
-        const userId = user._id;
-
         if (!user) {
-            return res.status(404).json({ error: 'Usuario no encontrado' });
+            return res.status(404).json({
+                code: 404,
+                status: 'error',
+                message: 'Usuario no encontrado',
+                data: {}
+            });
         }
-        
 
         // Generar un token de restablecimiento 
-        const resetToken = jwt.sign(
-            {
-                id: userId,
-            },
-            process.env.RESET_TOKEN_SECRET,
-        );
-
+        const resetToken = jwt.sign({ id: user._id }, process.env.RESET_TOKEN_SECRET);
         user.resetToken = resetToken;
         await user.save();
 
         // Enviar correo electrónico de recuperación de contraseña
-        const templatePath = path.join(__dirname, '..','..', 'utils', 'passwordRecovery.hbs');
+        const templatePath = path.join(__dirname, '..', '..', 'utils', 'passwordRecovery.hbs');
         const recuperarContrasenaTemplate = fs.readFileSync(templatePath, 'utf8');
         const template = handlebars.compile(recuperarContrasenaTemplate);
         const resetURL = `${process.env.FRONTEND_URL}/auth/newPassword/${resetToken}`;
@@ -149,27 +185,32 @@ router.post('/', async (req, res) => {
             html: recuperarContrasenaContent,
         };
 
-        const email = await new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
             transporter.sendMail(mailOptions, function (err, info) {
                 if (err) {
-                    resolve(err);
+                    reject(err);
                 } else {
                     resolve(info);
                 }
-            })
+            });
         });
-
-        console.log("--------- ", mailOptions);
-        console.log(transportSendGrid)
 
         res.json({
-            error: null,
+            code: 200,
+            status: 'success',
             message: 'Se ha enviado un correo electrónico para restablecer la contraseña',
-            token: resetToken,
+            data: {
+                token: resetToken,
+            }
         });
     } catch (error) {
-        res.status(500).json({ error: 'Error al recuperar la contraseña' });
-        console.log("Error:", error);
+        console.error("Error:", error);
+        res.status(500).json({
+            code: 500,
+            status: 'error',
+            message: 'Error al recuperar la contraseña',
+            data: {}
+        });
     }
 });
 

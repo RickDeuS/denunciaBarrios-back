@@ -25,9 +25,18 @@ const Joi = require('@hapi/joi');
  *           content:
  *             application/json:
  *               schema:
- *                 type: array
- *                 items:
- *                   $ref: '#/components/schemas/Denuncia'
+ *                 type: object
+ *                 properties:
+ *                   code:
+ *                     type: integer
+ *                   status:
+ *                     type: string
+ *                   message:
+ *                     type: string
+ *                   data:
+ *                     type: array
+ *                     items:
+ *                       $ref: '#/components/schemas/Denuncia'
  *         404:
  *           description: Usuario no encontrado o el usuario no ha presentado denuncias.
  *           content:
@@ -35,9 +44,14 @@ const Joi = require('@hapi/joi');
  *               schema:
  *                 type: object
  *                 properties:
- *                   error:
+ *                   code:
+ *                     type: integer
+ *                   status:
  *                     type: string
- *                     example: Usuario no encontrado.
+ *                   message:
+ *                     type: string
+ *                   data:
+ *                     type: object
  *         500:
  *           description: Error del servidor al obtener las denuncias.
  *           content:
@@ -45,37 +59,57 @@ const Joi = require('@hapi/joi');
  *               schema:
  *                 type: object
  *                 properties:
- *                   error:
+ *                   code:
+ *                     type: integer
+ *                   status:
  *                     type: string
- *                     example: Error del servidor al obtener las denuncias.
+ *                   message:
+ *                     type: string
+ *                   data:
+ *                     type: object
  */
 
+
 // Ruta para obtener todas las denuncias realizadas por el usuario autenticado.
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     try {
-        // const usuarioId = '64c5688cfb56baad04c3ad58';
         const usuarioId = req.user._id;
 
         const usuario = await User.findById(usuarioId);
         if (!usuario) {
-            return res.status(404).json({ error: 'Usuario no encontrado.' });
+            return res.status(404).json({
+                code: 404,
+                status: 'error',
+                message: 'Usuario no encontrado',
+                data: {}
+            });
         }
 
-        const denuncias = await Denuncia.find({
-            idDenunciante: usuarioId,
-            isDeleted: false,
-        });
-
+        const denuncias = await Denuncia.find({ idDenunciante: usuarioId, isDeleted: false });
         if (denuncias.length === 0) {
-            return res.status(200).json({ message: 'El usuario no ha presentado denuncias.' });
+            return res.json({
+                code: 200,
+                status: 'success',
+                message: 'El usuario no ha presentado denuncias',
+                data: denuncias
+            });
         }
 
-        res.status(200).json(denuncias);
+        res.json({
+            code: 200,
+            status: 'success',
+            message: 'Denuncias obtenidas correctamente',
+            data: denuncias
+        });
     } catch (error) {
         console.error('Error al obtener las denuncias:', error);
-        res.status(500).json({ error: 'Error del servidor al obtener las denuncias.' });
+        res.status(500).json({
+            code: 500,
+            status: 'error',
+            message: 'Error del servidor al obtener las denuncias',
+            data: {}
+        });
     }
 });
 
 module.exports = router;
-

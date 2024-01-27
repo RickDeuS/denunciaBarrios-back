@@ -38,9 +38,14 @@ const verifyToken = require('../../Middleware/validate-token');
  *             schema:
  *               type: object
  *               properties:
+ *                 code:
+ *                   type: integer
+ *                 status:
+ *                   type: string
  *                 message:
  *                   type: string
- *                   example: Denuncia marcada como eliminada.
+ *                 data:
+ *                   type: object
  *       400:
  *         description: Error en la solicitud del cliente.
  *         content:
@@ -48,9 +53,14 @@ const verifyToken = require('../../Middleware/validate-token');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                 status:
  *                   type: string
- *                   example: Datos de entrada inválidos.
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
  *       404:
  *         description: Denuncia no encontrada.
  *         content:
@@ -58,9 +68,14 @@ const verifyToken = require('../../Middleware/validate-token');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                 status:
  *                   type: string
- *                   example: Denuncia no encontrada.
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
  *       500:
  *         description: Error del servidor al marcar la denuncia como eliminada.
  *         content:
@@ -68,14 +83,20 @@ const verifyToken = require('../../Middleware/validate-token');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                 status:
  *                   type: string
- *                   example: Error del servidor al marcar la denuncia como eliminada.
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
  */
 
-router.post('/eliminarDenuncia', verifyToken, async (req, res) => {
+
+router.post('/', verifyToken, async (req, res) => {
     const idUsuario = req.user._id;
-    const { denunciaId } = req.body; // Obtener el ID de la denuncia desde el cuerpo de la solicitud
+    const { denunciaId } = req.body;
 
     // Validación Joi (opcional)
     const schema = Joi.object({
@@ -84,28 +105,45 @@ router.post('/eliminarDenuncia', verifyToken, async (req, res) => {
 
     const { error } = schema.validate({ denunciaId });
     if (error) {
-        return res.status(400).json({ error: error.details[0].message });
+        return res.status(400).json({
+            code: 400,
+            status: 'error',
+            message: error.details[0].message,
+            data: {}
+        });
     }
 
     try {
-        // Actualizar la denuncia marcándola como eliminada
         const denunciaActualizada = await Denuncia.findByIdAndUpdate(denunciaId, { isDeleted: true }, { new: true });
-
         if (!denunciaActualizada) {
-            return res.status(404).json({ error: 'Denuncia no encontrada.' });
+            return res.status(404).json({
+                code: 404,
+                status: 'error',
+                message: 'Denuncia no encontrada',
+                data: {}
+            });
         }
 
-        // Opcional: Actualizar el contador de denuncias del usuario
         const usuario = await User.findById(idUsuario);
         if (usuario) {
             usuario.numDenunciasRealizadas = usuario.numDenunciasRealizadas - 1;
             await usuario.save();
         }
 
-        return res.status(200).json({ message: 'Denuncia marcada como eliminada.' });
+        return res.status(200).json({
+            code: 200,
+            status: 'success',
+            message: 'Denuncia marcada como eliminada',
+            data: {}
+        });
     } catch (error) {
         console.error('Error al marcar la denuncia como eliminada:', error);
-        return res.status(500).json({ error: 'Error del servidor al marcar la denuncia como eliminada.' });
+        return res.status(500).json({
+            code: 500,
+            status: 'error',
+            message: 'Error del servidor al marcar la denuncia como eliminada',
+            data: {}
+        });
     }
 });
 

@@ -8,6 +8,9 @@ const verifyToken = require('../../Middleware/validate-token');
 const fs = require('fs');
 const path = require('path');
 
+const multer = require('multer');
+const upload = multer();
+
 /**
  * @swagger
  * tags:
@@ -83,9 +86,14 @@ const path = require('path');
  *             schema:
  *               type: object
  *               properties:
+ *                 code:
+ *                   type: integer
+ *                 status:
+ *                   type: string
  *                 message:
  *                   type: string
- *                   example: Denuncia creada exitosamente.
+ *                 data:
+ *                   $ref: '#/components/schemas/Denuncia'
  *       400:
  *         description: Error en la solicitud del cliente o ya has presentado una denuncia con el mismo título.
  *         content:
@@ -93,9 +101,14 @@ const path = require('path');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                 status:
  *                   type: string
- *                   example: Ya has presentado una denuncia con el mismo título.
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
  *       401:
  *         description: No se proporcionó un token de autenticación válido.
  *         content:
@@ -103,9 +116,14 @@ const path = require('path');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                 status:
  *                   type: string
- *                   example: Acceso no autorizado.
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
  *       404:
  *         description: No se encontró el usuario en la base de datos.
  *         content:
@@ -113,9 +131,14 @@ const path = require('path');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                 status:
  *                   type: string
- *                   example: Usuario no encontrado.
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
  *       500:
  *         description: Error del servidor al crear la denuncia.
  *         content:
@@ -123,9 +146,14 @@ const path = require('path');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                 status:
  *                   type: string
- *                   example: Error del servidor al crear la denuncia.
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
  */
 
 
@@ -136,14 +164,10 @@ cloudinary.config({
     secure: true,
 });
 
-const lastDenunciaTimes = {};
-const multer = require('multer');
-const upload = multer();
 
 // NUEVA DENUNCIA    
-router.post('/', upload.single('evidencia'), async (req, res) => {
+router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
     try {
-        console.log("Entrando a la ruta '/denuncia/nuevaDenuncia'");
         const usuarioId = req.user.id;
 
         const schema = Joi.object({
@@ -155,33 +179,24 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
                 'Movilidad Urbana: Bacheo de Calles, Frecuencias, Obstrucciones de aceras, etc.',
                 'Obstrucción de vías por construcciones, ornato, permisos de construcción'
             ).required(),
-            evidencia: Joi.string(),
-            ubicacion: Joi.string().required(),
-        });
-        console.log(schema.ubicacion);
-
-        const { error, value } = schema.validate(req.body, {
-            stripUnknown: true,
+            ubicacion: Joi.required(),
         });
 
+        const { error, value } = schema.validate(req.body, { stripUnknown: true });
         if (error) {
-            console.log("Error en la validación del cuerpo de la solicitud:", error.details[0].message);
-            return res.status(400).json({ error: error.details[0].message });
+            return res.status(400).json({
+                code: 400,
+                status: 'error',
+                message: error.details[0].message,
+                data: {}
+            });
         }
 
-        const now = Date.now();
-        const lastDenunciaTime = lastDenunciaTimes[usuarioId];
-        if (lastDenunciaTime && now - lastDenunciaTime < 15 * 60 * 1000) {
-            console.log("El usuario intentó presentar otra denuncia en menos de 15 minutos.");
-            return res.status(403).json({ error: 'Debes esperar al menos 15 minutos antes de presentar otra denuncia.' });
-        }
-
-        const nombreDenunciante = await User.findById(usuarioId).select('nombreCompleto');
-
+        const nombreDenunciante = (await User.findById(usuarioId).select('nombreCompleto')).nombreCompleto;
         const nuevaDenuncia = new Denuncia({
             tituloDenuncia: value.tituloDenuncia,
             idDenunciante: usuarioId,
-            nombreDenunciante: nombreDenunciante.nombreCompleto,
+            nombreDenunciante: nombreDenunciante,
             descripcion: value.descripcion,
             categoria: value.categoria,
             evidencia: '',
@@ -189,54 +204,47 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
             estado: 'En revisión',
         });
 
-        console.log(" aqui llega ", nuevaDenuncia.ubicacion);
-
         if (req.file) {
-            try {
-                const tempFileName = `temp_${Date.now()}.png`;
-                const tempDir = path.join(__dirname, '..', 'temp');
-                const tempFilePath = path.join(tempDir, tempFileName);
+            const tempFileName = `temp_${Date.now()}.png`;
+            const tempDir = path.join(__dirname, '..', 'temp');
+            const tempFilePath = path.join(tempDir, tempFileName);
 
-                if (!fs.existsSync(tempDir)) {
-                    fs.mkdirSync(tempDir);
-                }
-
-                fs.writeFileSync(tempFilePath, req.file.buffer);
-                const publicId = `evidencia_${nuevaDenuncia._id}`;
-                const result = await cloudinary.uploader.upload(tempFilePath, {
-                    folder: 'denuncia_photos',
-                    public_id: publicId,
-                });
-
-                nuevaDenuncia.evidencia = result.secure_url;
-                console.log('AQUI ESTA EL URL DE IMAGEN', nuevaDenuncia.evidencia);
-
-                fs.unlinkSync(tempFilePath);
-
-                try {
-                    console.log("Creando denuncia...", nuevaDenuncia);
-                    await nuevaDenuncia.save();
-
-                    const usuario = await User.findById(usuarioId);
-                    usuario.Denuncias.push(nuevaDenuncia);
-                    usuario.numDenunciasRealizadas += 1;
-                    await usuario.save();
-
-                    lastDenunciaTimes[usuarioId] = now;
-
-                    console.log("Denuncia creada exitosamente.");
-                    return res.status(201).json({ message: 'Denuncia creada exitosamente.' });
-                } catch (error) {
-                    console.error('Error al crear la denuncia:', error);
-                    return res.status(500).json({ error: 'Error del servidor al crear la denuncia.' });
-                }
-            } catch (error) {
-                console.error("Error al subir la imagen a Cloudinary:", error);
+            if (!fs.existsSync(tempDir)) {
+                fs.mkdirSync(tempDir);
             }
+
+            fs.writeFileSync(tempFilePath, req.file.buffer);
+            const publicId = `evidencia_${nuevaDenuncia._id}`;
+            const result = await cloudinary.uploader.upload(tempFilePath, {
+                folder: 'denuncia_photos',
+                public_id: publicId,
+            });
+
+            nuevaDenuncia.evidencia = result.secure_url;
+            fs.unlinkSync(tempFilePath);
         }
+
+        await nuevaDenuncia.save();
+
+        const usuario = await User.findById(usuarioId);
+        usuario.Denuncias.push(nuevaDenuncia);
+        usuario.numDenunciasRealizadas += 1;
+        await usuario.save();
+
+        res.status(201).json({
+            code: 201,
+            status: 'success',
+            message: 'Denuncia creada exitosamente',
+            data: nuevaDenuncia
+        });
     } catch (error) {
         console.error('Error en la ruta /denuncia/nuevaDenuncia:', error);
-        return res.status(500).json({ error: 'Error en el servidor.' });
+        res.status(500).json({
+            code: 500,
+            status: 'error',
+            message: 'Error en el servidor',
+            data: {}
+        });
     }
 });
 
