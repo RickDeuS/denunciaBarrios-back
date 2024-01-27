@@ -33,7 +33,12 @@ const denunciaSchema = new mongoose.Schema(
     },
     categoria: {
       type: String,
-      enum: ['Seguridad', 'Infraestructura', 'Contaminacion', 'Ruido', 'Otro'],
+      enum: [
+        'Agua Potable, Alcantarillado Sanitario, Alcantarillado Pluvial', 
+        'Recolección de Desechos y Saneamiento Ambiental', 
+        'Movilidad Urbana: Bacheo de Calles, Frecuencias, Obstrucciones de aceras, etc.', 
+        'Obstrucción de vías por construcciones, ornato, permisos de construcción'
+      ],
       required: true
     },
     estado: {

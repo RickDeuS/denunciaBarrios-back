@@ -62,7 +62,13 @@ const path = require('path');
  *               categoria:
  *                 type: string
  *                 description: Categoría de la denuncia.
- *                 example: Contaminacion
+ *                 enum: [
+ *                   'Agua Potable, Alcantarillado Sanitario, Alcantarillado Pluvial', 
+ *                   'Recolección de Desechos y Saneamiento Ambiental', 
+ *                   'Movilidad Urbana: Bacheo de Calles, Frecuencias, Obstrucciones de aceras, etc.', 
+ *                   'Obstrucción de vías por construcciones, ornato, permisos de construcción'
+ *                 ]
+ *                 example: Agua Potable
  *             required:
  *               - tituloDenuncia
  *               - descripcion
@@ -143,7 +149,12 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
         const schema = Joi.object({
             tituloDenuncia: Joi.string().required().trim(),
             descripcion: Joi.string().required().trim(),
-            categoria: Joi.string().valid('Seguridad', 'Infraestructura', 'Contaminacion', 'Ruido', 'Otro').required(),
+            categoria: Joi.string().valid(
+                'Agua Potable, Alcantarillado Sanitario, Alcantarillado Pluvial',
+                'Recolección de Desechos y Saneamiento Ambiental',
+                'Movilidad Urbana: Bacheo de Calles, Frecuencias, Obstrucciones de aceras, etc.',
+                'Obstrucción de vías por construcciones, ornato, permisos de construcción'
+            ).required(),
             evidencia: Joi.string(),
             ubicacion: Joi.string().required(),
         });
@@ -173,7 +184,7 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
             nombreDenunciante: nombreDenunciante.nombreCompleto,
             descripcion: value.descripcion,
             categoria: value.categoria,
-            evidencia:'',
+            evidencia: '',
             ubicacion: value.ubicacion,
             estado: 'En revisión',
         });
@@ -182,14 +193,14 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
 
         if (req.file) {
             try {
-                const tempFileName = `temp_${Date.now()}.png`; 
+                const tempFileName = `temp_${Date.now()}.png`;
                 const tempDir = path.join(__dirname, '..', 'temp');
                 const tempFilePath = path.join(tempDir, tempFileName);
-        
+
                 if (!fs.existsSync(tempDir)) {
                     fs.mkdirSync(tempDir);
                 }
-        
+
                 fs.writeFileSync(tempFilePath, req.file.buffer);
                 const publicId = `evidencia_${nuevaDenuncia._id}`;
                 const result = await cloudinary.uploader.upload(tempFilePath, {
