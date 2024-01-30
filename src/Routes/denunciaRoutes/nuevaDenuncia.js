@@ -166,7 +166,7 @@ cloudinary.config({
 
 
 // NUEVA DENUNCIA    
-router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
+router.post('/', upload.single('evidencia'), async (req, res) => {
     try {
         const usuarioId = req.user.id;
 
