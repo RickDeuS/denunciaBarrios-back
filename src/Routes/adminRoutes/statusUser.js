@@ -1,20 +1,18 @@
 const router = require('express').Router();
-const Denuncia = require('../../Models/denuncia');
+const User = require('../../Models/user');
 const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 
 /**
  * @swagger
  * tags:
- *   name: Administrador
- *   description: Endpoints para administradores
- */
-
-/**
- * @swagger
- * /admin/deleteDenuncia:
+ *   - name: Administrador
+ *     description: Endpoints para administradores
+ * 
+ * /admin/statusUser:
  *   post:
- *     summary: Eliminar una denuncia por su ID mediante un método POST.
- *     tags: [Administrador]
+ *     summary: Bloquear o desbloquear una cuenta de usuario por su ID.
+ *     tags:
+ *       - Administrador
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -24,13 +22,18 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *           schema:
  *             type: object
  *             properties:
- *               id:
+ *               _id:
  *                 type: string
- *                 description: ID de la denuncia a eliminar.
- *                 example: 6123456789abcdef12345678
+ *                 description: ID del usuario a bloquear o desbloquear.
+ *               status:
+ *                 type: string
+ *                 description: Estado deseado para la cuenta del usuario ('block' o 'unblock').
+ *             example:
+ *               _id: "123456789"
+ *               status: "block"
  *     responses:
  *       200:
- *         description: Denuncia eliminada exitosamente.
+ *         description: Estado de la cuenta de usuario actualizado correctamente.
  *         content:
  *           application/json:
  *             schema:
@@ -44,27 +47,14 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   example: "success"
  *                 message:
  *                   type: string
- *                   example: "Denuncia eliminada exitosamente."
+ *                   example: "Cuenta de usuario bloqueada/desbloqueada correctamente."
  *                 data:
  *                   type: object
- *       400:
- *         description: Solicitud incorrecta, denuncia no encontrada o ID no proporcionado.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 code:
- *                   type: integer
- *                   example: 400
- *                 status:
- *                   type: string
- *                   example: "error"
- *                 message:
- *                   type: string
- *                   example: "Denuncia no encontrada o ID no proporcionado."
- *                 data:
- *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     isBlocked:
+ *                       type: boolean
  *       401:
  *         description: No se proporcionó un token de autenticación válido.
  *         content:
@@ -83,8 +73,26 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   example: "Acceso no autorizado."
  *                 data:
  *                   type: object
+ *       404:
+ *         description: Usuario no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 404
+ *                 status:
+ *                   type: string
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Usuario no encontrado."
+ *                 data:
+ *                   type: object
  *       500:
- *         description: Error del servidor al eliminar la denuncia.
+ *         description: Error del servidor al actualizar el estado de la cuenta de usuario.
  *         content:
  *           application/json:
  *             schema:
@@ -98,47 +106,50 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   example: "error"
  *                 message:
  *                   type: string
- *                   example: "Error del servidor al eliminar la denuncia."
+ *                   example: "Error del servidor al actualizar el estado de la cuenta de usuario."
  *                 data:
  *                   type: object
  */
 
 router.post('/', verifyAdminToken, async (req, res) => {
     try {
-        const { id } = req.body; // Extraer el ID de la denuncia del cuerpo de la solicitud
+        const { _id, status } = req.body; // Recibir ID del usuario y estado deseado
 
-        if (!id) {
+        if (!_id || !status) {
             return res.status(400).json({
                 code: 400,
                 status: 'error',
-                message: 'Se debe proporcionar el ID de la denuncia.',
+                message: 'Se deben proporcionar el ID del usuario y el estado.',
                 data: {}
             });
         }
 
-        const denunciaEliminada = await Denuncia.findByIdAndRemove(id);
-
-        if (!denunciaEliminada) {
-            return res.status(400).json({
-                code: 400,
+        const usuario = await User.findById(_id);
+        if (!usuario) {
+            return res.status(404).json({
+                code: 404,
                 status: 'error',
-                message: 'Denuncia no encontrada.',
+                message: 'Usuario no encontrado.',
                 data: {}
             });
         }
+
+        // Actualizar el estado de bloqueo del usuario según el estado proporcionado
+        usuario.isBlocked = status === 'block';
+        await usuario.save();
 
         return res.status(200).json({
             code: 200,
             status: 'success',
-            message: 'Denuncia eliminada exitosamente.',
-            data: {}
+            message: status === 'block' ? 'Cuenta de usuario bloqueada correctamente.' : 'Cuenta de usuario desbloqueada correctamente.',
+            data: { _id: usuario._id, isBlocked: usuario.isBlocked }
         });
     } catch (error) {
-        console.error('Error al eliminar la denuncia:', error);
+        console.error('Error al actualizar el estado de la cuenta de usuario:', error);
         return res.status(500).json({
             code: 500,
             status: 'error',
-            message: 'Error del servidor al eliminar la denuncia.',
+            message: 'Error del servidor al actualizar el estado de la cuenta de usuario.',
             data: {}
         });
     }

@@ -6,16 +6,14 @@ const jwt = require('jsonwebtoken');
 /**
  * @swagger
  * tags:
- *   name: Administrador
- *   description: Endpoints para administradores
- */
-
-/**
- * @swagger
+ *   - name: Administrador
+ *     description: Endpoints para administradores
+ * 
  * /admin/loginAdmin:
  *   post:
  *     summary: Inicia sesión como administrador.
- *     tags: [Administrador]
+ *     tags:
+ *       - Administrador
  *     requestBody:
  *       required: true
  *       content:
@@ -42,9 +40,21 @@ const jwt = require('jsonwebtoken');
  *             schema:
  *               type: object
  *               properties:
- *                 token:
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 status:
  *                   type: string
- *                   description: Token de autenticación del administrador.
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Inicio de sesión exitoso."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     token:
+ *                       type: string
+ *                       description: Token de autenticación del administrador.
  *       401:
  *         description: Credenciales inválidas.
  *         content:
@@ -52,9 +62,17 @@ const jwt = require('jsonwebtoken');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                   example: 401
+ *                 status:
  *                   type: string
- *                   example: Credenciales inválidas.
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Credenciales inválidas."
+ *                 data:
+ *                   type: object
  *       500:
  *         description: Error del servidor al autenticar al administrador.
  *         content:
@@ -62,39 +80,60 @@ const jwt = require('jsonwebtoken');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 status:
  *                   type: string
- *                   example: Error del servidor al autenticar al administrador.
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Error del servidor al autenticar al administrador."
+ *                 data:
+ *                   type: object
  */
 
-router.post('/', async (req, res) => {
+router.post('/loginAdmin', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Buscar al administrador por correo electrónico en la base de datos
         const admin = await Admin.findOne({ email });
-
-        // Si no se encuentra el administrador, es inválido o no existe
         if (!admin) {
-            return res.status(401).json({ error: 'Credenciales inválidas.' });
+            return res.status(401).json({
+                code: 401,
+                status: 'error',
+                message: 'Credenciales inválidas.',
+                data: {}
+            });
         }
 
-        // Comprobar que la contraseña proporcionada coincide con la almacenada en la base de datos
         const isPasswordValid = await bcrypt.compare(password, admin.password);
-
         if (!isPasswordValid) {
-            return res.status(401).json({ error: 'Credenciales inválidas.' });
+            return res.status(401).json({
+                code: 401,
+                status: 'error',
+                message: 'Credenciales inválidas.',
+                data: {}
+            });
         }
 
-        // Generar un token de autenticación
         const token = jwt.sign({ adminId: admin._id }, 'secreto', { expiresIn: '1h' });
 
-        return res.json({ token });
+        res.json({
+            code: 200,
+            status: 'success',
+            message: 'Inicio de sesión exitoso.',
+            data: { token }
+        });
     } catch (error) {
         console.error('Error al autenticar al administrador:', error);
-        return res.status(500).json({ error: 'Error del servidor al autenticar al administrador.' });
+        res.status(500).json({
+            code: 500,
+            status: 'error',
+            message: 'Error del servidor al autenticar al administrador.',
+            data: {}
+        });
     }
 });
 
 module.exports = router;
-

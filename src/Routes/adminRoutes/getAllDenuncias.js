@@ -5,27 +5,37 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 /**
  * @swagger
  * tags:
- *   name: Administrador
- *   description: Endpoints para administradores
- */
-
-/**
- * @swagger
+ *   - name: Administrador
+ *     description: Endpoints para administradores
+ * 
  * /admin/getAllDenuncias:
  *   get:
  *     summary: Ver todas las denuncias.
- *     tags: [Administrador]
+ *     tags:
+ *       - Administrador
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de todas las denuncias.
+ *         description: Lista de todas las denuncias obtenida exitosamente.
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Denuncia'
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Lista de todas las denuncias obtenida exitosamente."
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Denuncia'
  *       401:
  *         description: No se proporcionó un token de autenticación válido.
  *         content:
@@ -33,9 +43,17 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                   example: 401
+ *                 status:
  *                   type: string
- *                   example: Acceso no autorizado.
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Acceso no autorizado."
+ *                 data:
+ *                   type: object
  *       500:
  *         description: Error del servidor al obtener las denuncias.
  *         content:
@@ -43,20 +61,37 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 status:
  *                   type: string
- *                   example: Error del servidor al obtener las denuncias.
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Error del servidor al obtener las denuncias."
+ *                 data:
+ *                   type: object
  */
 
-router.get('/', async (req, res) => {
+router.get('/', verifyAdminToken, async (req, res) => {
     try {
-        // Buscar todas las denuncias
         const denuncias = await Denuncia.find();
 
-        return res.status(200).json(denuncias);
+        res.status(200).json({
+            code: 200,
+            status: 'success',
+            message: 'Lista de todas las denuncias obtenida exitosamente.',
+            data: denuncias
+        });
     } catch (error) {
         console.error('Error al obtener todas las denuncias:', error);
-        return res.status(500).json({ error: 'Error del servidor al obtener las denuncias.' });
+        res.status(500).json({
+            code: 500,
+            status: 'error',
+            message: 'Error del servidor al obtener las denuncias.',
+            data: {}
+        });
     }
 });
 

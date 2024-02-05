@@ -36,7 +36,19 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Denuncia'
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Detalles de la denuncia obtenidos exitosamente."
+ *                 data:
+ *                   $ref: '#/components/schemas/Denuncia'
  *       400:
  *         description: Error en la solicitud del cliente o denuncia no encontrada.
  *         content:
@@ -44,9 +56,17 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 status:
  *                   type: string
- *                   example: Denuncia no encontrada.
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Denuncia no encontrada."
+ *                 data:
+ *                   type: object
  *       401:
  *         description: No se proporcionó un token de autenticación válido.
  *         content:
@@ -54,9 +74,17 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                   example: 401
+ *                 status:
  *                   type: string
- *                   example: Acceso no autorizado.
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Acceso no autorizado."
+ *                 data:
+ *                   type: object
  *       500:
  *         description: Error del servidor al obtener los detalles de la denuncia.
  *         content:
@@ -64,31 +92,57 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 status:
  *                   type: string
- *                   example: Error del servidor al obtener los detalles de la denuncia.
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Error del servidor al obtener los detalles de la denuncia."
+ *                 data:
+ *                   type: object
  */
 
-router.post('/', async (req, res) => {
+router.post('/', verifyAdminToken, async (req, res) => {
     try {
         const { _id } = req.body;
 
-        // Validar que se proporcione el ID de la denuncia
         if (!_id) {
-            return res.status(400).json({ error: 'Se debe proporcionar el ID de la denuncia.' });
+            return res.status(400).json({
+                code: 400,
+                status: 'error',
+                message: 'Se debe proporcionar el ID de la denuncia.',
+                data: {}
+            });
         }
 
-        // Buscar la denuncia por su ID
         const denuncia = await Denuncia.findById(_id);
 
         if (!denuncia) {
-            return res.status(400).json({ error: 'Denuncia no encontrada.' });
+            return res.status(400).json({
+                code: 400,
+                status: 'error',
+                message: 'Denuncia no encontrada.',
+                data: {}
+            });
         }
 
-        return res.status(200).json(denuncia);
+        return res.status(200).json({
+            code: 200,
+            status: 'success',
+            message: 'Detalles de la denuncia obtenidos exitosamente.',
+            data: denuncia
+        });
     } catch (error) {
         console.error('Error al obtener los detalles de la denuncia:', error);
-        return res.status(500).json({ error: 'Error del servidor al obtener los detalles de la denuncia.' });
+        return res.status(500).json({
+            code: 500,
+            status: 'error',
+            message: 'Error del servidor al obtener los detalles de la denuncia.',
+            data: {}
+        });
     }
 });
 

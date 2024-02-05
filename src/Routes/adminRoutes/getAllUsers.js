@@ -5,27 +5,37 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 /**
  * @swagger
  * tags:
- *   name: Administrador
- *   description: Endpoints para administradores
- */
-
-/**
- * @swagger
+ *   - name: Administrador
+ *     description: Endpoints para administradores
+ * 
  * /admin/getAllUsers:
  *   get:
  *     summary: Obtener todas las cuentas de usuario registradas.
- *     tags: [Administrador]
+ *     tags:
+ *       - Administrador
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de todas las cuentas de usuario.
+ *         description: Lista de todas las cuentas de usuario obtenida exitosamente.
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Lista de todas las cuentas de usuario obtenida exitosamente."
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
  *       401:
  *         description: No se proporcionó un token de autenticación válido.
  *         content:
@@ -33,9 +43,17 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                   example: 401
+ *                 status:
  *                   type: string
- *                   example: Acceso no autorizado.
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Acceso no autorizado."
+ *                 data:
+ *                   type: object
  *       500:
  *         description: Error del servidor al obtener las cuentas de usuario.
  *         content:
@@ -43,18 +61,36 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 status:
  *                   type: string
- *                   example: Error del servidor al obtener las cuentas de usuario.
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Error del servidor al obtener las cuentas de usuario."
+ *                 data:
+ *                   type: object
  */
 
-router.get('/' , async (req, res) => {
+router.get('/getAllUsers', verifyAdminToken, async (req, res) => {
     try {
-        const usuarios = await User.find();
-        return res.status(200).json(usuarios);
+        const usuarios = await User.find({}, '-password'); 
+        res.status(200).json({
+            code: 200,
+            status: 'success',
+            message: 'Lista de todas las cuentas de usuario obtenida exitosamente.',
+            data: usuarios
+        });
     } catch (error) {
         console.error('Error al obtener las cuentas de usuario:', error);
-        return res.status(500).json({ error: 'Error del servidor al obtener las cuentas de usuario.' });
+        res.status(500).json({
+            code: 500,
+            status: 'error',
+            message: 'Error del servidor al obtener las cuentas de usuario.',
+            data: {}
+        });
     }
 });
 

@@ -6,16 +6,14 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 /**
  * @swagger
  * tags:
- *   name: Administrador
- *   description: Endpoints para administradores
- */
-
-/**
- * @swagger
+ *   - name: Administrador
+ *     description: Endpoints para administradores
+ * 
  * /admin/getGeneralView:
  *   get:
  *     summary: Obtiene estadísticas y reportes del sistema.
- *     tags: [Administrador]
+ *     tags:
+ *       - Administrador
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -26,26 +24,32 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *             schema:
  *               type: object
  *               properties:
- *                 totalDenuncias:
- *                   type: number
- *                   description: Número total de denuncias registradas en el sistema.
- *                 denunciasPorCategoria:
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Estadísticas y reportes generados correctamente."
+ *                 data:
  *                   type: object
- *                   description: Número de denuncias por cada categoría.
- *                 promedioTiempoResolucion:
- *                   type: number
- *                   description: Promedio de tiempo (en días) para resolver denuncias.
- *                 totalUsuarios:
- *                   type: number
- *                   description: Número total de usuarios registrados en el sistema.
- *                 usuariosRegistrados:
- *                   type: array
- *                   description: Detalles de los usuarios registrados.
- *                   items:
- *                     $ref: '#/components/schemas/User'
- *                 denunciasPorEstado:
- *                   type: object
- *                   description: Número de denuncias por cada estado.
+ *                   properties:
+ *                     totalDenuncias:
+ *                       type: number
+ *                     denunciasPorCategoria:
+ *                       type: object
+ *                     promedioTiempoResolucion:
+ *                       type: number
+ *                     totalUsuarios:
+ *                       type: number
+ *                     usuariosRegistrados:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/User'
+ *                     denunciasPorEstado:
+ *                       type: object
  *       401:
  *         description: No se proporcionó un token de autenticación válido.
  *         content:
@@ -53,9 +57,17 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                   example: 401
+ *                 status:
  *                   type: string
- *                   example: Acceso no autorizado.
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Acceso no autorizado."
+ *                 data:
+ *                   type: object
  *       500:
  *         description: Error del servidor al generar estadísticas.
  *         content:
@@ -63,17 +75,22 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 status:
  *                   type: string
- *                   example: Error del servidor al generar estadísticas.
+ *                   example: "error"
+ *                 message:
+ *                   type: string
+ *                   example: "Error del servidor al generar estadísticas."
+ *                 data:
+ *                   type: object
  */
 
-router.get('/', async (req, res) => {
+router.get('/', verifyAdminToken, async (req, res) => {
     try {
-        // Número total de denuncias registradas en el sistema
         const totalDenuncias = await Denuncia.countDocuments();
-
-        // Número de denuncias por cada categoría
         const denunciasPorCategoria = await Denuncia.aggregate([
             {
                 $group: {
@@ -82,8 +99,6 @@ router.get('/', async (req, res) => {
                 },
             },
         ]);
-
-        // Promedio de tiempo (en días) para resolver denuncias
         const promedioTiempoResolucion = await Denuncia.aggregate([
             {
                 $match: {
@@ -93,18 +108,12 @@ router.get('/', async (req, res) => {
             {
                 $group: {
                     _id: null,
-                    promedio: { $avg: { $divide: [{ $subtract: ['$fechaHora', '$fechaHoraSolucion'] }, (1000 * 60 * 60 * 24)] } },
+                    promedio: { $avg: { $divide: [{ $subtract: ['$fechaHoraSolucion', '$fechaHora'] }, (1000 * 60 * 60 * 24)] } },
                 },
             },
         ]);
-
-        // Número total de usuarios registrados en el sistema
         const totalUsuarios = await User.countDocuments();
-
-        // Detalles de los usuarios registrados
-        const usuariosRegistrados = await User.find({}, { password: 0, verificationToken: 0, resetToken: 0 });
-
-        // Número de denuncias por cada estado
+        const usuariosRegistrados = await User.find({}, '-password -verificationToken -resetToken');
         const denunciasPorEstado = await Denuncia.aggregate([
             {
                 $group: {
@@ -114,19 +123,27 @@ router.get('/', async (req, res) => {
             },
         ]);
 
-        const estadisticas = {
-            totalDenuncias,
-            denunciasPorCategoria,
-            promedioTiempoResolucion: promedioTiempoResolucion.length > 0 ? promedioTiempoResolucion[0].promedio : 0,
-            totalUsuarios,
-            usuariosRegistrados,
-            denunciasPorEstado,
-        };
-
-        return res.status(200).json(estadisticas);
+        res.status(200).json({
+            code: 200,
+            status: 'success',
+            message: 'Estadísticas y reportes generados correctamente.',
+            data: {
+                totalDenuncias,
+                denunciasPorCategoria,
+                promedioTiempoResolucion: promedioTiempoResolucion.length > 0 ? promedioTiempoResolucion[0].promedio : 0,
+                totalUsuarios,
+                usuariosRegistrados,
+                denunciasPorEstado,
+            }
+        });
     } catch (error) {
         console.error('Error al generar estadísticas:', error);
-        return res.status(500).json({ error: 'Error del servidor al generar estadísticas.' });
+        res.status(500).json({
+            code: 500,
+            status: 'error',
+            message: 'Error del servidor al generar estadísticas.',
+            data: {}
+        });
     }
 });
 
