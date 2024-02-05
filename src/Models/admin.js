@@ -49,14 +49,7 @@ const adminSchema = new Schema({
         minlength: 6, 
         maxlength: 255, 
         trim: true,
-    },
-    palabraSecreta: { 
-        type: String, 
-        required: true, 
-        minlength: 6, 
-        maxlength: 255, 
-        trim: true,
-    },
+    }
 });
 
 const Admin = mongoose.model('Admin', adminSchema);

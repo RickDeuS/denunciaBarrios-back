@@ -101,7 +101,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   type: object
  */
 
-router.post('/', verifyAdminToken, async (req, res) => {
+router.post('/', verifyAdminToken,  async (req, res) => {
     const { nombreCompleto, email, password } = req.body;
 
     try {
