@@ -71,9 +71,9 @@ const Joi = require('@hapi/joi');
 
 
 // Ruta para obtener todas las denuncias realizadas por el usuario autenticado.
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     try {
-        const usuarioId = req.user._id;
+        const usuarioId = req.user._id; // Asegurando que esto coincide con la propiedad usada en el token
 
         const usuario = await User.findById(usuarioId);
         if (!usuario) {

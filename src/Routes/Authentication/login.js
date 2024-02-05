@@ -113,11 +113,11 @@ router.post('/', async (req, res) => {
             });
         }
 
-        if (user.isBlocked === true) {
+        if (user.isBlocked) {
             return res.status(401).json({ 
                 code: 401,
                 status: 'error',
-                message: 'El usuario está bloqueado. No puede iniciar sesion',
+                message: 'El usuario está bloqueado. No puede iniciar sesión',
                 data: {} 
             });
         }
@@ -134,23 +134,18 @@ router.post('/', async (req, res) => {
 
         // Crear token JWT
         const token = jwt.sign(
-            {
-                name: user.nombreCompleto,
-                id: user._id,
-            },
-            process.env.TOKEN_SECRET
+            { _id: user._id },
+            process.env.TOKEN_SECRET,
+            { expiresIn: '1h' }
         );
 
         res.json({
             code: 200,
             status: 'success',
             message: 'Inicio de sesión exitoso',
-            data: {
-                token: token,
-            }
+            data: { token }
         });
     } catch (error) {
-        // Manejo de errores inesperados
         res.status(500).json({
             code: 500,
             status: 'error',
