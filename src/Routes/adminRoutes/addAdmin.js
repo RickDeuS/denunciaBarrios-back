@@ -36,14 +36,10 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                 type: string
  *                 format: password
  *                 description: Contraseña del administrador.
- *               palabraSecreta:
- *                 type: string
- *                 description: Palabra secreta del administrador que solicita el registro.
  *             example:
  *               nombreCompleto: Administrador Nuevo
  *               email: adminnuevo@example.com
  *               password: password123
- *               palabraSecreta: miPalabraSecreta
  *     responses:
  *       200:
  *         description: Administrador añadido exitosamente.
