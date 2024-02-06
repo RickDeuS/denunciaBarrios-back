@@ -168,9 +168,9 @@ cloudinary.config({
 
 
 // NUEVA DENUNCIA    
-router.post('/', upload.single('evidencia'), async (req, res) => {
+router.post('/',verifyToken, upload.single('evidencia'), async (req, res) => {
     try {
-        const usuarioId = req.user.id;
+        const usuarioId = req.user._id;
 
         const schema = Joi.object({
             tituloDenuncia: Joi.string().required().trim(),
@@ -195,6 +195,7 @@ router.post('/', upload.single('evidencia'), async (req, res) => {
         }
 
         const nombreDenunciante = (await User.findById(usuarioId).select('nombreCompleto')).nombreCompleto;
+        console.log('nombreDenunciante', nombreDenunciante);
         const nuevaDenuncia = new Denuncia({
             tituloDenuncia: value.tituloDenuncia,
             idDenunciante: usuarioId,
