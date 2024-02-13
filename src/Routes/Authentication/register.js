@@ -250,7 +250,7 @@ router.post('/', async (req, res) => {
         res.json({
             code: 200,
             status: 'success',
-            message: 'Usuario registrado exitosamente',
+            message: 'Usuario registrado exitosamente. Se ha enviado un correo electrónico de verificación. Es necesario verificarse antes de inicar sesión.',
             data: savedUser
         });
     } catch (error) {
