@@ -122,6 +122,15 @@ router.post('/', async (req, res) => {
             });
         }
 
+        if (!user.isVerified) {
+            return res.status(401).json({ 
+                code: 401,
+                status: 'error',
+                message: 'El usuario no ha verificado su cuenta. No puede iniciar sesión',
+                data: {} 
+            });
+        }
+
         const validPassword = await bcrypt.compare(req.body.password, user.password);
         if (!validPassword) {
             return res.status(400).json({ 
