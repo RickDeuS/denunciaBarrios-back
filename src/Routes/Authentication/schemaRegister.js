@@ -57,15 +57,17 @@ const schemaRegister = Joi.object({
       'any.required': 'El correo electrónico es un campo obligatorio',
     }),
 
-  password: Joi.string()
-    .min(6)
+    password: Joi.string()
+    .min(8)
+    .max(30) 
     .required()
-    .regex(/^[a-zA-Z0-9]{3,30}$/)
+    .regex(/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,30}$/)
     .messages({
       'string.empty': 'La contraseña no debe estar vacía',
       'string.min': 'La contraseña debe tener al menos {#limit} caracteres',
+      'string.max': 'La contraseña debe tener como máximo {#limit} caracteres',
       'any.required': 'La contraseña es un campo obligatorio',
-      'string.pattern.base': 'La contraseña solo puede contener letras y números',
+      'string.pattern.base': 'La contraseña debe contener letras, números y caracteres especiales',
     }),
 
   photo: Joi.string()

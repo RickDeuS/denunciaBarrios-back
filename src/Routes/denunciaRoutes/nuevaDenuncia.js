@@ -195,7 +195,6 @@ router.post('/',verifyToken, upload.single('evidencia'), async (req, res) => {
         }
 
         const nombreDenunciante = (await User.findById(usuarioId).select('nombreCompleto')).nombreCompleto;
-        console.log('nombreDenunciante', nombreDenunciante);
         const nuevaDenuncia = new Denuncia({
             tituloDenuncia: value.tituloDenuncia,
             idDenunciante: usuarioId,
@@ -234,8 +233,8 @@ router.post('/',verifyToken, upload.single('evidencia'), async (req, res) => {
         usuario.numDenunciasRealizadas += 1;
         await usuario.save();
 
-        res.status(201).json({
-            code: 201,
+        res.status(200).json({
+            code: 200,
             status: 'success',
             message: 'Denuncia creada exitosamente',
             data: nuevaDenuncia
