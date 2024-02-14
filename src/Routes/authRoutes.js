@@ -13,3 +13,4 @@ routes.use('/newPassword', newPasswordRoutes);
 routes.use('/passwordRecovery', passwordRecoveryRoutes);
 
 module.exports = routes;
+ 

@@ -214,7 +214,7 @@ router.post('/', async (req, res) => {
             console.log("Imagen subida a Cloudinary");
         }
         // Enviar el correo electrónico de verificación
-        const verificationURL = `https://como-va-mi-barrio-a1bd81410089.herokuapp.com/verificarCuenta/${verificationToken}`;
+        const verificationURL = `${process.env.FRONTEND_URL}/verificarCuenta/${verificationToken}`;
         const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmail.hbs');
         const verificationEmailTemplate = fs.readFileSync(templatePath, 'utf8');
         const template = handlebars.compile(verificationEmailTemplate);
@@ -250,7 +250,7 @@ router.post('/', async (req, res) => {
         res.json({
             code: 200,
             status: 'success',
-            message: 'Usuario registrado exitosamente. Se ha enviado un correo electrónico de verificación. Es necesario verificarse antes de inicar sesión.',
+            message: 'Usuario registrado exitosamente. Se ha enviado un correo electrónico de verificación.',
             data: savedUser
         });
     } catch (error) {
