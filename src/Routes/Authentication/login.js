@@ -108,7 +108,7 @@ router.post('/', async (req, res) => {
             return res.status(404).json({ 
                 code: 404,
                 status: 'error',
-                message: 'Usuario no encontrado',
+                message: 'Correo o contraseña incorrectos.',
                 data: {} 
             });
         }
@@ -136,7 +136,7 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ 
                 code: 400,
                 status: 'error',
-                message: 'Contraseña no válida',
+                message: 'Correo o contraseña incorrectos.',
                 data: {} 
             });
         }
