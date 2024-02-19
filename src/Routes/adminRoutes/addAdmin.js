@@ -125,7 +125,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-router.post('/',  async (req, res) => {
+router.post('/',verifyAdminToken,  async (req, res) => {
     const { email, nombreCompleto, password } = req.body; // Corregido para desestructurar correctamente
 
     try {
