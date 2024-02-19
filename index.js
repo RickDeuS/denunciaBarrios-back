@@ -30,11 +30,11 @@ app.use(express.urlencoded({ extended: false }));
 
 // Importar rutas
 const AuthRoutes = require('./src/Routes/authRoutes');
-const homeRoutes = require('./src/Routes/homeRoutes');
 const denunciaRoutes = require('./src/Routes/denunciaRoutes');
 const adminRoutes = require('./src/Routes/adminRoutes');
 const verifyToken = require('./src/Middleware/validate-token');
 const verifyAdminToken = require('./src/Middleware/verifyAdminToken');
+const userRoutes = require('./src/Routes/userRoutes');
 
 // Ruta de autenticación
 app.use('/auth', AuthRoutes);
@@ -43,6 +43,7 @@ app.use('/admin', adminRoutes);
 
 // Middleware para verificar el token en las rutas protegidas
 app.use('/denuncias', verifyToken);
+app.use('/user', verifyToken);
 
 // Ruta por defecto
 app.get('/', (req, res) => {
@@ -54,6 +55,7 @@ app.get('/', (req, res) => {
 
 // Ruta protegida 
 app.use('/denuncias', denunciaRoutes);
+app.use('/user', userRoutes);
 
 // Configuración de Swagger
 const swaggerOptions = {
