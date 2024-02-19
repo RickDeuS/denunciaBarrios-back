@@ -16,7 +16,13 @@ const verifyToken = (req, res, next) => {
         req.user = verified;
         next();
     } catch (error) {
-        res.status(400).json({ error: 'Token no es válido' });
+        if (error instanceof jwt.TokenExpiredError) {
+            res.status(401).json({ error: 'Token expirado' });
+        } else if (error instanceof jwt.JsonWebTokenError) {
+            res.status(400).json({ error: 'Token no es válido' });
+        } else {
+            res.status(500).json({ error: 'Error al procesar el token' });
+        }
     }
 };
 
