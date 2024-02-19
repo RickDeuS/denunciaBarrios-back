@@ -9,7 +9,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *     description: Endpoints para administradores
  * 
  * /admin/getAllUsers:
- *   get:
+ *   post:
  *     summary: Obtener todas las cuentas de usuario registradas.
  *     tags:
  *       - Administrador
@@ -74,7 +74,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   type: object
  */
 
-router.get('/getAllUsers', verifyAdminToken, async (req, res) => {
+router.post('/', verifyAdminToken, async (req, res) => {
     try {
         const usuarios = await User.find({}, '-password'); 
         res.status(200).json({

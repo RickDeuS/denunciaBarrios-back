@@ -19,14 +19,10 @@
  *         password:
  *           type: string
  *           description: Contraseña del administrador. Mínimo 6 caracteres.
- *         palabraSecreta:
- *           type: string
- *           description: Palabra secreta utilizada para agregar un nuevo administrador. Mínimo 6 caracteres.
  *       example:
  *         nombreCompleto: Juan Pérez
  *         email: juan@example.com
  *         password: password123
- *         palabraSecreta: secreto123
  */
 
 const mongoose = require('mongoose');

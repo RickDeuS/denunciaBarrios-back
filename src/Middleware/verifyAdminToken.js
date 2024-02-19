@@ -1,20 +1,23 @@
 const jwt = require('jsonwebtoken');
 
-function verificarToken(req, res, next) {
-    const token = req.headers['auth-admin'];
+const verifyToken = (req, res, next) => {
+    const bearerHeader = req.header('Authorization');
+    if (!bearerHeader) return res.status(401).json({ error: 'Acceso denegado.' });
 
-    if (!token) {
-        return res.status(401).json({ error: 'Acceso no autorizado.' });
+    const bearer = bearerHeader.split(' ');
+    const bearerToken = bearer[1]; 
+
+    if(bearer.length !== 2 || bearer[0].toLowerCase() !== 'bearer' || !bearerToken) {
+        return res.status(400).json({ error: 'Formato de token inválido.' });
     }
 
-    jwt.verify(token, `${process.env.SECRETO_ADMINS}`, (error, decoded) => {
-        if (error) {
-            return res.status(401).json({ error: 'Token inválido o expirado.' });
-        }
-
-        req.adminId = decoded.adminId;
+    try {
+        const verified = jwt.verify(bearerToken, process.env.SECRETO_ADMINS);
+        req.user = verified;
         next();
-    });
-}
+    } catch (error) {
+        res.status(400).json({ error: 'Token no es válido' });
+    }
+};
 
-module.exports = verificarToken;
+module.exports = verifyToken;

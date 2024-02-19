@@ -113,13 +113,14 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 
 router.post('/', verifyAdminToken, async (req, res) => {
     try {
-        const { _id, status } = req.body; // Recibir ID del usuario y estado deseado
+        const { _id, status } = req.body; 
 
-        if (!_id || !status) {
+        // Validar que el estado sea 'block' o 'unblock'
+        if (!_id || (status !== 'block' && status !== 'unblock')) {
             return res.status(400).json({
                 code: 400,
                 status: 'error',
-                message: 'Se deben proporcionar el ID del usuario y el estado.',
+                message: 'Se deben proporcionar el ID del usuario y un estado válido (block/unblock).',
                 data: {}
             });
         }
@@ -134,7 +135,6 @@ router.post('/', verifyAdminToken, async (req, res) => {
             });
         }
 
-        // Actualizar el estado de bloqueo del usuario según el estado proporcionado
         usuario.isBlocked = status === 'block';
         await usuario.save();
 

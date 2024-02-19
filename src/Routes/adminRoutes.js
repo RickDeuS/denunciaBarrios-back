@@ -12,7 +12,7 @@ const getUser = require('./adminRoutes/getUser');
 const addAdmin = require('./adminRoutes/addAdmin');
 const loginAdmin = require('./adminRoutes/loginAdmin');
 
-router.use('/blockUser', statusUser);
+router.use('/changeStatusUser', statusUser);
 router.use('/deleteDenuncia', deleteDenuncia);
 router.use('/detallesDenuncia', detallesDenuncia);
 router.use('/estadoDenuncia', estadoDenuncia);

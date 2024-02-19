@@ -38,7 +38,7 @@ const userRoutes = require('./src/Routes/userRoutes');
 
 // Ruta de autenticación
 app.use('/auth', AuthRoutes);
-app.use('/admin', verifyAdminToken);
+// app.use('/admin', verifyAdminToken);
 app.use('/admin', adminRoutes);
 
 // Middleware para verificar el token en las rutas protegidas
@@ -64,7 +64,7 @@ const swaggerOptions = {
         info: {
             title: 'Backend de Denuncias en Barrios',
             version: '1.0.0',
-            description: 'Documentación de la API para Denuncias en Barrios de Loja',
+            description: 'Documentación de la API para Denuncias en Barrios',
         },
         servers: [
             {

@@ -9,7 +9,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *     description: Endpoints para administradores
  * 
  * /admin/getAllDenuncias:
- *   get:
+ *   post:
  *     summary: Ver todas las denuncias.
  *     tags:
  *       - Administrador
@@ -74,7 +74,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   type: object
  */
 
-router.get('/', verifyAdminToken, async (req, res) => {
+router.post('/', verifyAdminToken, async (req, res) => {
     try {
         const denuncias = await Denuncia.find();
 

@@ -93,7 +93,7 @@ const jwt = require('jsonwebtoken');
  *                   type: object
  */
 
-router.post('/loginAdmin', async (req, res) => {
+router.post('/', async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -117,7 +117,7 @@ router.post('/loginAdmin', async (req, res) => {
             });
         }
 
-        const token = jwt.sign({ adminId: admin._id }, 'secreto', { expiresIn: '1h' });
+        const token = jwt.sign({ adminId: admin._id }, process.env.SECRETO_ADMINS, { expiresIn: '1h' });
 
         res.json({
             code: 200,

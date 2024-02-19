@@ -10,7 +10,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *     description: Endpoints para administradores
  * 
  * /admin/getGeneralView:
- *   get:
+ *   post:
  *     summary: Obtiene estadísticas y reportes del sistema.
  *     tags:
  *       - Administrador
@@ -88,7 +88,7 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   type: object
  */
 
-router.get('/', verifyAdminToken, async (req, res) => {
+router.post('/', verifyAdminToken, async (req, res) => {
     try {
         const totalDenuncias = await Denuncia.countDocuments();
         const denunciasPorCategoria = await Denuncia.aggregate([
