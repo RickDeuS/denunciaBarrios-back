@@ -102,7 +102,25 @@ router.post('/', async (req, res) => {
             return res.status(401).json({
                 code: 401,
                 status: 'error',
-                message: 'Credenciales inválidas.',
+                message: 'Administrador no encontrado.',
+                data: {}
+            });
+        }
+
+        if (admin.isDeleted) {
+            return res.status(401).json({
+                code: 401,
+                status: 'error',
+                message: 'Administrador no encontrado.',
+                data: {}
+            });
+        }
+
+        if (!admin.isVerified) {
+            return res.status(401).json({
+                code: 401,
+                status: 'error',
+                message: 'Administrador no verificado.',
                 data: {}
             });
         }

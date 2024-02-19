@@ -2,6 +2,12 @@ const router = require('express').Router();
 const Admin = require('../../Models/admin');
 const bcrypt = require('bcrypt');
 const verifyAdminToken = require('../../Middleware/verifyAdminToken');
+const nodemailer = require('nodemailer');
+const generateVerificationToken = require('../../utils/generateVerificationToken');
+const fs = require('fs');
+const handlebars = require('handlebars');
+const path = require('path');
+
 
 /**
  * @swagger
@@ -101,11 +107,29 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
  *                   type: object
  */
 
-router.post('/', verifyAdminToken,  async (req, res) => {
-    const { nombreCompleto, email, password } = req.body;
+const userMailer = process.env.USER_MAILER;
+const passMailer = process.env.PASS_MAILER;
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: userMailer,
+        pass: passMailer,
+    },
+    tls: {
+        // do not fail on invalid certs
+        rejectUnauthorized: false,
+    },
+});
+
+router.post('/',  async (req, res) => {
+    const { email, nombreCompleto, password } = req.body; // Corregido para desestructurar correctamente
 
     try {
-        if (!nombreCompleto || !email || !password ) {
+        if (!nombreCompleto || !email || !password) {
             return res.status(400).json({
                 code: 400,
                 status: 'error',
@@ -114,7 +138,7 @@ router.post('/', verifyAdminToken,  async (req, res) => {
             });
         }
 
-        const adminExistente = await Admin.findOne({ email });
+        const adminExistente = await Admin.findOne({ email: email }); // Asegúrate de buscar por el campo de email
         if (adminExistente) {
             return res.status(400).json({
                 code: 400,
@@ -124,14 +148,51 @@ router.post('/', verifyAdminToken,  async (req, res) => {
             });
         }
 
+        const verificationToken = generateVerificationToken();
+
         const nuevoAdmin = new Admin({
-            nombreCompleto,
-            email,
-            password
+            nombreCompleto: nombreCompleto, // Asegúrate de asignar correctamente
+            email: email, // Asegúrate de asignar correctamente
+            password: password, // La contraseña se asignará después de encriptarla
+            isVerified: false,
+            verificationToken: verificationToken // Asegúrate de asignar correctamente
         });
 
         const salt = await bcrypt.genSalt(10);
-        nuevoAdmin.password = await bcrypt.hash(password, salt);
+        nuevoAdmin.password = await bcrypt.hash(nuevoAdmin.password, salt); 
+
+        const verificationURL = `${process.env.FRONTEND_URL}/verificarCuenta/${verificationToken}`;
+        const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmailAdmin.hbs');
+        const verificationEmailTemplate = fs.readFileSync(templatePath, 'utf8');
+        const template = handlebars.compile(verificationEmailTemplate);
+
+        const verificationEmailContent = template({
+            nombreCompleto: req.body.nombreCompleto,
+            verificationURL: verificationURL,
+        });
+        const mailOptions = {
+            from: userMailer,
+            to: req.body.email,
+            subject: 'Verificación de cuenta de Administrador',
+            html: verificationEmailContent,
+        };
+        //  await transporter.sendMail(mailOptions, function (err, msg) {
+
+        //  });
+
+
+        const emailUser = await new Promise((resolve, reject) => {
+            transporter.sendMail(mailOptions, function (err, info) {
+                if (err) {
+                    resolve(err);
+                } else {
+                    resolve(info);
+                }
+            })
+        });
+        //return; 
+
+        //await transporter.sendMail(mailOptions);
 
         const savedAdmin = await nuevoAdmin.save();
 
@@ -139,7 +200,7 @@ router.post('/', verifyAdminToken,  async (req, res) => {
             code: 200,
             status: 'success',
             message: 'Administrador añadido exitosamente.',
-            data: { adminId: savedAdmin._id }
+            data: { savedAdmin }
         });
     } catch (error) {
         console.error('Error al agregar un administrador:', error);
