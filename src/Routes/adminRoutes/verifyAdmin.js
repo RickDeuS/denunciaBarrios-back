@@ -4,16 +4,14 @@ const Admin = require('../../Models/admin');
 /**
  * @swagger
  * tags:
- *   name: Admin
- *   description: Endpoints para administradores.
- */
-
-/**
- * @swagger
- * /admin/verifyAdmin:
+ *   - name: Administrador
+ *     description: Endpoints para administradores
+ * 
+ * /admin/verifyAdmin/{token}:
  *   post:
  *     summary: Verifica la cuenta de un administrador.
- *     tags: [Auth]
+ *     tags:
+ *       - Administrador
  *     requestBody:
  *       required: true
  *       content:
