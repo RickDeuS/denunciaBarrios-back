@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const verifyToken = (req, res, next) => {
+const verifyAdminToken = (req, res, next) => {
     const bearerHeader = req.header('Authorization');
     if (!bearerHeader) return res.status(401).json({ error: 'Acceso denegado.' });
 
@@ -26,4 +26,4 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-module.exports = verifyToken;
+module.exports = verifyAdminToken;
