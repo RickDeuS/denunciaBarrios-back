@@ -3,6 +3,7 @@ const Denuncia = require('../../Models/denuncia');
 const Joi = require('@hapi/joi');
 const User = require('../../Models/user');
 const verifyToken = require('../../Middleware/validate-token');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -105,23 +106,13 @@ router.post('/', async (req, res) => {
 
     const { error } = schema.validate({ denunciaId });
     if (error) {
-        return res.status(400).json({
-            code: 400,
-            status: 'error',
-            message: error.details[0].message,
-            data: {}
-        });
+        return sendResponse(res, 400, {}, error.details[0].message);
     }
 
     try {
         const denunciaActualizada = await Denuncia.findByIdAndUpdate(denunciaId, { isDeleted: true }, { new: true });
         if (!denunciaActualizada) {
-            return res.status(404).json({
-                code: 404,
-                status: 'error',
-                message: 'Denuncia no encontrada',
-                data: {}
-            });
+            return sendResponse(res, 404, {}, 'Denuncia no encontrada');
         }
 
         const usuario = await User.findById(idUsuario);
@@ -130,20 +121,10 @@ router.post('/', async (req, res) => {
             await usuario.save();
         }
 
-        return res.status(200).json({
-            code: 200,
-            status: 'success',
-            message: 'Denuncia marcada como eliminada',
-            data: {}
-        });
+        return sendResponse(res, 200, {}, 'Denuncia marcada como eliminada');
     } catch (error) {
         console.error('Error al marcar la denuncia como eliminada:', error);
-        return res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al marcar la denuncia como eliminada',
-            data: {}
-        });
+        return sendResponse(res, 500, {}, 'Error del servidor al marcar la denuncia como eliminada');
     }
 });
 

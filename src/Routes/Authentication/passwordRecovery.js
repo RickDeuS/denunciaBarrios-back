@@ -5,6 +5,7 @@ const fs = require('fs');
 const handlebars = require('handlebars');
 const path = require('path');
 const nodemailer = require('nodemailer');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -132,8 +133,6 @@ const transportSendGrid = {
 
         pass: passMailer,
 
-
-
     }
 
 }
@@ -144,23 +143,13 @@ router.post('/', async (req, res) => {
         const { cedula } = req.body;
 
         if (!cedula) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'La cédula no puede estar vacía',
-                data: {}
-            });
+            return sendResponse(res, 400, {}, 'La cédula no puede estar vacía');
         }
 
         // Buscar al usuario por la cédula
         const user = await User.findOne({ cedula });
         if (!user) {
-            return res.status(404).json({
-                code: 404,
-                status: 'error',
-                message: 'Usuario no encontrado',
-                data: {}
-            });
+            return sendResponse(res, 404, {}, 'Usuario no encontrado');
         }
 
         // Generar un token de restablecimiento 
@@ -195,22 +184,10 @@ router.post('/', async (req, res) => {
             });
         });
 
-        res.json({
-            code: 200,
-            status: 'success',
-            message: 'Se ha enviado un correo electrónico para restablecer la contraseña',
-            data: {
-                token: resetToken,
-            }
-        });
+        sendResponse(res, 200, { token: resetToken }, 'Se ha enviado un correo electrónico para restablecer la contraseña');
     } catch (error) {
         console.error("Error:", error);
-        res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error al recuperar la contraseña',
-            data: {}
-        });
+        sendResponse(res, 500, {}, 'Error al recuperar la contraseña');
     }
 });
 

@@ -2,6 +2,7 @@ const router = require('express').Router();
 const Admin = require('../../Models/admin');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -99,58 +100,28 @@ router.post('/', async (req, res) => {
     try {
         const admin = await Admin.findOne({ email });
         if (!admin) {
-            return res.status(401).json({
-                code: 401,
-                status: 'error',
-                message: 'Administrador no encontrado.',
-                data: {}
-            });
+            return sendResponse(res, 401, {}, 'Administrador no encontrado.')
         }
 
         if (admin.isDeleted) {
-            return res.status(401).json({
-                code: 401,
-                status: 'error',
-                message: 'Administrador no encontrado.',
-                data: {}
-            });
+            return sendResponse(res, 401, {}, 'Administrador no encontrado.' )
         }
 
         if (!admin.isVerified) {
-            return res.status(401).json({
-                code: 401,
-                status: 'error',
-                message: 'Administrador no verificado.',
-                data: {}
-            });
+            return sendResponse(res, 401, {}, 'Administrador no verificado.')
         }
 
         const isPasswordValid = await bcrypt.compare(password, admin.password);
         if (!isPasswordValid) {
-            return res.status(401).json({
-                code: 401,
-                status: 'error',
-                message: 'Credenciales inválidas.',
-                data: {}
-            });
+            return sendResponse(res, 401, {}, 'Credenciales inválidas.')
         }
 
         const token = jwt.sign({ adminId: admin._id }, process.env.SECRETO_ADMINS, { expiresIn: '1h' });
 
-        res.json({
-            code: 200,
-            status: 'success',
-            message: 'Inicio de sesión exitoso.',
-            data: { token }
-        });
+        sendResponse(res, 200, token, 'Inicio de sesión exitoso.')
     } catch (error) {
         console.error('Error al autenticar al administrador:', error);
-        res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al autenticar al administrador.',
-            data: {}
-        });
+        sendResponse(res, 500, {}, 'Error del servidor al autenticar al administrador.')
     }
 });
 

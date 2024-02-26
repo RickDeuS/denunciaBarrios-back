@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const Denuncia = require('../../Models/denuncia');
 const verifyAdminToken = require('../../Middleware/verifyAdminToken');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -77,21 +78,10 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 router.post('/', verifyAdminToken, async (req, res) => {
     try {
         const denuncias = await Denuncia.find();
-
-        res.status(200).json({
-            code: 200,
-            status: 'success',
-            message: 'Lista de todas las denuncias obtenida exitosamente.',
-            data: denuncias
-        });
+        return sendResponse(res, 200, denuncias, 'Lista de todas las denuncias obtenida exitosamente.')
     } catch (error) {
         console.error('Error al obtener todas las denuncias:', error);
-        res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al obtener las denuncias.',
-            data: {}
-        });
+        return sendResponse(res, 500, {}, 'Error del servidor al obtener las denuncias.')
     }
 });
 

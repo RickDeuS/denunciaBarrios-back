@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const User = require('../../Models/user');
 const verifyAdminToken = require('../../Middleware/verifyAdminToken');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -77,20 +78,10 @@ const verifyAdminToken = require('../../Middleware/verifyAdminToken');
 router.post('/', verifyAdminToken, async (req, res) => {
     try {
         const usuarios = await User.find({}, '-password'); 
-        res.status(200).json({
-            code: 200,
-            status: 'success',
-            message: 'Lista de todas las cuentas de usuario obtenida exitosamente.',
-            data: usuarios
-        });
+        return sendResponse(res, 200, usuarios,'Lista de todas las cuentas de usuario obtenida exitosamente.' )
     } catch (error) {
         console.error('Error al obtener las cuentas de usuario:', error);
-        res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al obtener las cuentas de usuario.',
-            data: {}
-        });
+        return sendResponse(res, 500, {}, 'Error del servidor al obtener las cuentas de usuario.' )
     }
 });
 

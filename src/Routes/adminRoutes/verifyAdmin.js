@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Admin = require('../../Models/admin');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -9,7 +10,7 @@ const Admin = require('../../Models/admin');
  * 
  * /admin/verifyAdmin/{token}:
  *   post:
- *     summary: Verifica la cuenta de un administrador.
+ *     summary: Verifica la cuenta de un administrador. 
  *     tags:
  *       - Administrador
  *     requestBody:
@@ -90,49 +91,25 @@ const Admin = require('../../Models/admin');
 
 router.post('/:token', async (req, res) => {
     try {
-        // Obtener el token de verificación desde los parámetros de la URL
         const token = req.params.token;
 
-        // Validar el token
         if (!token) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Token de verificación no proporcionado',
-                data: {}
-            });
+            return sendResponse(res, 400, {}, 'Token de verificación no proporcionado');
         }
 
-        // Buscar al usuario con el token recibido
         const admin = await Admin.findOne({ verificationToken: token });
         if (!admin) {
-            return res.status(404).json({
-                code: 404,
-                status: 'error',
-                message: 'Token inválido o expirado',
-                data: {}
-            });
+            return sendResponse(res, 404, {}, 'Token inválido o expirado');
         }
 
-        // Marcar la cuenta como verificada
         admin.isVerified = true;
-        admin.verificationToken = undefined; // Eliminar el token de verificación
+        admin.verificationToken = undefined; 
         await admin.save();
 
-        res.json({
-            code: 200,
-            status: 'success',
-            message: 'Cuenta verificada correctamente',
-            data: {}
-        });
+        sendResponse(res, 200, {}, 'Cuenta verificada correctamente');
     } catch (error) {
         console.error("Error al verificar la cuenta:", error);
-        res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error al verificar la cuenta',
-            data: {}
-        });
+        sendResponse(res, 500, {}, 'Error al verificar la cuenta');
     }
 });
 

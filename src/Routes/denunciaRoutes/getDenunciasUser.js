@@ -3,6 +3,7 @@ const verifyToken = require('../../Middleware/validate-token');
 const Denuncia = require('../../Models/denuncia');
 const User = require('../../Models/user');
 const Joi = require('@hapi/joi');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -77,38 +78,18 @@ router.get('/', verifyToken, async (req, res) => {
 
         const usuario = await User.findById(usuarioId);
         if (!usuario) {
-            return res.status(404).json({
-                code: 404,
-                status: 'error',
-                message: 'Usuario no encontrado',
-                data: {}
-            });
+            return sendResponse(res, 404, {}, 'Usuario no encontrado');
         }
 
         const denuncias = await Denuncia.find({ idDenunciante: usuarioId, isDeleted: false });
         if (denuncias.length === 0) {
-            return res.json({
-                code: 200,
-                status: 'success',
-                message: 'El usuario no ha presentado denuncias',
-                data: denuncias
-            });
+            return sendResponse(res, 200, denuncias, 'El usuario no ha presentado denuncias');
         }
 
-        res.json({
-            code: 200,
-            status: 'success',
-            message: 'Denuncias obtenidas correctamente',
-            data: denuncias
-        });
+        sendResponse(res, 200, denuncias, 'Denuncias obtenidas correctamente');
     } catch (error) {
         console.error('Error al obtener las denuncias:', error);
-        res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al obtener las denuncias',
-            data: {}
-        });
+        sendResponse(res, 500, {}, 'Error del servidor al obtener las denuncias');
     }
 });
 

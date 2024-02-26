@@ -3,6 +3,7 @@ const User = require('../../Models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Joi = require('@hapi/joi');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -105,40 +106,20 @@ router.post('/', async (req, res) => {
         // Validaciones
         const user = await User.findOne({ email: req.body.email });
         if (!user) {
-            return res.status(404).json({ 
-                code: 404,
-                status: 'error',
-                message: 'Correo o contraseña incorrectos.',
-                data: {} 
-            });
+            return sendResponse(res, 404, {}, 'Correo o contraseña incorrectos.');
         }
 
         if (user.isBlocked) {
-            return res.status(401).json({ 
-                code: 401,
-                status: 'error',
-                message: 'El usuario está bloqueado. No puede iniciar sesión',
-                data: {} 
-            });
+            return sendResponse(res, 401, {}, 'El usuario está bloqueado. No puede iniciar sesión');
         }
 
         if (!user.isVerified) {
-            return res.status(401).json({ 
-                code: 401,
-                status: 'error',
-                message: 'El usuario no ha verificado su cuenta. No puede iniciar sesión',
-                data: {} 
-            });
+            return sendResponse(res, 401, {}, 'El usuario no ha verificado su cuenta. No puede iniciar sesión');
         }
 
         const validPassword = await bcrypt.compare(req.body.password, user.password);
         if (!validPassword) {
-            return res.status(400).json({ 
-                code: 400,
-                status: 'error',
-                message: 'Correo o contraseña incorrectos.',
-                data: {} 
-            });
+            return sendResponse(res, 400, {}, 'Correo o contraseña incorrectos.');
         }
 
         // Crear token JWT
@@ -148,19 +129,9 @@ router.post('/', async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        res.json({
-            code: 200,
-            status: 'success',
-            message: 'Inicio de sesión exitoso',
-            data: { token }
-        });
+        sendResponse(res, 200, { token }, 'Inicio de sesión exitoso');
     } catch (error) {
-        res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error interno del servidor',
-            data: {} 
-        });
+        sendResponse(res, 500, {}, 'Error interno del servidor');
     }
 });
 

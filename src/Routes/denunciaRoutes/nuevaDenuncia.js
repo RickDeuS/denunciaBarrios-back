@@ -7,6 +7,7 @@ const _ = require('lodash');
 const verifyToken = require('../../Middleware/validate-token');
 const fs = require('fs');
 const path = require('path');
+const { sendResponse } = require('../../utils/responseHandler');
 
 const multer = require('multer');
 const upload = multer({
@@ -168,7 +169,7 @@ cloudinary.config({
 
 
 // NUEVA DENUNCIA    
-router.post('/',verifyToken, upload.single('evidencia'), async (req, res) => {
+router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
     try {
         const usuarioId = req.user._id;
 
@@ -186,12 +187,7 @@ router.post('/',verifyToken, upload.single('evidencia'), async (req, res) => {
 
         const { error, value } = schema.validate(req.body, { stripUnknown: true });
         if (error) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: error.details[0].message,
-                data: {}
-            });
+            return sendResponse(res, 400, {}, error.details[0].message);
         }
 
         const nombreDenunciante = (await User.findById(usuarioId).select('nombreCompleto')).nombreCompleto;
@@ -233,20 +229,10 @@ router.post('/',verifyToken, upload.single('evidencia'), async (req, res) => {
         usuario.numDenunciasRealizadas += 1;
         await usuario.save();
 
-        res.status(200).json({
-            code: 200,
-            status: 'success',
-            message: 'Denuncia creada exitosamente',
-            data: nuevaDenuncia
-        });
+        sendResponse(res, 200, nuevaDenuncia, 'Denuncia creada exitosamente');
     } catch (error) {
         console.error('Error en la ruta /denuncia/nuevaDenuncia:', error);
-        res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error en el servidor',
-            data: {}
-        });
+        sendResponse(res, 500, {}, 'Error en el servidor');
     }
 });
 

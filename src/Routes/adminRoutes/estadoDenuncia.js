@@ -5,6 +5,8 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const handlebars = require('handlebars');
 const path = require('path');
+const { send } = require('process');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -128,42 +130,22 @@ router.post('/', verifyAdminToken, async (req, res) => {
         const { _id, estado } = req.body;
 
         if (!_id || !estado) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Se deben proporcionar el ID y el nuevo estado de la denuncia.',
-                data: {}
-            });
+            return sendResponse(res, 400, {}, 'Denuncia no encontrada o parámetros faltantes.');
         }
 
         const denunciaActualizada = await Denuncia.findByIdAndUpdate(_id, { estado }, { new: true });
 
         if (!denunciaActualizada) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Denuncia no encontrada.',
-                data: {}
-            });
+            return sendResponse(res, 400, {}, 'Denuncia no encontrada.');
         }
 
         // Enviar correo electrónico al usuario sobre la actualización del estado de la denuncia (Opcional)
         // Omitido: Implementación del envío de correo electrónico para simplificar
 
-        return res.status(200).json({
-            code: 200,
-            status: 'success',
-            message: 'Estado de la denuncia modificado exitosamente.',
-            data: { estado: denunciaActualizada.estado }
-        });
+        return sendResponse(res, 200, denunciaActualizada, 'Estado de la denuncia modificado exitosamente.');
     } catch (error) {
         console.error('Error al modificar el estado de la denuncia:', error);
-        return res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al modificar el estado de la denuncia.',
-            data: {}
-        });
+        return sendResponse(res, 500, {}, "Error del servidor al actualizar el estado de la denuncia")
     }
 });
 

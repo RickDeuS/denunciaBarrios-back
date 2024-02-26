@@ -7,6 +7,7 @@ const generateVerificationToken = require('../../utils/generateVerificationToken
 const fs = require('fs');
 const handlebars = require('handlebars');
 const path = require('path');
+const { sendResponse } = require('../../utils/responseHandler');
 
 
 /**
@@ -125,41 +126,33 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-router.post('/',verifyAdminToken,  async (req, res) => {
-    const { email, nombreCompleto, password } = req.body; // Corregido para desestructurar correctamente
+router.post('/', verifyAdminToken, async (req, res) => {
+    const { email, nombreCompleto, password } = req.body;
 
     try {
         if (!nombreCompleto || !email || !password) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Por favor, ingrese todos los campos requeridos.',
-                data: {}
-            });
+            sendResponse(res, 400, {}, 'Faltan datos requeridos.');
         }
 
-        const adminExistente = await Admin.findOne({ email: email }); // Asegúrate de buscar por el campo de email
+
+        const adminExistente = await Admin.findOne({ email: email });
         if (adminExistente) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Ya existe un administrador con ese correo electrónico.',
-                data: {}
-            });
-        }
+            return sendResponse(res, 400, {}, 'Ya existe un administrador con ese correo electrónico.');
+        };
+
 
         const verificationToken = generateVerificationToken();
 
         const nuevoAdmin = new Admin({
-            nombreCompleto: nombreCompleto, // Asegúrate de asignar correctamente
-            email: email, // Asegúrate de asignar correctamente
-            password: password, // La contraseña se asignará después de encriptarla
+            nombreCompleto: nombreCompleto,
+            email: email,
+            password: password,
             isVerified: false,
-            verificationToken: verificationToken // Asegúrate de asignar correctamente
+            verificationToken: verificationToken
         });
 
         const salt = await bcrypt.genSalt(10);
-        nuevoAdmin.password = await bcrypt.hash(nuevoAdmin.password, salt); 
+        nuevoAdmin.password = await bcrypt.hash(nuevoAdmin.password, salt);
 
         const verificationURL = `${process.env.FRONTEND_URL}/verificarCuenta/${verificationToken}`;
         const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmailAdmin.hbs');
@@ -196,20 +189,11 @@ router.post('/',verifyAdminToken,  async (req, res) => {
 
         const savedAdmin = await nuevoAdmin.save();
 
-        return res.status(200).json({
-            code: 200,
-            status: 'success',
-            message: 'Administrador añadido exitosamente.',
-            data: { savedAdmin }
-        });
+        return sendResponse(res, 200, { adminId: savedAdmin._id }, 'Administrador añadido exitosamente.');
+
     } catch (error) {
         console.error('Error al agregar un administrador:', error);
-        return res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al agregar un administrador.',
-            data: {}
-        });
+        return sendResponse(res, 500, {}, 'Error del servidor al agregar un administrador.');
     }
 });
 

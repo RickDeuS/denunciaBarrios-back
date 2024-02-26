@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Denuncia = require('../../Models/denuncia');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -73,28 +74,13 @@ router.get('/', async (req, res) => {
         const denuncias = await Denuncia.find({ isDeleted: false });
 
         if (denuncias.length === 0) {
-            return res.status(404).json({
-                code: 404,
-                status: 'error',
-                message: 'No hay denuncias que mostrar',
-                data: {}
-            });
+            return sendResponse(res, 404, {}, 'No hay denuncias que mostrar');
         }
 
-        res.json({
-            code: 200,
-            status: 'success',
-            message: 'Denuncias obtenidas correctamente',
-            data: denuncias
-        });
+        sendResponse(res, 200, denuncias, 'Denuncias obtenidas correctamente');
     } catch (error) {
         console.error('Error al obtener las denuncias:', error);
-        res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Hubo un error al obtener las denuncias',
-            data: {}
-        });
+        sendResponse(res, 500, {}, 'Hubo un error al obtener las denuncias');
     }
 });
 

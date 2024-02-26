@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const Denuncia = require('../../Models/denuncia');
 const verifyAdminToken = require('../../Middleware/verifyAdminToken');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -110,39 +111,19 @@ router.post('/', verifyAdminToken, async (req, res) => {
         const { _id } = req.body;
 
         if (!_id) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Se debe proporcionar el ID de la denuncia.',
-                data: {}
-            });
+            return sendResponse(res, 400, {}, 'ID no proporcionado.');
         }
 
         const denuncia = await Denuncia.findById(_id);
 
         if (!denuncia) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Denuncia no encontrada.',
-                data: {}
-            });
+            return sendResponse(res, 400, {}, 'Denuncia no encontrada.');
         }
 
-        return res.status(200).json({
-            code: 200,
-            status: 'success',
-            message: 'Detalles de la denuncia obtenidos exitosamente.',
-            data: denuncia
-        });
+        return sendResponse(res, 200, denuncia, 'Detalles de la denuncia obtenidos exitosamente.');
     } catch (error) {
         console.error('Error al obtener los detalles de la denuncia:', error);
-        return res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al obtener los detalles de la denuncia.',
-            data: {}
-        });
+        return sendResponse(res, 500, {}, 'Error del servidor al obtener los detalles de la denuncia.');
     }
 });
 

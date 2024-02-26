@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const User = require('../../Models/user');
 const verifyAdminToken = require('../../Middleware/verifyAdminToken');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -117,41 +118,26 @@ router.post('/', verifyAdminToken, async (req, res) => {
 
         // Validar que el estado sea 'block' o 'unblock'
         if (!_id || (status !== 'block' && status !== 'unblock')) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Se deben proporcionar el ID del usuario y un estado válido (block/unblock).',
-                data: {}
-            });
+            return sendResponse(res, 400, {}, 'Se deben proporcionar el ID del usuario y un estado válido (block/unblock).' )
         }
 
         const usuario = await User.findById(_id);
         if (!usuario) {
-            return res.status(404).json({
-                code: 404,
-                status: 'error',
-                message: 'Usuario no encontrado.',
-                data: {}
-            });
+            return sendResponse(res, 404, {},'Usuario no encontrado.' )
         }
 
         usuario.isBlocked = status === 'block';
         await usuario.save();
 
-        return res.status(200).json({
-            code: 200,
-            status: 'success',
-            message: status === 'block' ? 'Cuenta de usuario bloqueada correctamente.' : 'Cuenta de usuario desbloqueada correctamente.',
-            data: { _id: usuario._id, isBlocked: usuario.isBlocked }
-        });
+        return sendResponse(
+            res, 
+            200, 
+            { _id: usuario._id, isBlocked: usuario.isBlocked }, 
+            status === 'block' ? 'Cuenta de usuario bloqueada correctamente.' : 'Cuenta de usuario desbloqueada correctamente.')
+
     } catch (error) {
         console.error('Error al actualizar el estado de la cuenta de usuario:', error);
-        return res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al actualizar el estado de la cuenta de usuario.',
-            data: {}
-        });
+        return sendResponse(res, 500, {}, 'Error del servidor al actualizar el estado de la cuenta de usuario.')
     }
 });
 

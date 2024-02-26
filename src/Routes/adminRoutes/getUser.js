@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const User = require('../../Models/user');
 const verifyAdminToken = require('../../Middleware/verifyAdminToken');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -89,39 +90,19 @@ router.post('/', verifyAdminToken, async (req, res) => {
         const { _id } = req.body;
 
         if (!_id) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Se debe proporcionar el ID del usuario.',
-                data: {}
-            });
+            return  sendResponse(res, 400, {}, 'Se debe proporcionar el ID del usuario.')
         }
 
         const usuario = await User.findById(_id, '-password'); 
 
         if (!usuario) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Usuario no encontrado.',
-                data: {}
-            });
+            return sendResponse(res, 400, {},'Usuario no encontrado.' )
         }
 
-        return res.status(200).json({
-            code: 200,
-            status: 'success',
-            message: 'Detalles del usuario obtenidos exitosamente.',
-            data: usuario
-        });
+        return sendResponse(res, 200, usuario, 'Detalles del usuario obtenidos exitosamente.')
     } catch (error) {
         console.error('Error al obtener los detalles del usuario:', error);
-        return res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al obtener los detalles del usuario.',
-            data: {}
-        });
+        return sendResponse(res, 500, {}, 'Error del servidor al obtener los detalles del usuario.')
     }
 });
 

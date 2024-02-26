@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Denuncia = require('../../Models/denuncia');
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -106,42 +107,22 @@ const Denuncia = require('../../Models/denuncia');
 
 router.get('/', async (req, res) => {
     try {
-        const { _id } = req.body;
+        const { _id } = req.query;
 
         if (!_id) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Se debe proporcionar el ID de la denuncia.',
-                data: {}
-            });
+            return sendResponse(res, 400, {}, 'Se debe proporcionar el ID de la denuncia.');
         }
 
         const denuncia = await Denuncia.findById(_id);
 
         if (!denuncia) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Denuncia no encontrada.',
-                data: {}
-            });
+            return sendResponse(res, 404, {}, 'Denuncia no encontrada.');
         }
 
-        return res.status(200).json({
-            code: 200,
-            status: 'success',
-            message: 'Detalles de la denuncia obtenidos exitosamente.',
-            data: denuncia
-        });
+        sendResponse(res, 200, denuncia, 'Detalles de la denuncia obtenidos exitosamente.');
     } catch (error) {
         console.error('Error al obtener los detalles de la denuncia:', error);
-        return res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al obtener los detalles de la denuncia.',
-            data: {}
-        });
+        sendResponse(res, 500, {}, 'Error del servidor al obtener los detalles de la denuncia.');
     }
 });
 

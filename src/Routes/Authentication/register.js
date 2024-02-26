@@ -10,6 +10,7 @@ const schemaRegister = require('./schemaRegister');
 const { Resend } = require("resend");
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
+const { sendResponse } = require('../../utils/responseHandler');
 
 /**
  * @swagger
@@ -146,52 +147,22 @@ router.post('/', async (req, res) => {
         // Validar usuario
         const { error } = schemaRegister.validate(req.body);
         if (error) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: error.details[0].message,
-                data: {}
-            });
+            return sendResponse(res, 400, {}, error.details[0].message);
         }
-
-        // const isNombreCompletoExist = await User.findOne({ nombreCompleto: req.body.nombreCompleto });
-        // if (isNombreCompletoExist) {
-        //     return res.status(400).json({
-        //         code: 400,
-        //         status: 'error',
-        //         message: 'Email ya registrado',
-        //         data: {}
-        //     });
-        // }
 
         const isEmailExist = await User.findOne({ email: req.body.email });
         if (isEmailExist) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Este email ya ha sido registrado.',
-                data: {}
-            });
+            return sendResponse(res, 400, {}, 'Este email ya ha sido registrado.');
         }
 
         const isNumTelefonoExist = await User.findOne({ numTelefono: req.body.numTelefono });
         if (isNumTelefonoExist) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Este número de teléfono ya ha sido registrado.',
-                data: {}
-            });
+            return sendResponse(res, 400, {}, 'Este número de teléfono ya ha sido registrado.');
         }
 
         const isDniExist = await User.findOne({ cedula: req.body.cedula });
         if (isDniExist) {
-            return res.status(400).json({
-                code: 400,
-                status: 'error',
-                message: 'Esta cédula ya ha sido registrada.',
-                data: {}
-            });
+            return sendResponse(res, 400, {}, 'Esta cédula ya ha sido registrada.');
         }
 
         // Hash de la contraseña
@@ -204,15 +175,16 @@ router.post('/', async (req, res) => {
             numTelefono: req.body.numTelefono,
             email: req.body.email,
             password: hashedPassword,
-            // photo: '',
             verificationToken,
             isVerified: false,
         });
+
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path, { folder: 'profile_photos' });
             user.photo = result.secure_url;
             console.log("Imagen subida a Cloudinary");
         }
+
         // Enviar el correo electrónico de verificación
         const verificationURL = `${process.env.FRONTEND_URL}/verificarCuenta/${verificationToken}`;
         const templatePath = path.join(__dirname, '..', '..', 'utils', 'verificationEmail.hbs');
@@ -223,49 +195,32 @@ router.post('/', async (req, res) => {
             nombreCompleto: req.body.nombreCompleto,
             verificationURL: verificationURL,
         });
+        
         const mailOptions = {
             from: userMailer,
             to: req.body.email,
             subject: 'Verificación de cuenta',
             html: verificationEmailContent,
         };
-        //  await transporter.sendMail(mailOptions, function (err, msg) {
 
-        //  });
-
-
-        const email = await new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
             transporter.sendMail(mailOptions, function (err, info) {
                 if (err) {
-                    resolve(err);
+                    reject(err);
                 } else {
                     resolve(info);
                 }
-            })
+            });
         });
-        //return; 
 
-        //await transporter.sendMail(mailOptions);
         const savedUser = await user.save();        
-        res.json({
-            code: 200,
-            status: 'success',
-            message: 'Usuario registrado exitosamente. Se ha enviado un correo electrónico de verificación.',
-            data: savedUser
-        });
+        sendResponse(res, 200, savedUser, 'Usuario registrado exitosamente. Se ha enviado un correo electrónico de verificación.');
     } catch (error) {
         console.error("Error:", error);
-        res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error al guardar el usuario en la base de datos',
-            data: {}
-        });
+        sendResponse(res, 500, {}, 'Error al guardar el usuario en la base de datos');
     }
 });
 
 module.exports = router;
 
 
-
-///////////////////////
