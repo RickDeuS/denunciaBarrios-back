@@ -129,7 +129,7 @@ router.post('/', async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        sendResponse(res, 200,  token , 'Inicio de sesión exitoso');
+        sendResponse(res, 200,  {token} , 'Inicio de sesión exitoso');
     } catch (error) {
         sendResponse(res, 500, {}, 'Error interno del servidor');
     }
