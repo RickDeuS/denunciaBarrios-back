@@ -99,7 +99,7 @@ router.post('/', verifyAdminToken, async (req, res) => {
             return sendResponse(res, 400, {},'Usuario no encontrado.' )
         }
 
-        return sendResponse(res, 200, {usuario}, 'Detalles del usuario obtenidos exitosamente.')
+        return sendResponse(res, 200, usuario, 'Detalles del usuario obtenidos exitosamente.')
     } catch (error) {
         console.error('Error al obtener los detalles del usuario:', error);
         return sendResponse(res, 500, {}, 'Error del servidor al obtener los detalles del usuario.')

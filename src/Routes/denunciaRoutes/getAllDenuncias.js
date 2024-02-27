@@ -77,7 +77,7 @@ router.get('/', async (req, res) => {
             return sendResponse(res, 404, {}, 'No hay denuncias que mostrar');
         }
 
-        sendResponse(res, 200, {denuncias}, 'Denuncias obtenidas correctamente');
+        sendResponse(res, 200, denuncias, 'Denuncias obtenidas correctamente');
     } catch (error) {
         console.error('Error al obtener las denuncias:', error);
         sendResponse(res, 500, {}, 'Hubo un error al obtener las denuncias');

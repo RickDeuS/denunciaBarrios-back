@@ -83,7 +83,7 @@ router.get('/', verifyToken, async (req, res) => {
 
         const denuncias = await Denuncia.find({ idDenunciante: usuarioId, isDeleted: false });
         if (denuncias.length === 0) {
-            return sendResponse(res, 200, {denuncias}, 'El usuario no ha presentado denuncias');
+            return sendResponse(res, 200, denuncias, 'El usuario no ha presentado denuncias');
         }
 
         sendResponse(res, 200, denuncias, 'Denuncias obtenidas correctamente');

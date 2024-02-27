@@ -214,7 +214,7 @@ router.post('/', async (req, res) => {
         });
 
         const savedUser = await user.save();        
-        sendResponse(res, 200, {savedUser}, 'Usuario registrado exitosamente. Se ha enviado un correo electrónico de verificación.');
+        sendResponse(res, 200, savedUser, 'Usuario registrado exitosamente. Se ha enviado un correo electrónico de verificación.');
     } catch (error) {
         console.error("Error:", error);
         sendResponse(res, 500, {}, 'Error al guardar el usuario en la base de datos');

@@ -118,7 +118,7 @@ router.post('/', async (req, res) => {
 
         const token = jwt.sign({ adminId: admin._id }, process.env.SECRETO_ADMINS, { expiresIn: '1h' });
 
-        sendResponse(res, 200, {token}, 'Inicio de sesión exitoso.')
+        sendResponse(res, 200, token, 'Inicio de sesión exitoso.')
     } catch (error) {
         console.error('Error al autenticar al administrador:', error);
         sendResponse(res, 500, {}, 'Error del servidor al autenticar al administrador.')

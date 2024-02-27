@@ -119,7 +119,7 @@ router.get('/', async (req, res) => {
             return sendResponse(res, 404, {}, 'Denuncia no encontrada.');
         }
 
-        sendResponse(res, 200, {denuncia}, 'Detalles de la denuncia obtenidos exitosamente.');
+        sendResponse(res, 200, denuncia, 'Detalles de la denuncia obtenidos exitosamente.');
     } catch (error) {
         console.error('Error al obtener los detalles de la denuncia:', error);
         sendResponse(res, 500, {}, 'Error del servidor al obtener los detalles de la denuncia.');

@@ -78,7 +78,7 @@ const { sendResponse } = require('../../utils/responseHandler');
 router.post('/', verifyAdminToken, async (req, res) => {
     try {
         const denuncias = await Denuncia.find();
-        return sendResponse(res, 200, {denuncias}, 'Lista de todas las denuncias obtenida exitosamente.')
+        return sendResponse(res, 200, denuncias, 'Lista de todas las denuncias obtenida exitosamente.')
     } catch (error) {
         console.error('Error al obtener todas las denuncias:', error);
         return sendResponse(res, 500, {}, 'Error del servidor al obtener las denuncias.')
