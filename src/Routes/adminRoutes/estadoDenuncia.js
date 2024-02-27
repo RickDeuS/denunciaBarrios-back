@@ -142,7 +142,7 @@ router.post('/', verifyAdminToken, async (req, res) => {
         // Enviar correo electrónico al usuario sobre la actualización del estado de la denuncia (Opcional)
         // Omitido: Implementación del envío de correo electrónico para simplificar
 
-        return sendResponse(res, 200, denunciaActualizada, 'Estado de la denuncia modificado exitosamente.');
+        return sendResponse(res, 200, {denunciaActualizada}, 'Estado de la denuncia modificado exitosamente.');
     } catch (error) {
         console.error('Error al modificar el estado de la denuncia:', error);
         return sendResponse(res, 500, {}, "Error del servidor al actualizar el estado de la denuncia")

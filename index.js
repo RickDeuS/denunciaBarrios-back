@@ -35,11 +35,13 @@ const adminRoutes = require('./src/Routes/adminRoutes');
 const verifyToken = require('./src/Middleware/validate-token');
 const verifyAdminToken = require('./src/Middleware/verifyAdminToken');
 const userRoutes = require('./src/Routes/userRoutes');
+const dashboardRoutes = require ('./src/Routes/dashboardRoutes');
 
 // Ruta de autenticación
 app.use('/auth', AuthRoutes);
-// app.use('/admin', verifyAdminToken);
+app.use('/admin/dashboard', verifyAdminToken);
 app.use('/admin', adminRoutes);
+
 
 // Middleware para verificar el token en las rutas protegidas
 app.use('/denuncias', verifyToken);
@@ -54,6 +56,7 @@ app.get('/', (req, res) => {
 });
 
 // Ruta protegida 
+app.use('/admin/dashboard', dashboardRoutes);
 app.use('/denuncias', denunciaRoutes);
 app.use('/user', userRoutes);
 

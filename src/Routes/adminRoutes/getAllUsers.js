@@ -78,7 +78,7 @@ const { sendResponse } = require('../../utils/responseHandler');
 router.post('/', verifyAdminToken, async (req, res) => {
     try {
         const usuarios = await User.find({}, '-password'); 
-        return sendResponse(res, 200, usuarios,'Lista de todas las cuentas de usuario obtenida exitosamente.' )
+        return sendResponse(res, 200, {usuarios},'Lista de todas las cuentas de usuario obtenida exitosamente.' )
     } catch (error) {
         console.error('Error al obtener las cuentas de usuario:', error);
         return sendResponse(res, 500, {}, 'Error del servidor al obtener las cuentas de usuario.' )

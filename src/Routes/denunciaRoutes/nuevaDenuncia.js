@@ -229,7 +229,7 @@ router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
         usuario.numDenunciasRealizadas += 1;
         await usuario.save();
 
-        sendResponse(res, 200, nuevaDenuncia, 'Denuncia creada exitosamente');
+        sendResponse(res, 200, {nuevaDenuncia}, 'Denuncia creada exitosamente');
     } catch (error) {
         console.error('Error en la ruta /denuncia/nuevaDenuncia:', error);
         sendResponse(res, 500, {}, 'Error en el servidor');

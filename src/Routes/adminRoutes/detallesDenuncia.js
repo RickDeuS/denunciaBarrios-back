@@ -120,7 +120,7 @@ router.post('/', verifyAdminToken, async (req, res) => {
             return sendResponse(res, 400, {}, 'Denuncia no encontrada.');
         }
 
-        return sendResponse(res, 200, denuncia, 'Detalles de la denuncia obtenidos exitosamente.');
+        return sendResponse(res, 200, {denuncia}, 'Detalles de la denuncia obtenidos exitosamente.');
     } catch (error) {
         console.error('Error al obtener los detalles de la denuncia:', error);
         return sendResponse(res, 500, {}, 'Error del servidor al obtener los detalles de la denuncia.');

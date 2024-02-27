@@ -2,6 +2,7 @@ const router = require('express').Router();
 const verifyToken = require('../../Middleware/validate-token');
 const Denuncia = require('../../Models/denuncia');
 const User = require('../../Models/user');
+const sendResponse = require('../../utils/responseHandler');
 
 router.get('/', verifyToken, async (req, res) => {
     try {
@@ -9,28 +10,14 @@ router.get('/', verifyToken, async (req, res) => {
 
         const usuario = await User.findById(usuarioId).select('-password'); 
         if (!usuario) {
-            return res.status(404).json({
-                code: 404,
-                status: 'error',
-                message: 'Usuario no encontrado',
-                data: {}
-            });
+            return sendResponse(res, 404, {}, 'Usuario no encontrado');
         }
 
-        res.json({
-            code: 200,
-            status: 'success',
-            message: 'Usuario obtenido correctamente.',
-            data: usuario
-        });
+        sendResponse(res, 200, {usuario}, 'Usuario obtenido correctamente.');
+
     } catch (error) {
         console.error('Error al obtener el usuario:', error);
-        res.status(500).json({
-            code: 500,
-            status: 'error',
-            message: 'Error del servidor al obtener el usuario.',
-            data: {}
-        });
+        sendResponse(res, 500, {}, 'Error del servidor al obtener el usuario.');
     }
 });
 
