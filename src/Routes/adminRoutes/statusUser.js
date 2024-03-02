@@ -9,7 +9,7 @@ const { sendResponse } = require('../../utils/responseHandler');
  *   - name: Administrador
  *     description: Endpoints para administradores
  * 
- * /admin/statusUser:
+ * /admin/changeStatusUser:
  *   post:
  *     summary: Bloquear o desbloquear una cuenta de usuario por su ID.
  *     tags:
