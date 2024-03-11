@@ -3,7 +3,7 @@ module.exports = {
         name: 'BACKEND-PUYANGO:3085',
         script: 'index.js',
         watch: true,
-        autorestart: true,
+        autorestart: false,
         restart_delay: 5000 
     }]
 };
