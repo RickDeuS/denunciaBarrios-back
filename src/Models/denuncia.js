@@ -43,7 +43,7 @@ const denunciaSchema = new mongoose.Schema(
     },
     estado: {
       type: String,
-      enum: ['En revisión', 'En proceso de solución', 'Solucionada'],
+      enum: ['En revisión', 'En proceso', 'Atendida'],
       default: 'En revisión'
     },
     isDeleted: {
