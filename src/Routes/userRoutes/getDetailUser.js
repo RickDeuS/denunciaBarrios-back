@@ -17,7 +17,7 @@ router.get('/', verifyToken, async (req, res) => {
 
     } catch (error) {
         console.error('Error al obtener el usuario:', error);
-        sendResponse(res, 500, {}, 'Error del servidor al obtener el usuario.');
+        return sendResponse(res, 500, {}, 'Error del servidor al obtener el usuario.');
     }
 });
 
