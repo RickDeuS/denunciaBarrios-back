@@ -33,6 +33,7 @@
     "nodemon": "^3.0.1",
     "path": "^0.12.7",
     "resend": "^2.0.0",
+    "streamifier": "^0.1.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.3",
     "uuid": "^9.0.0"

@@ -77,6 +77,7 @@ router.get('/', verifyToken, async (req, res) => {
         const usuarioId = req.user._id; 
 
         const usuario = await User.findById(usuarioId);
+        console.log("============================",usuario)
         if (!usuario) {
             return sendResponse(res, 404, {}, 'Usuario no encontrado');
         }

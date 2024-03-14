@@ -8,6 +8,7 @@ const verifyToken = require('../../Middleware/validate-token');
 const fs = require('fs');
 const path = require('path');
 const { sendResponse } = require('../../utils/responseHandler');
+const streamifier = require('streamifier');
 
 const multer = require('multer');
 const upload = multer({
@@ -167,7 +168,6 @@ cloudinary.config({
     secure: true,
 });
 
-
 // NUEVA DENUNCIA    
 router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
     try {
@@ -203,23 +203,25 @@ router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
         });
 
         if (req.file) {
-            const tempFileName = `temp_${Date.now()}.png`;
-            const tempDir = path.join(__dirname, '..', 'temp');
-            const tempFilePath = path.join(tempDir, tempFileName);
-
-            if (!fs.existsSync(tempDir)) {
-                fs.mkdirSync(tempDir);
-            }
-
-            fs.writeFileSync(tempFilePath, req.file.buffer);
             const publicId = `evidencia_${nuevaDenuncia._id}`;
-            const result = await cloudinary.uploader.upload(tempFilePath, {
-                folder: 'denuncia_photos',
-                public_id: publicId,
-            });
+            // Uso de upload_stream para cargar directamente desde el buffer
+            await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream({
+                    folder: 'denuncia_photos',
+                    public_id: publicId,
+                    format: 'png' // o el formato que necesites
+                }, (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                });
 
-            nuevaDenuncia.evidencia = result.secure_url;
-            fs.unlinkSync(tempFilePath);
+                streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+            }).then((result) => {
+                nuevaDenuncia.evidencia = result.secure_url;
+            }).catch((error) => {
+                console.error('Error al cargar la imagen en Cloudinary:', error);
+                throw new Error('Error al cargar la imagen');
+            });
         }
 
         await nuevaDenuncia.save();
