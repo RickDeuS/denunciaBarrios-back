@@ -148,21 +148,25 @@ router.post('/', async (req, res) => {
         const { error } = schemaRegister.validate(req.body);
         if (error) {
             return sendResponse(res, 400, {}, error.details[0].message);
+            console.log("Error:", error);
         }
 
         const isEmailExist = await User.findOne({ email: req.body.email });
         if (isEmailExist) {
             return sendResponse(res, 400, {}, 'Este email ya ha sido registrado.');
+            console.log("Este email ya ha sido registrado.");
         }
 
         const isNumTelefonoExist = await User.findOne({ numTelefono: req.body.numTelefono });
         if (isNumTelefonoExist) {
             return sendResponse(res, 400, {}, 'Este número de teléfono ya ha sido registrado.');
+            console.log("Este número de teléfono ya ha sido registrado.");
         }
 
         const isDniExist = await User.findOne({ cedula: req.body.cedula });
         if (isDniExist) {
             return sendResponse(res, 400, {}, 'Esta cédula ya ha sido registrada.');
+            console.log("Esta cédula ya ha sido registrada.");
         }
 
         // Hash de la contraseña
