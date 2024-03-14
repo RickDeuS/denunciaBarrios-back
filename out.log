@@ -325,3 +325,176 @@
 2024-03-11 23:18:44: IP: ::ffff:190.110.60.140, Method: GET, URL: /api-docs/swagger-ui-init.js, Status: 304
 2024-03-11 23:18:44: IP: ::ffff:190.110.60.140, Method: GET, URL: /api-docs/swagger-ui-standalone-preset.js, Status: 304
 2024-03-11 23:18:44: IP: ::ffff:190.110.60.140, Method: GET, URL: /api-docs/favicon-32x32.png, Status: 304
+2024-03-12 09:34:33: Servidor en ejecución en el puerto: 3085
+2024-03-12 09:34:33: Se estableció conexión con la base de datos
+2024-03-12 09:34:54: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/, Status: 200
+2024-03-12 09:34:55: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-init.js, Status: 200
+2024-03-12 09:34:55: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui.css, Status: 200
+2024-03-12 09:34:55: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-standalone-preset.js, Status: 200
+2024-03-12 09:34:55: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-bundle.js, Status: 200
+2024-03-12 09:51:14: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs, Status: 301
+2024-03-12 09:51:14: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/, Status: 304
+2024-03-12 09:51:15: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-bundle.js, Status: 304
+2024-03-12 09:51:15: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui.css, Status: 304
+2024-03-12 09:51:15: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-init.js, Status: 304
+2024-03-12 09:51:15: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-standalone-preset.js, Status: 304
+2024-03-12 09:55:09: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/, Status: 200
+2024-03-12 09:55:10: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui.css, Status: 304
+2024-03-12 09:55:10: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-bundle.js, Status: 304
+2024-03-12 09:55:10: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-standalone-preset.js, Status: 304
+2024-03-12 09:55:10: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-init.js, Status: 304
+2024-03-12 09:55:11: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/, Status: 304
+2024-03-12 09:55:11: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui.css, Status: 304
+2024-03-12 09:55:11: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-bundle.js, Status: 304
+2024-03-12 09:55:11: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-init.js, Status: 304
+2024-03-12 09:55:11: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-standalone-preset.js, Status: 304
+2024-03-12 09:55:12: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/favicon-32x32.png, Status: 200
+2024-03-12 12:42:06: Servidor en ejecución en el puerto: 3085
+2024-03-12 12:42:07: Se estableció conexión con la base de datos
+2024-03-12 12:46:10: Servidor en ejecución en el puerto: 3085
+2024-03-12 12:46:11: Se estableció conexión con la base de datos
+2024-03-12 13:01:46: Servidor en ejecución en el puerto: 3085
+2024-03-12 13:01:47: Se estableció conexión con la base de datos
+2024-03-12 14:57:02: IP: ::ffff:35.203.210.118, Method: GET, URL: /, Status: 200
+2024-03-12 15:24:31: IP: ::ffff:190.63.241.39, Method: GET, URL: /, Status: 200
+2024-03-12 15:24:31: IP: ::ffff:190.63.241.39, Method: GET, URL: /favicon.ico, Status: 404
+2024-03-12 15:24:37: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs, Status: 301
+2024-03-12 15:24:37: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/, Status: 200
+2024-03-12 15:24:38: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/swagger-ui.css, Status: 200
+2024-03-12 15:24:38: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/swagger-ui-init.js, Status: 200
+2024-03-12 15:24:38: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/swagger-ui-standalone-preset.js, Status: 200
+2024-03-12 15:24:38: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/swagger-ui-bundle.js, Status: 200
+2024-03-12 15:24:39: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/swagger-ui-init.js, Status: 200
+2024-03-12 15:24:39: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/swagger-ui-standalone-preset.js, Status: 200
+2024-03-12 15:24:40: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/favicon-32x32.png, Status: 200
+2024-03-12 15:24:40: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/swagger-ui-bundle.js, Status: 200
+2024-03-12 15:34:04: Servidor en ejecución en el puerto: 3085
+2024-03-12 15:34:05: Se estableció conexión con la base de datos
+2024-03-12 15:34:32: Servidor en ejecución en el puerto: 3085
+2024-03-12 15:34:32: Se estableció conexión con la base de datos
+2024-03-12 15:37:56: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/, Status: 304
+2024-03-12 15:37:56: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/swagger-ui.css, Status: 304
+2024-03-12 15:37:56: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/swagger-ui-bundle.js, Status: 304
+2024-03-12 15:37:56: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/swagger-ui-standalone-preset.js, Status: 304
+2024-03-12 15:37:57: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/swagger-ui-init.js, Status: 200
+2024-03-12 15:37:57: IP: ::ffff:190.63.241.39, Method: GET, URL: /api-docs/favicon-32x32.png, Status: 304
+2024-03-12 15:38:13: IP: ::ffff:190.63.241.39, Method: OPTIONS, URL: /auth/login, Status: 204
+2024-03-12 15:38:14: IP: ::ffff:190.63.241.39, Method: POST, URL: /auth/login, Status: 200
+2024-03-12 15:38:14: IP: ::ffff:190.63.241.39, Method: OPTIONS, URL: /user/getDetailUser, Status: 204
+2024-03-12 15:38:14: IP: ::ffff:190.63.241.39, Method: OPTIONS, URL: /user/getDetailUser, Status: 204
+2024-03-12 15:38:14: IP: ::ffff:190.63.241.39, Method: OPTIONS, URL: /denuncias/getAllDenuncias, Status: 204
+2024-03-12 15:38:15: IP: ::ffff:190.63.241.39, Method: OPTIONS, URL: /denuncias/getAllDenuncias, Status: 204
+2024-03-12 15:38:15: IP: ::ffff:190.63.241.39, Method: GET, URL: /denuncias/getAllDenuncias, Status: 200
+2024-03-12 15:38:15: IP: ::ffff:190.63.241.39, Method: GET, URL: /denuncias/getAllDenuncias, Status: 304
+2024-03-12 15:38:22: IP: ::ffff:190.63.241.39, Method: GET, URL: /user/getDetailUser, Status: 200
+2024-03-12 15:50:54: Servidor en ejecución en el puerto: 3085
+2024-03-12 15:50:54: Se estableció conexión con la base de datos
+2024-03-12 15:57:15: Servidor en ejecución en el puerto: 3085
+2024-03-12 15:57:15: Se estableció conexión con la base de datos
+2024-03-12 15:58:10: Servidor en ejecución en el puerto: 3085
+2024-03-12 15:58:10: Se estableció conexión con la base de datos
+2024-03-13 16:55:35: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs, Status: 301
+2024-03-13 16:55:35: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/, Status: 200
+2024-03-13 16:55:36: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-init.js, Status: 200
+2024-03-13 16:55:36: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui.css, Status: 200
+2024-03-13 16:55:36: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-standalone-preset.js, Status: 200
+2024-03-13 16:55:36: IP: ::ffff:181.233.51.189, Method: GET, URL: /api-docs/swagger-ui-bundle.js, Status: 200
+2024-03-13 22:51:21: IP: ::ffff:190.96.96.230, Method: POST, URL: /auth/login, Status: 200
+2024-03-13 22:51:26: IP: ::ffff:190.96.96.230, Method: GET, URL: /denuncias/getDenunciasUser/, Status: 200
+2024-03-13 22:51:30: IP: ::ffff:190.96.96.230, Method: GET, URL: /denuncias/getDenunciasUser/, Status: 200
+2024-03-13 22:53:38: IP: ::ffff:190.96.96.230, Method: POST, URL: /auth/login, Status: 401
+2024-03-13 22:55:02: IP: ::ffff:190.96.96.230, Method: OPTIONS, URL: /admin/loginAdmin, Status: 204
+2024-03-13 22:55:02: IP: ::ffff:190.96.96.230, Method: POST, URL: /admin/loginAdmin, Status: 200
+2024-03-13 22:55:04: IP: ::ffff:190.96.96.230, Method: OPTIONS, URL: /admin/getAllDenuncias, Status: 204
+2024-03-13 22:55:04: IP: ::ffff:190.96.96.230, Method: OPTIONS, URL: /admin/getAllDenuncias, Status: 204
+2024-03-13 22:55:04: IP: ::ffff:190.96.96.230, Method: POST, URL: /admin/getAllDenuncias, Status: 200
+2024-03-13 22:55:04: IP: ::ffff:190.96.96.230, Method: POST, URL: /admin/getAllDenuncias, Status: 200
+2024-03-13 22:55:04: IP: ::ffff:190.96.96.230, Method: OPTIONS, URL: /admin/getAllUsers, Status: 204
+2024-03-13 22:55:04: IP: ::ffff:190.96.96.230, Method: OPTIONS, URL: /admin/getAllUsers, Status: 204
+2024-03-13 22:55:04: IP: ::ffff:190.96.96.230, Method: POST, URL: /admin/getAllUsers, Status: 200
+2024-03-13 22:55:04: IP: ::ffff:190.96.96.230, Method: POST, URL: /admin/getAllUsers, Status: 200
+2024-03-13 22:55:24: IP: ::ffff:190.96.96.230, Method: OPTIONS, URL: /admin/changeStatusUser, Status: 204
+2024-03-13 22:55:24: IP: ::ffff:190.96.96.230, Method: POST, URL: /admin/changeStatusUser, Status: 200
+2024-03-13 22:55:24: IP: ::ffff:190.96.96.230, Method: OPTIONS, URL: /admin/getAllUsers, Status: 204
+2024-03-13 22:55:24: IP: ::ffff:190.96.96.230, Method: POST, URL: /admin/getAllUsers, Status: 200
+2024-03-13 22:55:39: IP: ::ffff:190.96.96.230, Method: POST, URL: /auth/login, Status: 400
+2024-03-13 22:56:13: IP: ::ffff:190.96.96.230, Method: POST, URL: /auth/login, Status: 400
+2024-03-13 22:56:16: IP: ::ffff:190.96.96.230, Method: POST, URL: /auth/login, Status: 200
+2024-03-13 22:56:18: IP: ::ffff:190.96.96.230, Method: GET, URL: /denuncias/getDenunciasUser/, Status: 200
+2024-03-13 22:59:26: IP: ::ffff:190.96.96.230, Method: GET, URL: /denuncias/getDenunciasUser/, Status: 200
+2024-03-13 22:59:31: IP: ::ffff:190.96.96.230, Method: GET, URL: /denuncias/getDenunciasUser/, Status: 200
+2024-03-13 23:02:02: IP: ::ffff:190.96.96.230, Method: GET, URL: /api-docs, Status: 301
+2024-03-13 23:02:02: IP: ::ffff:190.96.96.230, Method: GET, URL: /api-docs/, Status: 200
+2024-03-13 23:02:02: IP: ::ffff:190.96.96.230, Method: GET, URL: /api-docs/swagger-ui-init.js, Status: 200
+2024-03-13 23:02:02: IP: ::ffff:190.96.96.230, Method: GET, URL: /api-docs/swagger-ui.css, Status: 200
+2024-03-13 23:02:02: IP: ::ffff:190.96.96.230, Method: GET, URL: /api-docs/swagger-ui-standalone-preset.js, Status: 200
+2024-03-13 23:02:02: IP: ::ffff:190.96.96.230, Method: GET, URL: /api-docs/swagger-ui-bundle.js, Status: 200
+2024-03-13 23:11:10: IP: ::ffff:190.96.96.230, Method: GET, URL: /denuncias/getDenunciasUser/, Status: 200
+2024-03-13 23:11:33: IP: ::ffff:190.96.96.230, Method: POST, URL: /auth/login, Status: 200
+2024-03-13 23:11:53: IP: ::ffff:190.96.96.230, Method: POST, URL: /denuncias/getDenunciasUser, Status: 401
+2024-03-13 23:12:04: IP: ::ffff:190.96.96.230, Method: POST, URL: /denuncias/getDenunciasUser, Status: 404
+2024-03-13 23:12:17: IP: ::ffff:190.96.96.230, Method: POST, URL: /denuncias/getDenunciasUser, Status: 404
+2024-03-13 23:13:03: IP: ::ffff:190.96.96.230, Method: POST, URL: /denuncias/getDenunciasUser, Status: 404
+2024-03-13 23:13:07: IP: ::ffff:190.96.96.230, Method: GET, URL: /denuncias/getDenunciasUser, Status: 200
+2024-03-13 23:33:21: IP: ::ffff:190.96.96.230, Method: POST, URL: /auth/login, Status: 200
+2024-03-13 23:33:23: IP: ::ffff:190.96.96.230, Method: GET, URL: /denuncias/getDenunciasUser/, Status: 200
+2024-03-13 23:33:28: IP: ::ffff:190.96.96.230, Method: GET, URL: /denuncias/getDenunciasUser/, Status: 200
+2024-03-13 23:34:41: Servidor en ejecución en el puerto: 3085
+2024-03-13 23:34:41: Se estableció conexión con la base de datos
+2024-03-13 23:35:13: Servidor en ejecución en el puerto: 3085
+2024-03-13 23:35:14: Se estableció conexión con la base de datos
+2024-03-13 23:47:14: Servidor en ejecución en el puerto: 3085
+2024-03-13 23:47:14: Se estableció conexión con la base de datos
+2024-03-13 23:51:43: IP: ::ffff:190.96.96.230, Method: POST, URL: /auth/login, Status: 200
+2024-03-13 23:51:45: IP: ::ffff:190.96.96.230, Method: GET, URL: /denuncias/getDenunciasUser/, Status: 200
+2024-03-13 23:51:48: IP: ::ffff:190.96.96.230, Method: GET, URL: /denuncias/getDenunciasUser/, Status: 200
+2024-03-13 23:53:13: Servidor en ejecución en el puerto: 3085
+2024-03-13 23:53:13: Se estableció conexión con la base de datos
+2024-03-13 23:53:45: Servidor en ejecución en el puerto: 3085
+2024-03-13 23:53:46: Se estableció conexión con la base de datos
+2024-03-13 23:55:51: Servidor en ejecución en el puerto: 3085
+2024-03-13 23:55:51: Se estableció conexión con la base de datos
+2024-03-14 00:01:11: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:01:12: Se estableció conexión con la base de datos
+2024-03-14 00:03:36: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:03:36: Se estableció conexión con la base de datos
+2024-03-14 00:07:02: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:07:02: Se estableció conexión con la base de datos
+2024-03-14 00:07:15: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:07:15: Se estableció conexión con la base de datos
+2024-03-14 00:08:03: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:08:03: Se estableció conexión con la base de datos
+2024-03-14 00:08:19: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:08:19: Se estableció conexión con la base de datos
+2024-03-14 00:08:53: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:08:53: Se estableció conexión con la base de datos
+2024-03-14 00:09:54: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:09:54: Se estableció conexión con la base de datos
+2024-03-14 00:10:52: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:10:52: Se estableció conexión con la base de datos
+2024-03-14 00:11:06: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:11:07: Se estableció conexión con la base de datos
+2024-03-14 00:11:34: IP: ::ffff:190.96.96.230, Method: POST, URL: /denuncias/nuevaDenuncia, Status: 400
+2024-03-14 00:12:21: IP: ::ffff:190.96.96.230, Method: POST, URL: /auth/login, Status: 200
+2024-03-14 00:12:51: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:12:51: Se estableció conexión con la base de datos
+2024-03-14 00:13:32: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:13:32: Se estableció conexión con la base de datos
+2024-03-14 00:13:40: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:13:40: Se estableció conexión con la base de datos
+2024-03-14 00:13:55: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:13:55: Se estableció conexión con la base de datos
+2024-03-14 00:14:02: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:14:03: Se estableció conexión con la base de datos
+2024-03-14 00:14:13: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:14:14: Se estableció conexión con la base de datos
+2024-03-14 00:14:20: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:14:20: Se estableció conexión con la base de datos
+2024-03-14 00:15:39: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:15:39: Se estableció conexión con la base de datos
+2024-03-14 00:15:44: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:15:44: Se estableció conexión con la base de datos
+2024-03-14 00:16:03: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:16:03: Se estableció conexión con la base de datos
+2024-03-14 00:16:17: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:16:17: Se estableció conexión con la base de datos

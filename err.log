@@ -1,0 +1,6 @@
+2024-03-12 15:38:14: Error al obtener el usuario: TypeError: sendResponse is not a function
+2024-03-12 15:38:14:     at /var/www/denunciaBarrios-back/src/Routes/userRoutes/getDetailUser.js:16:9
+2024-03-12 15:38:14:     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-03-12 15:38:14: TypeError: sendResponse is not a function
+2024-03-12 15:38:14:     at /var/www/denunciaBarrios-back/src/Routes/userRoutes/getDetailUser.js:20:9
+2024-03-12 15:38:14:     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
