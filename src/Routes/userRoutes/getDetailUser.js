@@ -2,7 +2,7 @@ const router = require('express').Router();
 const verifyToken = require('../../Middleware/validate-token');
 const Denuncia = require('../../Models/denuncia');
 const User = require('../../Models/user');
-const sendResponse = require('../../utils/responseHandler');
+const { sendResponse } = require('../../utils/responseHandler');
 
 router.get('/', verifyToken, async (req, res) => {
     try {
@@ -10,14 +10,14 @@ router.get('/', verifyToken, async (req, res) => {
 
         const usuario = await User.findById(usuarioId).select('-password'); 
         if (!usuario) {
-            return sendResponse(res, 404, {}, 'Usuario no encontrado');
+            return sendResponse(res, 404, {}, 'User not found');
         }
 
-        return sendResponse(res, 200, usuario, 'Usuario obtenido correctamente.');
+        return sendResponse(res, 200, usuario, 'User retrieved successfully.');
 
     } catch (error) {
-        console.error('Error al obtener el usuario:', error);
-        return sendResponse(res, 500, {}, 'Error del servidor al obtener el usuario.');
+        console.error('Error retrieving user:', error);
+        return sendResponse(res, 500, {}, 'Server error while retrieving user.');
     }
 });
 
