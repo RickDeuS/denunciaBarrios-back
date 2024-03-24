@@ -13,7 +13,7 @@ router.get('/', verifyToken, async (req, res) => {
             return sendResponse(res, 404, {}, 'Usuario no encontrado');
         }
 
-        sendResponse(res, 200, usuario, 'Usuario obtenido correctamente.');
+        return sendResponse(res, 200, usuario, 'Usuario obtenido correctamente.');
 
     } catch (error) {
         console.error('Error al obtener el usuario:', error);

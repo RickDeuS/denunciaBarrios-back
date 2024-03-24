@@ -512,3 +512,7 @@
 2024-03-14 00:22:36: Se estableció conexión con la base de datos
 2024-03-14 00:22:44: Servidor en ejecución en el puerto: 3085
 2024-03-14 00:22:44: Se estableció conexión con la base de datos
+2024-03-14 00:38:24: Servidor en ejecución en el puerto: 3085
+2024-03-14 00:38:26: Se estableció conexión con la base de datos
+2024-03-14 00:38:37: IP: ::1, Method: POST, URL: /denuncias/nuevaDenuncia, Status: 200
+2024-03-14 00:38:53: IP: ::1, Method: POST, URL: /denuncias/nuevaDenuncia, Status: 200
