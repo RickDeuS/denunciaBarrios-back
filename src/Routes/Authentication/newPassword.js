@@ -109,24 +109,31 @@ const { sendResponse } = require('../../utils/responseHandler');
 
 
 //NUEVA CONTRASEÑA DE USUARIO 
-// router.post('/', resetToken,async(req.res) => {
     router.post('/:resetToken', async (req, res) => {
         try {
-            const { resetToken } = req.params.resetToken;
+            const { resetToken } = req.params; 
             const { newPassword } = req.body;
-            const decodedToken = jwt.verify(resetToken, process.env.RESET_TOKEN_SECRET);
-            const userId = decodedToken.id;
-            const user = await User.findById(userId);
     
-            if (!user) {
-                return sendResponse(res, 404, {}, 'Usuario no encontrado');
+            if (!resetToken) {
+                return sendResponse(res, 400, {}, 'Token de restablecimiento no proporcionado');
             }
     
             if (!newPassword) {
                 return sendResponse(res, 400, {}, 'La nueva contraseña no puede estar vacía');
             }
     
+            const decodedToken = jwt.verify(resetToken, process.env.RESET_TOKEN_SECRET);
+    
+            const userId = decodedToken.id;
+    
+            const user = await User.findById(userId);
+    
+            if (!user) {
+                return sendResponse(res, 404, {}, 'Usuario no encontrado');
+            }
+    
             const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
             user.password = hashedPassword;
             user.resetToken = undefined;
             await user.save();
