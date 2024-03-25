@@ -51,8 +51,8 @@ const denunciaSchema = new mongoose.Schema(
       default: false
     },
     fechaHora: {
-      type: Date,
-      default: Date.now
+      type: String,
+      default: () => new Date().toLocaleDateString('es-ES')
     }
   },
   {
@@ -65,7 +65,7 @@ denunciaSchema.index({ ubicacion: '2dsphere' });
 
 const Denuncia = mongoose.model('Denuncia', denunciaSchema);
 
-module.exports = Denuncia;
+module.exports = Denuncia;
 
 
 /**
