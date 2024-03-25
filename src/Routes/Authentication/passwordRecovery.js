@@ -140,24 +140,21 @@ var transporter = nodemailer.createTransport(transportSendGrid);
 
 router.post('/', async (req, res) => {
     try {
-        const { cedula } = req.body;
+        const { email } = req.body;
 
-        if (!cedula) {
-            return sendResponse(res, 400, {}, 'La cédula no puede estar vacía');
+        if (!email) {
+            return sendResponse(res, 400, {}, 'El campo solicitado no puede estar vacío');
         }
 
-        // Buscar al usuario por la cédula
-        const user = await User.findOne({ cedula });
+        const user = await User.findOne({ email });
         if (!user) {
             return sendResponse(res, 404, {}, 'Usuario no encontrado');
         }
 
-        // Generar un token de restablecimiento 
         const resetToken = jwt.sign({ id: user._id }, process.env.RESET_TOKEN_SECRET);
         user.resetToken = resetToken;
         await user.save();
 
-        // Enviar correo electrónico de recuperación de contraseña
         const templatePath = path.join(__dirname, '..', '..', 'utils', 'passwordRecovery.hbs');
         const recuperarContrasenaTemplate = fs.readFileSync(templatePath, 'utf8');
         const template = handlebars.compile(recuperarContrasenaTemplate);

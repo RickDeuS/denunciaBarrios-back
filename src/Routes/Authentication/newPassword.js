@@ -110,9 +110,10 @@ const { sendResponse } = require('../../utils/responseHandler');
 
 //NUEVA CONTRASEÑA DE USUARIO 
 // router.post('/', resetToken,async(req.res) => {
-    router.post('/', async (req, res) => {
+    router.post('/:resetToken', async (req, res) => {
         try {
-            const { resetToken, newPassword } = req.body;
+            const { resetToken } = req.params.resetToken;
+            const { newPassword } = req.body;
             const decodedToken = jwt.verify(resetToken, process.env.RESET_TOKEN_SECRET);
             const userId = decodedToken.id;
             const user = await User.findById(userId);
