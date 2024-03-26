@@ -122,7 +122,6 @@ const userSchema = new Schema(
             type: String,
             default: 'user',
         },
-
         isVerified: {
             type: Boolean,
             default: true,
@@ -148,6 +147,26 @@ const userSchema = new Schema(
                 ref: 'Denuncia',
             },
         ],
+        createdAt: {
+            type: String,
+            default: () => {
+                const date = new Date();
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            },
+        },
+        updatedAt: {
+            type: String,
+            default: () => {
+                const date = new Date();
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            },
+        },
     },
     {
         timestamps: true,
