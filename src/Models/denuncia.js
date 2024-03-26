@@ -56,8 +56,7 @@ const denunciaSchema = new mongoose.Schema(
     }
   },
   {
-    versionKey: false,
-    timestamps: true
+    versionKey: false
   }
 );
 
@@ -66,7 +65,6 @@ denunciaSchema.index({ ubicacion: '2dsphere' });
 const Denuncia = mongoose.model('Denuncia', denunciaSchema);
 
 module.exports = Denuncia;
-
 
 /**
  * @swagger
