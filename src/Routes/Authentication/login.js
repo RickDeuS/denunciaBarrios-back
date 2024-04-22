@@ -122,15 +122,18 @@ router.post('/', async (req, res) => {
             return sendResponse(res, 400, {}, 'Correo o contraseña incorrectos.');
         }
 
-        // Crear token JWT
+        const tokenExpirationSeconds = 3600; 
         const token = jwt.sign(
             { _id: user._id },
             process.env.TOKEN_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: tokenExpirationSeconds }
         );
 
-        sendResponse(res, 200,  {token} , 'Inicio de sesión exitoso');
+        const expirationDate = new Date(new Date().getTime() + tokenExpirationSeconds * 1000);
+
+        sendResponse(res, 200, { token, expiration: expirationDate.toISOString() }, 'Inicio de sesión exitoso');
     } catch (error) {
+        console.error(error);
         sendResponse(res, 500, {}, 'Error interno del servidor');
     }
 });
