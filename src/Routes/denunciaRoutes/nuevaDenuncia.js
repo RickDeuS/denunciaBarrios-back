@@ -221,6 +221,7 @@ router.post('/', verifyToken, upload.single('evidencia'), async (req, res) => {
             }).catch((error) => {
                 console.error('Error al cargar la imagen en Cloudinary:', error);
                 throw new Error('Error al cargar la imagen');
+                sendResponse(res, 500, {}, 'El tamaño de la imagen es muy grande. Intente con una imagen más pequeña.');
             });
         }
 
