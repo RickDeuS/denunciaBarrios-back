@@ -117,6 +117,10 @@ router.post('/', async (req, res) => {
             return sendResponse(res, 401, {}, 'El usuario no ha verificado su cuenta. No puede iniciar sesión');
         }
 
+        if(user.rol === 'admin'){
+            return sendResponse(res, 401, {}, 'rol:1');
+        }
+
         const validPassword = await bcrypt.compare(req.body.password, user.password);
         if (!validPassword) {
             return sendResponse(res, 400, {}, 'Correo o contraseña incorrectos.');
@@ -131,7 +135,7 @@ router.post('/', async (req, res) => {
 
         const expirationDate = new Date(new Date().getTime() + tokenExpirationSeconds * 1000);
 
-        sendResponse(res, 200, { token, expiration: expirationDate.toISOString() }, 'Inicio de sesión exitoso');
+        sendResponse(res, 200, { token, expiration: expirationDate.toISOString()}, 'Inicio de sesión exitoso');
     } catch (error) {
         console.error(error);
         sendResponse(res, 500, {}, 'Error interno del servidor');

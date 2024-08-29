@@ -128,13 +128,12 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
     port: 465,
-    secure: true, 
+    secure: true,
     auth: {
         user: userMailer,
         pass: passMailer,
     },
     tls: {
-        // do not fail on invalid certs
         rejectUnauthorized: false,
     },
 });
@@ -169,7 +168,7 @@ router.post('/', async (req, res) => {
             console.log("Esta cédula ya ha sido registrada.");
         }
 
-        // Hash de la contraseña
+        // Hash de la contraseñ
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         const verificationToken = generateVerificationToken();
@@ -199,7 +198,7 @@ router.post('/', async (req, res) => {
             nombreCompleto: req.body.nombreCompleto,
             verificationURL: verificationURL,
         });
-        
+
         const mailOptions = {
             from: userMailer,
             to: req.body.email,
@@ -217,7 +216,7 @@ router.post('/', async (req, res) => {
             });
         });
 
-        const savedUser = await user.save();        
+        const savedUser = await user.save();
         sendResponse(res, 200, savedUser, 'Usuario registrado exitosamente. Se ha enviado un correo electrónico de verificación.');
     } catch (error) {
         console.error("Error:", error);
