@@ -6,7 +6,7 @@ const swaggerJsdoc = require('swagger-jsdoc');
 require('dotenv').config();
 const app = express();
 const cors = require('cors');
-const helmet = require('helmet');  // Usamos helmet para mejorar la seguridad
+const helmet = require('helmet'); 
 
 connMongo.mongoose;
 
@@ -17,7 +17,7 @@ const corsOptions = {
 
 // Middleware para agregar encabezados de seguridad
 app.use((req, res, next) => {
-    // Establecemos los encabezados de seguridad
+
     res.setHeader('Content-Security-Policy', "default-src 'self';");
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -30,7 +30,6 @@ morgan.token('custom', function (req, res) {
     return `IP: ${req.ip}, Method: ${req.method}, URL: ${req.originalUrl}, Status: ${res.statusCode}`;
 });
 
-// Utiliza el formato personalizado de morgan
 app.use(morgan(':custom'));
 
 app.use(cors(corsOptions));
