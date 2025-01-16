@@ -6,6 +6,7 @@ const swaggerJsdoc = require('swagger-jsdoc');
 require('dotenv').config();
 const app = express();
 const cors = require('cors');
+const helmet = require('helmet');  // Usamos helmet para mejorar la seguridad
 
 connMongo.mongoose;
 
@@ -14,12 +15,22 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization', 'auth-token', 'auth-admin'],
 };
 
+// Middleware para agregar encabezados de seguridad
+app.use((req, res, next) => {
+    // Establecemos los encabezados de seguridad
+    res.setHeader('Content-Security-Policy', "default-src 'self';");
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('Permissions-Policy', 'geolocation=(self), microphone=()');
+    next();
+});
 
 morgan.token('custom', function (req, res) {
     return `IP: ${req.ip}, Method: ${req.method}, URL: ${req.originalUrl}, Status: ${res.statusCode}`;
 });
 
-// Utiliza el formato personalizado
+// Utiliza el formato personalizado de morgan
 app.use(morgan(':custom'));
 
 app.use(cors(corsOptions));
@@ -41,7 +52,6 @@ const dashboardRoutes = require ('./src/Routes/dashboardRoutes');
 app.use('/auth', AuthRoutes);
 app.use('/admin/dashboard', verifyAdminToken);
 app.use('/admin', adminRoutes);
-
 
 // Middleware para verificar el token en las rutas protegidas
 app.use('/denuncias', verifyToken);
